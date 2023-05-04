@@ -26,21 +26,6 @@ namespace WebApi.Controllers
         }
 
         [Authorize(Roles = "User")]
-        [HttpPost("get")]
-        public async Task<object> GetVms()
-        {
-            var httpContext = new HttpContextAccessor().HttpContext;
-            var rand = new Random();
-            var response = await _vmService.GetVmsAsync(rand.Next(150, 999999), "gggweSSfsdfsdgsdw");
-            if (response.ResponseInError)
-            {
-                return BadRequest(response.GetError());
-            }
-
-            return response.Response;
-        }
-
-        [Authorize(Roles = "User")]
         [HttpPost("create")]
         public async Task<object> CreateVm(Vm vm)
         {
@@ -50,7 +35,7 @@ namespace WebApi.Controllers
                 return BadRequest("Не смогли создать машину");
             }
 
-            return StatusCode(201);
+            return result.Response;
         }
 
         [Authorize(Roles = "User")]

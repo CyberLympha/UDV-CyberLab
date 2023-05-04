@@ -16,7 +16,7 @@ builder.Services.AddSingleton<UserService>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddCors(p => p.AddPolicy("AllowAll",
-    b => { b.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader().AllowCredentials(); }));
+    b => { b.WithOrigins("http://10.40.229.60:3000").AllowAnyMethod().AllowAnyHeader().AllowCredentials(); }));
 
 builder.Services.AddControllers();
 
