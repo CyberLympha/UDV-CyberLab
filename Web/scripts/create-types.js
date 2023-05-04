@@ -3,7 +3,7 @@ import * as path from 'path'
 import * as fs from "fs";
 
 
-const config = {url: "http://localhost:5220/swagger/v1/swagger.json", cleanOutput: true, modular: true}
+const config = {url: "http://10.249.2.120:5220/swagger/v1/swagger.json", cleanOutput: true, modular: true}
 
 async function build() {
     const {files} = await pkg.generateApi(config);

@@ -1,4 +1,4 @@
-import {FormControl, FormLabel, Input, NumberInput, NumberInputField, VStack} from "@chakra-ui/react";
+import {Input, VStack} from "@chakra-ui/react";
 
 import style from "./NewVm.module.scss"
 import {Button} from "../Button/Button";

@@ -5,7 +5,7 @@
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true
   },
-  "include": ["vite.config.ts"],
-  "exclude": [
-    "./rcci.config.js", "node_modules"]
+  "include": [
+    "vite.config.ts"
+  ]
 }
