@@ -1,8 +1,8 @@
+import React from "react";
 import {observer} from "mobx-react-lite";
 import {userStore} from "../../stores";
 import {Button} from "../Button/Button";
 import {LoginForm} from "../AuthForm/LoginForm";
-import React from "react";
 import {RegistrationForm} from "../AuthForm/RegistrationForm";
 
 export const UserProfile = observer(() => {

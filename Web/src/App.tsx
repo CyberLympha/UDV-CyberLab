@@ -1,5 +1,6 @@
 import React from 'react'
-import './App.css'
+import {Spinner} from "@chakra-ui/react";
+
 import {Route, Routes} from "react-router-dom";
 import {SideMenu} from "./components/SideMenu/SideMenu";
 import {News} from "./components/News/News";
@@ -8,6 +9,9 @@ import {userStore} from "./stores";
 import {Vms} from "./components/Vms/Vms";
 import {NewVm} from "./components/NewVm/NewVm";
 import {Vm} from "./components/Vm";
+
+
+import style from "./App.module.scss"
 
 function App() {
     const [loading, setLoading] = React.useState(false)
@@ -29,7 +33,7 @@ function App() {
         void fetchUser()
     }, [])
 
-    if (loading) return <div>Загрузка</div>
+    if (loading) return <Spinner className={style.spinner} size="xl" speed="1s" thickness="4px"/>
 
     return (
         <Routes>

@@ -2,17 +2,17 @@ import React from "react";
 import {
     Input,
     Modal,
-    ModalBody,
+    ModalBody, ModalCloseButton,
     ModalContent,
     ModalFooter,
     ModalHeader,
-    ModalOverlay, VStack,
+    ModalOverlay,
+    VStack
 } from "@chakra-ui/react";
+
 import {apiService} from "../../services";
 import {Button} from "../Button/Button";
-
 import {userStore} from "../../stores";
-import style from "./AuthForm.module.scss";
 
 interface LoginFormProps {
     onClose: () => void
@@ -42,23 +42,26 @@ export function LoginForm({onClose, isOpen}: LoginFormProps) {
     return (
         <Modal isOpen={isOpen} onClose={onClose} blockScrollOnMount>
             <ModalOverlay/>
-            <ModalContent className={style.container}>
+            <ModalContent>
                 <ModalHeader>Войти</ModalHeader>
+                <ModalCloseButton/>
                 <ModalBody>
-                    <Input
-                        style={{width: "300px"}}
-                        onChange={e => setEmail(e.target.value)}
-                        value={email}
-                        type="email"
-                        placeholder='Почта'
-                    />
-                    <Input
-                        style={{width: "300px"}}
-                        onChange={e => setPassword(e.target.value)}
-                        value={password}
-                        type="password"
-                        placeholder='Пароль'
-                    />
+                    <VStack>
+                        <Input
+                            width={"350px"}
+                            onChange={e => setEmail(e.target.value)}
+                            value={email}
+                            type="email"
+                            placeholder='Почта'
+                        />
+                        <Input
+                            width={"350px"}
+                            onChange={e => setPassword(e.target.value)}
+                            value={password}
+                            type="password"
+                            placeholder='Пароль'
+                        />
+                    </VStack>
                 </ModalBody>
                 <ModalFooter>
                     <Button onClick={handleClickPrimaryButton} isLoading={loading}>

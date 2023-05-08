@@ -2,15 +2,15 @@ import React from "react";
 import {
     Input,
     Modal,
-    ModalBody,
+    ModalBody, ModalCloseButton,
     ModalContent,
     ModalFooter,
     ModalHeader,
-    ModalOverlay,
+    ModalOverlay, VStack,
 } from "@chakra-ui/react";
-import {apiService} from "../../services";
-import {Button} from "../Button/Button";
 
+import {apiService} from "../../services";
+import {Button} from "../Button/Button"
 
 interface RegistrationFormProps {
     onClose: () => void
@@ -40,31 +40,38 @@ export function RegistrationForm({onClose, isOpen}: RegistrationFormProps) {
             <ModalOverlay/>
             <ModalContent>
                 <ModalHeader>Регистрация</ModalHeader>
+                <ModalCloseButton/>
                 <ModalBody>
-                    <Input
-                        onChange={e => setFirstName(e.target.value)}
-                        value={firstName}
-                        type="text"
-                        placeholder='Имя'
-                    />
-                    <Input
-                        onChange={e => setSecondName(e.target.value)}
-                        value={secondName}
-                        type="text"
-                        placeholder='Фамилия'
-                    />
-                    <Input
-                        onChange={e => setEmail(e.target.value)}
-                        value={email}
-                        type="email"
-                        placeholder='Почта'
-                    />
-                    <Input
-                        onChange={e => setPassword(e.target.value)}
-                        value={password}
-                        type="password"
-                        placeholder='Пароль'
-                    />
+                    <VStack>
+                        <Input
+                            width={"350px"}
+                            onChange={e => setFirstName(e.target.value)}
+                            value={firstName}
+                            type="text"
+                            placeholder='Имя'
+                        />
+                        <Input
+                            width={"350px"}
+                            onChange={e => setSecondName(e.target.value)}
+                            value={secondName}
+                            type="text"
+                            placeholder='Фамилия'
+                        />
+                        <Input
+                            width={"350px"}
+                            onChange={e => setEmail(e.target.value)}
+                            value={email}
+                            type="email"
+                            placeholder='Логин'
+                        />
+                        <Input
+                            width={"350px"}
+                            onChange={e => setPassword(e.target.value)}
+                            value={password}
+                            type="password"
+                            placeholder='Пароль'
+                        />
+                    </VStack>
                 </ModalBody>
                 <ModalFooter>
                     <Button onClick={handleClickPrimaryButton} isLoading={loading}>
