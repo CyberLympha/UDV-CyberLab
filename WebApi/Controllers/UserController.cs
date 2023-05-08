@@ -24,30 +24,5 @@ namespace WebApi.Controllers
             var candidate = await _userService.GetAsyncById(userId);
             return candidate;
         }
-
-
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }
