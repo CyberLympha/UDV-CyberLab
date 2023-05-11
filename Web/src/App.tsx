@@ -1,7 +1,7 @@
 import React from 'react'
 import {Spinner} from "@chakra-ui/react";
+import {Route, Routes, Navigate} from "react-router-dom";
 
-import {Route, Routes} from "react-router-dom";
 import {SideMenu} from "./components/SideMenu/SideMenu";
 import {News} from "./components/News/News";
 import {apiService} from "./services";
@@ -13,7 +13,7 @@ import {Vm} from "./components/Vm";
 
 import style from "./App.module.scss"
 
-function App() {
+export function App() {
     const [loading, setLoading] = React.useState(false)
 
     React.useEffect(() => {
@@ -37,15 +37,18 @@ function App() {
 
     return (
         <Routes>
-            <Route path="/" element={<SideMenu/>}>
+            <Route element={<SideMenu/>}>
                 <Route path={"/news"} element={<News/>}/>
                 <Route path={"/vms"} element={<Vms/>}/>
                 <Route path={"/vms/new"} element={<NewVm/>}/>
                 <Route path={"/vms/:vmid"} element={<Vm/>}/>
+                <Route
+                    path="*"
+                    element={<Navigate to="/news" replace/>}
+                />
             </Route>
 
         </Routes>
     )
 }
 
-export default App

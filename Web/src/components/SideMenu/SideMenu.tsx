@@ -1,10 +1,12 @@
 import {NavLink, Outlet} from "react-router-dom";
+import {observer} from "mobx-react-lite";
+
 import {UserProfile} from "../UserProfile/UserProfile";
 import {userStore} from "../../stores";
 import {Button} from "../Button/Button";
-import {observer} from "mobx-react-lite";
-import style from "./SideMenu.module.scss"
 import {UserRole} from "../../../api";
+
+import style from "./SideMenu.module.scss"
 
 interface NavLink {
     to: string;

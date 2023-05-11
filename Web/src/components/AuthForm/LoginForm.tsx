@@ -26,7 +26,7 @@ export function LoginForm({onClose, isOpen}: LoginFormProps) {
     const handleClickPrimaryButton = async () => {
         setLoading(true);
         const response = await apiService.login({email, password});
-        console.log(response)
+
         if (response instanceof Error) {
             setLoading(false);
             return;

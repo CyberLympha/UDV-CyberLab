@@ -9,6 +9,11 @@ export interface ChangeCredentialsRequest {
   sshKey: string;
 }
 
+export interface CreateVmRequest {
+  vm: Vm;
+  type: VmType;
+}
+
 export interface HaInt {
   /** @format int32 */
   managed?: number;
@@ -105,4 +110,10 @@ export interface VmBaseStatusCurrent {
   /** @format int64 */
   uptime?: number;
   ha?: HaInt;
+}
+
+export enum VmType {
+  Kali = "Kali",
+  Windows = "Windows",
+  Ubuntu = "Ubuntu",
 }

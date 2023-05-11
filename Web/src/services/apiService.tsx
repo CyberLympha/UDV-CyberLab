@@ -1,5 +1,12 @@
 import {HttpClient} from "./httpClient";
-import {ChangeCredentialsRequest, LoginResponse, RegistrationRequest, User, VmBaseStatusCurrent} from "../../api";
+import {
+    ChangeCredentialsRequest,
+    CreateVmRequest,
+    LoginResponse,
+    RegistrationRequest,
+    User,
+    VmBaseStatusCurrent
+} from "../../api";
 import {LoginRequest} from "../../api";
 
 
@@ -18,11 +25,8 @@ export class ApiService {
         return this.httpClient.get<User>('/User');
     }
 
-    public createVm(request: { vmid: number, name: string }) {
-        return this.httpClient.post<{ vmid: number, name: string }, {
-            user: User,
-            token: string
-        }>('/vm/create', request)
+    public createVm(request: CreateVmRequest) {
+        return this.httpClient.post<CreateVmRequest, void>('/vm/create', request)
     }
 
     public stopVm(request: { vmid: number }) {

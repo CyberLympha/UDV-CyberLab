@@ -32,6 +32,9 @@
       }
     ],
     "react/prop-types": "off",
+    "react/no-children-prop": "off",
+    "react/react-in-jsx-scope": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
     "react/jsx-props-no-spreading": "off",
     "react/jsx-filename-extension": [
       1,

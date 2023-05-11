@@ -1,10 +1,12 @@
 import {useParams} from "react-router-dom";
 import React from "react";
+import {Input} from "@chakra-ui/react";
+
 import {apiService} from "../services";
 import {VmBaseStatusCurrent} from "../../api";
-import {Button} from "./Button/Button";
-import {Input} from "@chakra-ui/react";
 import {getReadableVmStatus} from "../helpers/helpers";
+
+import {Button} from "./Button/Button";
 
 export function Vm() {
     const {vmid} = useParams()
@@ -36,24 +38,25 @@ export function Vm() {
 
     const getVmStatus = React.useCallback(async () => {
         const response = await apiService.getVmStatus({vmid: Number(vmid)})
-        if (!(response instanceof Error)) {
-            console.log(response)
 
-            setVm(response);
+        if (response instanceof Error) {
+            return
         }
+
+        setVm(response);
     }, [vmid])
 
     React.useEffect(() => {
         void getVmStatus();
-        const timer = setInterval(getVmStatus, 5000);
+        const timer = setInterval(getVmStatus, 10000);
         return () => {
             clearInterval(timer);
         }
 
     }, [getVmStatus])
 
-    // @ts-ignore
-    const vmStatus = vm?.lock! === "clone" ? "Создаётся" : getReadableVmStatus(vm?.status);
+    //@ts-ignore
+    const vmStatus = vm?.lock === "clone" ? "Создаётся" : getReadableVmStatus(vm?.status);
 
     return <div>
         {vm?.status === "running" ? <Button isLoading={loading} onClick={stopVm} children={"Остановить машину"}/>

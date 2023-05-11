@@ -17,11 +17,11 @@ export const Vms = observer(() => {
     }
 
 
-    return <div style={{padding: "16px"}}>
+    return (<div style={{padding: "16px"}}>
         <div>
             <div><Button onClick={() => navigate("/vms/new")}>Создать машину</Button></div>
         </div>
         <div>Список вм</div>
         <div>{renderVm(usersVm)}</div>
-    </div>
+    </div>)
 })
