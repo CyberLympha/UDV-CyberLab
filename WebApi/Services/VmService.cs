@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using Corsinvest.ProxmoxVE.Api;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -13,13 +14,19 @@ public class VmService
     private readonly IConfiguration _configuration;
     private PveClient proxmoxClient;
     private string nodeName;
+    private string winNode;
+    private string ubuntuNode;
+    private string kaliNode;
 
     public VmService(
         IMongoCollection<User> usersCollection, IConfiguration configuration)
     {
         _configuration = configuration;
         _usersCollection = usersCollection;
-        nodeName = _configuration["ProxmoxCredentials:NodeName"]
+        nodeName = _configuration["ProxmoxCredentials:NodeName"];
+        kaliNode = _configuration["ProxmoxCredentials:KaliNode"];
+        ubuntuNode = _configuration["ProxmoxCredentials:UbuntuNode"];
+        winNode = _configuration["ProxmoxCredentials:WinNode"];
         proxmoxClient = new PveClient(_configuration["ProxmoxCredentials:Host"]);
         proxmoxClient.ApiToken = _configuration["ProxmoxCredentials:ApiKey"];
     }
@@ -29,11 +36,20 @@ public class VmService
         return await proxmoxClient.Nodes[nodeName].Qemu["9000"].Clone.CloneVm(vmid, full: true, name: name);
     }
 
-    public async Task<Result> CreateVmAsync(Vm vm)
+    public async Task<Result> CreateVmAsync(Vm vm, VmType type)
     {
         var httpContext = new HttpContextAccessor().HttpContext;
-        var result = await proxmoxClient.Nodes[nodeName].Qemu["101"].Clone.CloneVm(vm.Vmid, full: true, name: vm.Name);
-
+        var vmType = kaliNode;
+        if (type == VmType.Windows)
+        {
+            vmType = winNode;
+        }
+        else if(type == VmType.Ubuntu)
+        {
+            vmType = ubuntuNode;
+        }
+        var result = await proxmoxClient.Nodes[nodeName].Qemu[vmType].Clone.CloneVm(vm.Vmid, full: true, name: vm.Name);
+        
         if (result.IsSuccessStatusCode)
         {
             var userId = httpContext?.User.FindFirst(claim => claim.Type == "Id")?.Value;
@@ -82,7 +98,7 @@ public class VmService
         var response = await proxmoxClient.Nodes[nodeName].Qemu[$"{vmid}"].Status.Shutdown.VmShutdown();
         if (response.IsSuccessStatusCode)
         {
-            return response.;
+            return response.Response;
         }
 
         return null;

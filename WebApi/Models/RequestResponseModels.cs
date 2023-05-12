@@ -30,10 +30,16 @@ public class ChangeCredentialsRequest
     [Required] public string SshKey { get; set; } = null!;
 }
 
-public class RegistrationResponse
+public enum VmType
 {
-    [Required] public string FirstName { get; set; } = null!;
-    [Required] public string SecondName { get; set; } = null!;
-    [Required] public string Email { get; set; } = null!;
-    [Required] public string Password { get; set; } = null!;
+    Kali,
+    Windows,
+    Ubuntu
+    
+}
+
+public class CreateVmRequest
+{
+    [Required] public Vm Vm {get; set; } = null!;
+    [Required] public VmType Type { get; set; } = VmType.Kali;
 }

@@ -27,10 +27,11 @@ namespace WebApi.Controllers
 
         [Authorize(Roles = "User")]
         [HttpPost("create")]
-        public async Task<object> CreateVm(Vm vm)
+        public async Task<object> CreateVm(CreateVmRequest request)
         {
-            var result = await _vmService.CreateVmAsync(vm);
-            if (result.ResponseInError)
+            var result = await _vmService.CreateVmAsync(request.Vm, request.Type);
+            
+            if (!result.IsSuccessStatusCode)
             {
                 return BadRequest("Не смогли создать машину");
             }

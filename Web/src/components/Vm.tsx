@@ -47,13 +47,12 @@ export function Vm() {
     }, [vmid])
 
     React.useEffect(() => {
-        void getVmStatus();
         const timer = setInterval(getVmStatus, 10000);
         return () => {
             clearInterval(timer);
         }
 
-    }, [getVmStatus])
+    }, [])
 
     //@ts-ignore
     const vmStatus = vm?.lock === "clone" ? "Создаётся" : getReadableVmStatus(vm?.status);
