@@ -7,6 +7,7 @@ import {Button} from "../Button/Button";
 import {UserRole} from "../../../api";
 
 import style from "./SideMenu.module.scss"
+import React from "react";
 
 interface NavLink {
     to: string;
@@ -15,13 +16,14 @@ interface NavLink {
 }
 
 const navLinks: NavLink[] = [
-    {to: "/news", name: "Новости", roles: [UserRole.Anon, UserRole.User]},
+    {to: "/news", name: "Новости", roles: [UserRole.User]},
     {to: "/vms", name: "Виртуалки", roles: [UserRole.User]},
 
 ]
 
 export const SideMenu = observer(() => {
     const user = userStore.user;
+    const [loading, setLoading] = React.useState(false)
     const renderNavLinks = (navLink: NavLink) => {
 
         if (!navLink.roles.includes(user?.role ?? UserRole.Anon)) return;
@@ -33,8 +35,10 @@ export const SideMenu = observer(() => {
     }
 
     const logout = () => {
+        setLoading(true);
         localStorage.clear();
-        userStore.deleteUser()
+        userStore.deleteUser();
+        setLoading(false);
     };
 
     return (

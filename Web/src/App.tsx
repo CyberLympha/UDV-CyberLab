@@ -1,20 +1,21 @@
 import React from 'react'
 import {Spinner} from "@chakra-ui/react";
-import {Route, Routes, Navigate} from "react-router-dom";
+import {Route, Routes} from "react-router-dom";
+import {observer} from "mobx-react-lite";
 
-import {SideMenu} from "./components/SideMenu/SideMenu";
-import {News} from "./components/News/News";
+
 import {apiService} from "./services";
 import {userStore} from "./stores";
-import {Vms} from "./components/Vms/Vms";
-import {NewVm} from "./components/NewVm/NewVm";
-import {Vm} from "./components/Vm";
-
+import {Login} from "./components/Login";
+import {AuthApp} from "./components/AuthApp";
+import {Registration} from "./components/Registration";
 
 import style from "./App.module.scss"
 
-export function App() {
+
+export const App = observer(function App() {
     const [loading, setLoading] = React.useState(false)
+
 
     React.useEffect(() => {
         setLoading(true);
@@ -26,8 +27,8 @@ export function App() {
                 setLoading(false)
                 return;
             }
-            userStore.setUser(response)
-            setLoading(false)
+            userStore.setUser(response);
+            setLoading(false);
         }
 
         void fetchUser()
@@ -35,20 +36,19 @@ export function App() {
 
     if (loading) return <Spinner className={style.spinner} size="xl" speed="1s" thickness="4px"/>
 
+    if (userStore.isLogined) {
+        return (
+            <AuthApp/>
+        )
+    }
+
     return (
         <Routes>
-            <Route element={<SideMenu/>}>
-                <Route path={"/news"} element={<News/>}/>
-                <Route path={"/vms"} element={<Vms/>}/>
-                <Route path={"/vms/new"} element={<NewVm/>}/>
-                <Route path={"/vms/:vmid"} element={<Vm/>}/>
-                <Route
-                    path="*"
-                    element={<Navigate to="/news" replace/>}
-                />
-            </Route>
+            <Route path={"/login"} element={<Login/>}/>
+            <Route path={"/registration"} element={<Registration/>}/>
+            <Route path="*" element={<Login/>}/>
+        </Routes>)
 
-        </Routes>
-    )
-}
+});
 
+App.displayName = "App"

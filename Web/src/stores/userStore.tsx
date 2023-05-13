@@ -1,4 +1,5 @@
 import {action, makeObservable, observable} from "mobx"
+
 import {User} from "../../api";
 
 export class UserStore {
@@ -13,16 +14,20 @@ export class UserStore {
         })
     }
 
-    addVm(vmid: number) {
+    addVm = (vmid: number) => {
         this.user?.vms.push(vmid)
     }
 
-    setUser(user: User) {
+    setUser = (user: User) => {
         this.user = user;
     }
 
-    deleteUser() {
+    deleteUser = () => {
         this.user = null;
+    }
+
+    get isLogined() {
+        return !!this.user;
     }
 
 }

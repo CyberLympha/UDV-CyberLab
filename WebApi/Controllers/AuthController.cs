@@ -31,7 +31,7 @@ namespace WebApi.Controllers
             {
                 Email = request.Email,
                 Password = passwordHash,
-                Role = UserRole.Anon,
+                Role = UserRole.User,
                 FirstName = request.FirstName,
                 SecondName = request.SecondName,
             };
