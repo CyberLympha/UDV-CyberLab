@@ -1,5 +1,66 @@
+export interface BalloonInfoInt {
+  /** @format int64 */
+  actual?: number;
+  /** @format int64 */
+  maxMem?: number;
+  /** @format int64 */
+  lastUpdate?: number;
+}
+
+export interface BlockstatInt {
+  /** @format int64 */
+  unmapBytes?: number;
+  /** @format int64 */
+  flushOperations?: number;
+  accountInvalid?: boolean;
+  accountFailed?: boolean;
+  /** @format int64 */
+  flushTotalTimeNs?: number;
+  /** @format int64 */
+  failedWrOperations?: number;
+  /** @format int64 */
+  wrMerged?: number;
+  /** @format int64 */
+  rdTotalTimeNs?: number;
+  /** @format int64 */
+  rdOperations?: number;
+  /** @format int64 */
+  rdBytes?: number;
+  /** @format int64 */
+  invalidRdOperations?: number;
+  /** @format int64 */
+  failedFlushOperations?: number;
+  /** @format int64 */
+  failedRdOperations?: number;
+  /** @format int64 */
+  unmapTotalTimeNs?: number;
+  timedStats?: any[] | null;
+  /** @format int64 */
+  invalidFlushOperations?: number;
+  /** @format int64 */
+  unmapOperations?: number;
+  /** @format int64 */
+  invalidUnmapOperations?: number;
+  /** @format int64 */
+  invalidWrOperations?: number;
+  /** @format int64 */
+  wrHighestOffset?: number;
+  /** @format int64 */
+  unmapMerged?: number;
+  /** @format int64 */
+  rdMerged?: number;
+  /** @format int64 */
+  wrOperations?: number;
+  /** @format int64 */
+  wrTotalTimeNs?: number;
+  /** @format int64 */
+  wrBytes?: number;
+  /** @format int64 */
+  failedUnmapOperations?: number;
+}
+
 export interface ChangeCredentialsRequest {
-  /** @format int32 */
+  /** @minLength 1 */
   vmid: number;
   /** @minLength 1 */
   password: string;
@@ -9,14 +70,39 @@ export interface ChangeCredentialsRequest {
   sshKey: string;
 }
 
-export interface CreateVmRequest {
-  vm: Vm;
-  type: VmType;
+export interface CreateLabRequest {
+  /** @minLength 1 */
+  id: string;
+}
+
+export interface CreateNewItem {
+  /** @minLength 1 */
+  title: string;
+  /** @minLength 1 */
+  text: string;
+  /** @minLength 1 */
+  createdAt: string;
 }
 
 export interface HaInt {
   /** @format int32 */
   managed?: number;
+}
+
+export interface Ip {
+  ipAddressType?: string | null;
+  ipAddress?: string | null;
+  /** @format int32 */
+  prefix?: number;
+}
+
+export interface Lab {
+  /** @minLength 1 */
+  id: string;
+  title?: string;
+  shortDescription?: string;
+  description?: string;
+  labsEntitys?: string[];
 }
 
 export interface LoginRequest {
@@ -26,10 +112,55 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface LoginResponse {
-  user: User;
+export interface News {
   /** @minLength 1 */
-  token: string;
+  id: string;
+  /** @minLength 1 */
+  title: string;
+  /** @minLength 1 */
+  text: string;
+  /** @minLength 1 */
+  createdAt: string;
+}
+
+export interface NicsInt {
+  /** @format int64 */
+  netIn?: number;
+  /** @format int64 */
+  netOut?: number;
+}
+
+export interface NodeTask {
+  node?: string | null;
+  status?: string | null;
+  statusOk?: boolean;
+  vmId?: string | null;
+  /** @format int64 */
+  startTime?: number;
+  /** @format date-time */
+  startTimeDate?: string;
+  /** @format date-time */
+  endTimeDate?: string;
+  duration?: TimeSpan;
+  durationInfo?: string | null;
+  /** @format int64 */
+  endTime?: number;
+  type?: string | null;
+  description?: string | null;
+  descriptionFull?: string | null;
+  uniqueTaskId?: string | null;
+  user?: string | null;
+  /** @format int32 */
+  pid?: number;
+}
+
+export interface ProxmoxSupportInt {
+  pbsDirtyBitmapSaveVm?: boolean;
+  pbsMasterKey?: boolean;
+  queryBitmapInfo?: boolean;
+  pbsDirtyBitmapMigration?: boolean;
+  pbsDirtyBitmap?: boolean;
+  pbsLibraryVersion?: string | null;
 }
 
 export interface RegistrationRequest {
@@ -43,6 +174,65 @@ export interface RegistrationRequest {
   password: string;
 }
 
+export interface ResultInt {
+  ipAddresses?: Ip[] | null;
+  statistics?: Statistics;
+  name?: string | null;
+  hardwareAddress?: string | null;
+}
+
+export interface Statistics {
+  /** @format int64 */
+  rxPackets?: number;
+  /** @format int64 */
+  rxBytes?: number;
+  /** @format int64 */
+  txErrors?: number;
+  /** @format int64 */
+  txDropped?: number;
+  /** @format int64 */
+  rxDropped?: number;
+  /** @format int64 */
+  rxErrors?: number;
+  /** @format int64 */
+  txBytes?: number;
+  /** @format int64 */
+  txPackets?: number;
+}
+
+export interface TimeSpan {
+  /** @format int64 */
+  ticks?: number;
+  /** @format int32 */
+  days?: number;
+  /** @format int32 */
+  hours?: number;
+  /** @format int32 */
+  milliseconds?: number;
+  /** @format int32 */
+  microseconds?: number;
+  /** @format int32 */
+  nanoseconds?: number;
+  /** @format int32 */
+  minutes?: number;
+  /** @format int32 */
+  seconds?: number;
+  /** @format double */
+  totalDays?: number;
+  /** @format double */
+  totalHours?: number;
+  /** @format double */
+  totalMilliseconds?: number;
+  /** @format double */
+  totalMicroseconds?: number;
+  /** @format double */
+  totalNanoseconds?: number;
+  /** @format double */
+  totalMinutes?: number;
+  /** @format double */
+  totalSeconds?: number;
+}
+
 export interface User {
   /** @minLength 1 */
   id: string;
@@ -53,7 +243,9 @@ export interface User {
   /** @minLength 1 */
   email: string;
   role: UserRole;
-  vms: number[];
+  /** @minLength 1 */
+  labs: string;
+  isApproved: boolean;
 }
 
 export enum UserRole {
@@ -63,14 +255,11 @@ export enum UserRole {
   SuperUser = "SuperUser",
 }
 
-export interface Vm {
-  /** @format int32 */
-  vmid: number;
-  /** @minLength 1 */
-  name: string;
+export interface VmQemuAgentNetworkGetInterfaces {
+  result?: ResultInt[] | null;
 }
 
-export interface VmBaseStatusCurrent {
+export interface VmQemuStatusCurrent {
   /** @format int64 */
   netIn?: number;
   /** @format int64 */
@@ -95,7 +284,7 @@ export interface VmBaseStatusCurrent {
   cpuInfo?: string | null;
   name?: string | null;
   /** @format int64 */
-  vmId?: number;
+  vmid?: number;
   /** @format int64 */
   diskRead?: number;
   /** @format int64 */
@@ -110,10 +299,15 @@ export interface VmBaseStatusCurrent {
   /** @format int64 */
   uptime?: number;
   ha?: HaInt;
-}
-
-export enum VmType {
-  Kali = "Kali",
-  Windows = "Windows",
-  Ubuntu = "Ubuntu",
+  spice?: boolean;
+  agent?: boolean;
+  runningQemu?: string | null;
+  runningMachine?: string | null;
+  qmpstatus?: string | null;
+  nics?: Record<string, NicsInt>;
+  blockStat?: Record<string, BlockstatInt>;
+  /** @format int64 */
+  balloon?: number;
+  ballooninfo?: BalloonInfoInt;
+  proxmoxSupport?: ProxmoxSupportInt;
 }

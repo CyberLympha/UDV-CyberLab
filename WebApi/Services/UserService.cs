@@ -17,6 +17,18 @@ public class UserService
     public async Task<List<User>> GetUsersAsync() =>
         await _usersCollection.Find(_ => true).ToListAsync();
 
+    public async Task ApproveUsers(List<string> ids)
+    {
+        var filter = Builders<User>.Filter.Where(bson => ids.Contains(bson.Id));
+
+        var update = Builders<User>.Update.Set("IsApproved", true);
+
+        await _usersCollection.UpdateManyAsync(filter, update);
+    }
+
+    public async Task<List<User>> GetLabUsersAsync(IEnumerable<string> userIds) =>
+        await _usersCollection.Find(x => userIds.Contains(x.Id)).ToListAsync();
+
     public async Task<User?> GetAsync(string email) =>
         await _usersCollection.Find(x => x.Email == email).FirstOrDefaultAsync();
 
@@ -37,8 +49,14 @@ public class UserService
         }
     }
 
-    public async Task UpdateAsync(string id, User updatedUser) =>
-        await _usersCollection.ReplaceOneAsync(x => x.Id == id, updatedUser);
+    public async Task UpdateAsync(string id, ObjectId idd)
+    {
+        var filter = Builders<User>.Filter.Eq("_id", ObjectId.Parse(id));
+
+        var update = Builders<User>.Update.Set("Labs", idd.ToString());
+
+        await _usersCollection.UpdateOneAsync(filter, update);
+    }
 
     public async Task RemoveAsync(string id) =>
         await _usersCollection.DeleteOneAsync(x => x.Id == id);

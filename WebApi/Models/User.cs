@@ -27,5 +27,6 @@ public class User
     [JsonIgnore] public string Password { get; set; } = null!;
 
     [Required] public UserRole Role { get; set; } = UserRole.Anon;
-    [Required] public int[] Vms { get; set; } = null!;
+    [Required] public string Labs { get; set; } = null!;
+    [Required] public bool IsApproved { get; set; } = false;
 }

@@ -1,29 +1,32 @@
-import {action, makeObservable, observable} from "mobx"
+import {makeAutoObservable} from "mobx"
+import {fromPromise,} from "mobx-utils";
+import type {IPromiseBasedObservable} from "mobx-utils"
 
-import {User} from "../../api";
+import {User, UserRole} from "../../api";
+import {apiService} from "../services";
+
+
 
 export class UserStore {
-    user: User | null = null
+    user?: User | null
 
 
     constructor() {
-        makeObservable(this, {
-            setUser: action,
-            deleteUser: action,
-            user: observable,
-        })
+        makeAutoObservable(this)
     }
 
-    addVm = (vmid: number) => {
-        this.user?.vms.push(vmid)
-    }
 
     setUser = (user: User) => {
         this.user = user;
     }
 
+    setLab = (lab: string) =>{
+        this.user!.labs = lab;
+    }
+
     deleteUser = () => {
         this.user = null;
+
     }
 
     get isLogined() {

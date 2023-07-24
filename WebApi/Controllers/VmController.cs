@@ -1,10 +1,7 @@
-using System.Configuration;
-using System.Net;
-using Corsinvest.ProxmoxVE.Api;
+using Corsinvest.ProxmoxVE.Api.Shared.Models.Node;
 using Corsinvest.ProxmoxVE.Api.Shared.Models.Vm;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using WebApi.Models;
 using WebApi.Services;
 
@@ -17,79 +14,106 @@ namespace WebApi.Controllers
         private readonly ILogger<VmController> _logger;
         private readonly IConfiguration _configuration;
         private readonly VmService _vmService;
+        private readonly LabsService _labsService;
 
-        public VmController(ILogger<VmController> logger, IConfiguration configuration, VmService vmService)
+        public VmController(ILogger<VmController> logger, IConfiguration configuration, VmService vmService,
+            LabsService labsService)
         {
             _configuration = configuration;
             _logger = logger;
             _vmService = vmService;
+            _labsService = labsService;
         }
 
-        [Authorize(Roles = "User")]
-        [HttpPost("create")]
-        public async Task<object> CreateVm(CreateVmRequest request)
-        {
-            var result = await _vmService.CreateVmAsync(request.Vm, request.Type);
-            
-            if (!result.IsSuccessStatusCode)
-            {
-                return BadRequest("Не смогли создать машину");
-            }
-
-            return result.Response;
-        }
-
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         [HttpGet("start")]
-        public async Task<object> StartVm(int vmid)
+        public async Task<ActionResult<NodeTask>> StartVm(string vmid)
         {
-            var result = await _vmService.StartVm(vmid);
-            if (result == null)
+            try
             {
-                return BadRequest();
+                var result = await _vmService.StartVm(vmid);
+                return result as NodeTask;
             }
-
-            return result.Response;
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
         }
 
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         [HttpGet("stop")]
         public async Task<object> StopVm(int vmid)
         {
-            var result = await _vmService.StopVm(vmid);
-            if (result == null)
+            try
             {
-                return BadRequest();
+                var result = await _vmService.StopVm(vmid);
+                return result["data"];
             }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
 
-            return result.Response;
+        [Authorize(Roles = "User,Admin")]
+        [HttpGet("ip")]
+        [Produces(typeof(VmQemuAgentNetworkGetInterfaces))]
+        public async Task<object> GetIpAddress(string vmid)
+        {
+            try
+            {
+                var result = await _vmService.GetVmIp(vmid);
+                return result["data"];
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
         }
 
         [Authorize(Roles = "User")]
-        [HttpGet("status")]
-        [Produces(typeof(VmBaseStatusCurrent))]
-        public async Task<ActionResult<object>> GetStatus(int vmid)
+        [HttpGet("task")]
+        public async Task<ActionResult<object>> GetStatusTask(string uuid)
         {
-            var result = await _vmService.GetStatus(vmid);
-            if (result != null)
+            try
             {
+                var result = await _vmService.GetTask(uuid);
                 return result["data"];
             }
-
-            return BadRequest();
+            catch (Exception e)
+            {
+                return StatusCode(500);
+            }
         }
+
 
         [Authorize(Roles = "User")]
         [HttpPost("setPassword")]
-        public async Task<ActionResult> SetPassword(ChangeCredentialsRequest creds)
+        public async Task<ActionResult> SetPassword(ChangeCredentialsRequest credentials)
         {
-            var result = await _vmService.SetPassword(creds.Vmid, creds.Username, creds.Password, creds.SshKey);
+            var result = await _vmService.SetPassword(credentials.Vmid, credentials.Username, credentials.Password,
+                credentials.SshKey);
             if (result != null)
             {
                 return Ok();
             }
 
             return BadRequest();
+        }
+
+        [Authorize(Roles = "User")]
+        [HttpGet("config")]
+        public async Task<ActionResult<object>> GetQemuConfig(string vmid)
+        {
+            try
+            {
+                var result = await _vmService.GetVmConfig(vmid);
+                return result["data"];
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
         }
     }
 }

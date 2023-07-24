@@ -24,7 +24,7 @@ public class RegistrationRequest
 
 public class ChangeCredentialsRequest
 {
-    [Required] public int Vmid { get; set; } = 0;
+    [Required] public string Vmid { get; set; } = null!;
     [Required] public string Password { get; set; } = null!;
     [Required] public string Username { get; set; } = null!;
     [Required] public string SshKey { get; set; } = null!;
@@ -38,8 +38,14 @@ public enum VmType
     
 }
 
-public class CreateVmRequest
+public class CreateLabRequest
 {
-    [Required] public Vm Vm {get; set; } = null!;
-    [Required] public VmType Type { get; set; } = VmType.Kali;
+    [Required] public string Id { get; set; } = null!;
+}
+
+public class CreateNewItem
+{
+    [Required] public string title { get; set; } = null!;
+    [Required] public string text { get; set; } = null!;
+    [Required] public string createdAt { get; set; } = null!;
 }

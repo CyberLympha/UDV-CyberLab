@@ -7,13 +7,24 @@ using WebApi.Models;
 using WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddSingleton(new MongoClient("mongodb://localhost:27017").GetDatabase("rtf-db")
     .GetCollection<User>("users"));
-
+builder.Services.AddSingleton(new MongoClient("mongodb://localhost:27017").GetDatabase("rtf-db")
+    .GetCollection<News>("news"));
+builder.Services.AddSingleton(new MongoClient("mongodb://localhost:27017").GetDatabase("rtf-db")
+    .GetCollection<Vm>("vms"));
+builder.Services.AddSingleton(new MongoClient("mongodb://localhost:27017").GetDatabase("rtf-db")
+    .GetCollection<Lab>("labs"));
+builder.Services.AddSingleton(new MongoClient("mongodb://localhost:27017").GetDatabase("rtf-db")
+    .GetCollection<LabEntity>("labsEntity"));
 
 builder.Services.AddSingleton<VmService>();
 builder.Services.AddSingleton<UserService>();
+builder.Services.AddSingleton<NewsService>();
+builder.Services.AddSingleton<ProxmoxService>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddSingleton<LabsService>();
 
 builder.Services.AddCors(p => p.AddPolicy("AllowAll",
     b => { b.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader().AllowCredentials(); }));
@@ -51,10 +62,7 @@ builder.Services.AddAuthentication().AddJwtBearer(options =>
     };
 });
 
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SupportNonNullableReferenceTypes();
-});
+builder.Services.AddSwaggerGen(options => { options.SupportNonNullableReferenceTypes(); });
 
 var app = builder.Build();
 

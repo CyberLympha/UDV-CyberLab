@@ -10,120 +10,134 @@ namespace WebApi.Services;
 
 public class VmService
 {
-    private readonly IMongoCollection<User> _usersCollection;
-    private readonly IConfiguration _configuration;
-    private PveClient proxmoxClient;
-    private string nodeName;
-    private string winNode;
-    private string ubuntuNode;
-    private string kaliNode;
+    private readonly IMongoCollection<User> usersCollection;
+    private readonly IMongoCollection<Lab> labsCollection;
+    private readonly IMongoCollection<LabEntity> labsEntityCollection;
+    private readonly IMongoCollection<Vm> vmCollection;
+    private readonly ProxmoxService proxmox;
+    private readonly IConfiguration configuration;
 
     public VmService(
-        IMongoCollection<User> usersCollection, IConfiguration configuration)
+        IMongoCollection<User> usersCollection, IConfiguration configuration, IMongoCollection<Vm> vmCollection,
+        IMongoCollection<Lab> labsCollection, IMongoCollection<LabEntity> labsEntityCollection, ProxmoxService proxmox)
     {
-        _configuration = configuration;
-        _usersCollection = usersCollection;
-        nodeName = _configuration["ProxmoxCredentials:NodeName"];
-        kaliNode = _configuration["ProxmoxCredentials:KaliNode"];
-        ubuntuNode = _configuration["ProxmoxCredentials:UbuntuNode"];
-        winNode = _configuration["ProxmoxCredentials:WinNode"];
-        proxmoxClient = new PveClient(_configuration["ProxmoxCredentials:Host"]);
-        proxmoxClient.ApiToken = _configuration["ProxmoxCredentials:ApiKey"];
+        this.configuration = configuration;
+        this.usersCollection = usersCollection;
+        this.vmCollection = vmCollection;
+        this.labsCollection = labsCollection;
+        this.labsEntityCollection = labsEntityCollection;
+        this.proxmox = proxmox;
     }
 
-    public async Task<Result> GetVmsAsync(int vmid, string name)
-    {
-        return await proxmoxClient.Nodes[nodeName].Qemu["9000"].Clone.CloneVm(vmid, full: true, name: name);
-    }
 
-    public async Task<Result> CreateVmAsync(Vm vm, VmType type)
+    public async Task<bool> CreateGroupVmAsync(long id)
     {
         var httpContext = new HttpContextAccessor().HttpContext;
-        var vmType = kaliNode;
-        if (type == VmType.Windows)
-        {
-            vmType = winNode;
-        }
-        else if(type == VmType.Ubuntu)
-        {
-            vmType = ubuntuNode;
-        }
-        var result = await proxmoxClient.Nodes[nodeName].Qemu[vmType].Clone.CloneVm(vm.Vmid, full: true, name: vm.Name);
-        
-        if (result.IsSuccessStatusCode)
-        {
-            var userId = httpContext?.User.FindFirst(claim => claim.Type == "Id")?.Value;
 
-            if (userId == null)
-            {
-                throw new Exception();
-            }
+        var userId = httpContext?.User.FindFirst(claim => claim.Type == "Id")?.Value;
 
-            var filter = Builders<User>.Filter.Eq("_id", ObjectId.Parse(userId));
-            var user = (await _usersCollection.FindAsync(filter)).FirstOrDefault();
-            if (user != null)
-            {
-                if (user.Vms.Length > 0)
-                {
-                    var newVms = user.Vms.Append(vm.Vmid).ToArray();
-                    var update = Builders<User>.Update.Set("Vms", newVms);
-                    await _usersCollection.FindOneAndUpdateAsync(filter, update);
-                }
-                else
-                {
-                    var update = Builders<User>.Update.Set("Vms", new int[] { vm.Vmid });
-                    await _usersCollection.FindOneAndUpdateAsync(filter, update);
-                }
-
-                return result;
-            }
+        if (userId == null)
+        {
+            throw new Exception();
         }
 
-        return result;
+        var filter = Builders<User>.Filter.Eq("_id", ObjectId.Parse(userId));
+        // var user = (await _usersCollection.FindAsync(filter)).FirstOrDefault();
+        try
+        {
+            var resultKali = await proxmox.CreateNode(id + 1, "kali");
+            var resultWin = await proxmox.CreateNode(id + 2, "win");
+            var resultUbuntu = await proxmox.CreateNode(id + 3, "ubuntu");
+            return true;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 
-    public async Task<Result> StartVm(int vmid)
+
+    public async Task<object> StartVm(string vmid)
     {
-        var response = await proxmoxClient.Nodes[nodeName].Qemu[$"{vmid}"].Status.Start.VmStart();
-        if (response.IsSuccessStatusCode)
+        try
         {
+            var result = await proxmox.StartNode(vmid);
+            return result["data"];
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public async Task<IDictionary<string, object>> StopVm(int vmid)
+    {
+        try
+        {
+            var response = await proxmox.StopNode(vmid.ToString());
             return response;
         }
-
-        return null;
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 
-    public async Task<Result> StopVm(int vmid)
-    {
-        var response = await proxmoxClient.Nodes[nodeName].Qemu[$"{vmid}"].Status.Shutdown.VmShutdown();
-        if (response.IsSuccessStatusCode)
-        {
-            return response.Response;
-        }
 
-        return null;
+    public async Task<IDictionary<string, object>> GetVmIp(string vmid)
+    {
+        try
+        {
+            var response = await proxmox.VmIp(vmid);
+            return response;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 
-    public async Task<IDictionary<string, object>> GetStatus(int vmid)
+    public async Task<IDictionary<string, object>> GetVmConfig(string vmid)
     {
-        var response = await proxmoxClient.Nodes[nodeName].Qemu[$"{vmid}"].Status.Current.VmStatus();
-        if (response.IsSuccessStatusCode)
+        try
         {
-            return response.ResponseToDictionary;
+            var response = await proxmox.VmQemuConfig(vmid);
+            return response;
         }
-
-        return null;
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 
-    public async Task<dynamic> SetPassword(int vmid, string username, string password, string sshKey)
+    public async Task<dynamic> SetPassword(string vmid, string username, string password, string sshKey)
     {
-        var response = await proxmoxClient.Nodes[nodeName].Qemu[$"{vmid}"].Config
-            .UpdateVmAsync(ciuser: username, cipassword: password, sshkeys: sshKey.TrimEnd());
-        if (response.IsSuccessStatusCode)
+        try
         {
-            return response.Response;
+            var response = await proxmox.SetVmPassword(vmid, username, password, sshKey);
+            return response;
         }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
 
-        return null;
+    public async Task<IDictionary<string, object>> GetTask(string uuid)
+    {
+        try
+        {
+            var response = await proxmox.GetTaskStatus(uuid);
+            return response;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public async Task InsertMany(Vm firstVm, Vm secondVm, Vm thirdVm)
+    {
+        await vmCollection.InsertManyAsync(new List<Vm> { firstVm, secondVm, thirdVm });
     }
 }

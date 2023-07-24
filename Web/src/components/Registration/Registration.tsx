@@ -1,11 +1,14 @@
-import {Center, Input, VStack} from "@chakra-ui/react";
+import {Center, Input, useToast, VStack} from "@chakra-ui/react";
 import React from "react";
 import {useNavigate} from "react-router-dom";
 
 import {apiService} from "../../services";
 import {Button} from "../Button/Button";
 
+import style from "./Registration.module.scss"
+
 export function Registration() {
+    const toast = useToast();
     const [email, setEmail] = React.useState<string>('');
     const [password, setPassword] = React.useState<string>('');
     const [firstName, setFirstName] = React.useState<string>('');
@@ -24,13 +27,21 @@ export function Registration() {
         }
 
         setLoading(false);
+        toast({
+            title: 'Регистрация прошла успешно',
+            description: "Дождитесь, пока вашу заявку одобрит администратор",
+            status: "success",
+            duration: 9000,
+            isClosable: true,
+            position: "top"
+        })
         navigate("/login");
     }
 
 
     return (
         <Center w={"100%"}>
-            <VStack>
+            <VStack className={style.wrapper}>
                 <Input
                     width={"350px"}
                     onChange={e => setFirstName(e.target.value)}

@@ -48,12 +48,18 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<LoginResponse>> Login(LoginRequest request)
+        public async Task<ActionResult> Login(LoginRequest request)
         {
             var user = await _userService.GetAsync(request.Email);
-            if (user == null)
+            
+            if (user == null )
             {
-                return BadRequest();
+                return StatusCode(400, "User doesnt found");
+            };
+
+            if (user.IsApproved == false)
+            {
+                return StatusCode(403);
             }
 
             if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
@@ -75,8 +81,8 @@ namespace WebApi.Controllers
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, "User"),
-                new Claim("Id", user.Id)
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
+                new Claim("Id", user.Id),
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(

@@ -1,11 +1,12 @@
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 import type {AxiosInstance, AxiosRequestConfig, AxiosResponse} from "axios"
+import {NetworkError} from "../commons/NetworkError";
 
 export class HttpClient {
     private client: AxiosInstance;
 
     constructor() {
-        this.client = axios.create({baseURL: "http://localhost:5221/api/", withCredentials: true,});
+        this.client = axios.create({baseURL: "http://localhost:5221/api/", withCredentials: true});
         this.client.interceptors.request.use(
             config => {
                 config.headers['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`;
@@ -22,7 +23,10 @@ export class HttpClient {
     }
 
     public post<R, T>(url: string, data: R, config?: AxiosRequestConfig<T>) {
-        return this.client.post<R, AxiosResponse<T>>(url, data, config).then(res => res.data).catch(reason => new Error(reason))
+        return this.client.post<R, AxiosResponse<T>>(url, data, config).then(res => res.data).catch((reason: AxiosError) => {
+            debugger;
+            return new NetworkError(reason.response!)
+        })
     }
 
     public put<R, T>(url: string, data: T, config?: AxiosRequestConfig<T>) {

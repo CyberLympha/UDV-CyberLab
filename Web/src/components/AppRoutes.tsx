@@ -2,20 +2,20 @@ import {Navigate, Route, Routes} from "react-router-dom";
 import React from "react";
 import {observer} from "mobx-react-lite";
 
-import {Login} from "./Login";
-import {Registration} from "./Registration";
+import {userStore} from "../stores";
+
 import {SideMenu} from "./SideMenu/SideMenu";
 import {News} from "./News/News";
-import {Vms} from "./Vms/Vms";
-import {NewVm} from "./NewVm";
-import {userStore} from "../stores";
-import {Vm} from "./Vm";
+import {Labs} from "./Labs/Labs";
+import {Lab} from "./Lab/Lab";
+import { NewsAdd } from "./NewsAdd/NewsAdd";
+import {NewsEdit} from "./NewsEdit/NewsEdit";
+import {Admin} from "./Admin/Admin";
 
 
 const Protected = observer(({children}: { children: JSX.Element }) => {
-    console.log(userStore.isLogined)
-    if (userStore.isLogined) {
-        //return <Navigate to="/login" replace/>;
+    if (!userStore.isLogined) {
+        return <Navigate to="/login" replace/>;
     }
     return children;
 });
@@ -27,9 +27,11 @@ export function AppRoutes() {
         <Routes>
             <Route element={<Protected><SideMenu/></Protected>}>
                 <Route path={"/news"} element={<Protected><News/></Protected>}/>
-                <Route path={"/vms"} element={<Protected><Vms/></Protected>}/>
-                <Route path={"/vms/new"} element={<Protected><NewVm/></Protected>}/>
-                <Route path={"/vms/:vmid"} element={<Protected><Vm/></Protected>}/>
+                <Route path={"/news/add"} element={<Protected><NewsAdd/></Protected>}/>
+                <Route path={"/news/:id/edit"} element={<Protected><NewsEdit/></Protected>}/>
+                <Route path={"/labs"} element={<Protected><Labs/></Protected>}/>
+                <Route path={"/labs/:labId/:id"} element={<Protected><Lab/></Protected>}/>
+                <Route path={"/admin"} element={<Protected><Admin/></Protected>}/>
                 <Route path="*" element={<Navigate to={"/news"} replace/>}/>
             </Route>
 

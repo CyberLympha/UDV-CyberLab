@@ -1,7 +1,7 @@
 import React from 'react'
 import {configure, spy} from 'mobx'
 
-import {ChakraProvider} from '@chakra-ui/react'
+import {ChakraProvider, extendTheme} from '@chakra-ui/react'
 import ReactDOM from 'react-dom/client'
 import {BrowserRouter} from "react-router-dom";
 
@@ -15,10 +15,10 @@ spy((ev) => {
     }
 })
 
-configure({
-    enforceActions: 'never',
-    reactionScheduler: (f) => setTimeout(f),
-})
+// configure({
+//     enforceActions: 'never',
+//     reactionScheduler: (f) => setTimeout(f),
+// })
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>

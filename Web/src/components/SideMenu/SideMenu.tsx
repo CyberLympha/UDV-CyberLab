@@ -1,5 +1,8 @@
 import {NavLink, Outlet} from "react-router-dom";
 import {observer} from "mobx-react-lite";
+import React from "react";
+import {VStack} from "@chakra-ui/react";
+import {ImExit} from "react-icons/all";
 
 import {UserProfile} from "../UserProfile/UserProfile";
 import {userStore} from "../../stores";
@@ -7,7 +10,7 @@ import {Button} from "../Button/Button";
 import {UserRole} from "../../../api";
 
 import style from "./SideMenu.module.scss"
-import React from "react";
+
 
 interface NavLink {
     to: string;
@@ -16,20 +19,26 @@ interface NavLink {
 }
 
 const navLinks: NavLink[] = [
-    {to: "/news", name: "Новости", roles: [UserRole.User]},
-    {to: "/vms", name: "Виртуалки", roles: [UserRole.User]},
+    {to: "/news", name: "Новости", roles: [UserRole.User, UserRole.Admin]},
+    {to: "/labs", name: "Лабораторные работы", roles: [UserRole.User, UserRole.Admin]},
+    {to: "/tests", name: "Тесты", roles: [UserRole.User, UserRole.Admin]},
+    {to: "/ratings", name: "Оценки", roles: [UserRole.User, UserRole.Admin]},
+    {to: "/ctf", name: "Соревнования", roles: [UserRole.User, UserRole.Admin]},
+    {to: "/admin", name: "Администрирование", roles: [UserRole.Admin]},
 
 ]
 
 export const SideMenu = observer(() => {
     const user = userStore.user;
-    const [loading, setLoading] = React.useState(false)
+    const [loading, setLoading] = React.useState(false);
+
     const renderNavLinks = (navLink: NavLink) => {
 
         if (!navLink.roles.includes(user?.role ?? UserRole.Anon)) return;
         return (<NavLink style={({isActive}) => {
             return {
                 fontWeight: isActive ? "bold" : "",
+                backgroundColor: isActive ? "#C8C8C8" : ""
             };
         }} className={style.link} to={navLink.to}>{navLink.name}</NavLink>)
     }
@@ -40,23 +49,26 @@ export const SideMenu = observer(() => {
         userStore.deleteUser();
         setLoading(false);
     };
-
     return (
         <>
             <div className={style.sidePageWrapper}>
-                <UserProfile/>
-                {navLinks.map(link => renderNavLinks(link))}
+                <VStack>
+                    {navLinks.map(link => renderNavLinks(link))}
+                </VStack>
                 <div style={{flex: 1}}></div>
-                {userStore.user && <Button onClick={logout}>Выйти</Button>}
+                {userStore.user && <Button leftIcon={<ImExit/>} onClick={logout}>Выйти</Button>}
             </div>
             <div style={{
                 width: "100%",
-                margin: "10px",
-                marginLeft: 0,
                 borderRadius: "24px",
-                backgroundColor: "#f6f6f6",
-                padding: "16px"
+                minHeight: "100vh",
+                height: "fit-content",
+                display: "flex",
+                flexDirection: "column",
             }}>
+                <div className={style.header}>
+                    <UserProfile/>
+                </div>
                 <Outlet/>
             </div>
         </>

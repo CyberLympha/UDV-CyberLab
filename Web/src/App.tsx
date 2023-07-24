@@ -9,11 +9,10 @@ import {userStore} from "./stores";
 import {Login} from "./components/Login";
 import {AuthApp} from "./components/AuthApp";
 import {Registration} from "./components/Registration";
-
 import style from "./App.module.scss"
 
 
-export const App = observer(function App() {
+export const App = observer(() => {
     const [loading, setLoading] = React.useState(false)
 
 
@@ -47,7 +46,8 @@ export const App = observer(function App() {
             <Route path={"/login"} element={<Login/>}/>
             <Route path={"/registration"} element={<Registration/>}/>
             <Route path="*" element={<Login/>}/>
-        </Routes>)
+        </Routes>
+    )
 
 });
 
