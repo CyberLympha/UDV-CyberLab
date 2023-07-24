@@ -56,6 +56,11 @@ public class LabsService
             Vmid = (int)(count + 3),
             Name = "xp",
         };
+        Vm router = new Vm()
+        {
+            Vmid = (int)(count + 4),
+            Name = "router",
+        };
         try
         {
             await _labsEntityCollection.InsertOneAsync(doc);

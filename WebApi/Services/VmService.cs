@@ -48,6 +48,16 @@ public class VmService
             var resultKali = await proxmox.CreateNode(id + 1, "kali");
             var resultWin = await proxmox.CreateNode(id + 2, "win");
             var resultUbuntu = await proxmox.CreateNode(id + 3, "ubuntu");
+            var resultRouter = await proxmox.CreateNode(id + 4, "router");
+            var interKali = await proxmox.CreateNetInterface(id + 1,"kali");
+            var interUbuntu = await proxmox.CreateNetInterface(id + 2,"win");
+            var interWin = await proxmox.CreateNetInterface(id + 3,"ubuntu");
+            var reloadNetwork = await proxmox.ReloadNetworkInterface();
+            await proxmox.SetNetworkInterface(id + 1, interKali);
+            await proxmox.SetNetworkInterface(id + 3, interUbuntu);
+            await proxmox.SetNetworkInterface(id + 2, interWin);
+            var interRouterResult =  await proxmox.SetRouterNetworkInterface(id + 4, new  string[]{interWin, interKali, interUbuntu});
+
             return true;
         }
         catch (Exception e)

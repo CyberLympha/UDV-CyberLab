@@ -171,4 +171,81 @@ public class ProxmoxService
             throw new Exception(e.Message);
         }
     }
+
+    public async Task<string> CreateNetInterface(long id, string name)
+    {
+        try
+        {
+            var result = await proxmoxClient.Nodes[nodeName].Network.CreateNetwork(id.ToString()+ name,"bridge",cidr:$"192.168.{id}.0/24");
+            if (result.IsSuccessStatusCode)
+            {
+                return name;
+            }
+
+            throw new Exception(result.ReasonPhrase);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public async Task<IDictionary<string, object>> ReloadNetworkInterface()
+    {
+        try
+        {
+            var result = await proxmoxClient.Nodes[nodeName].Network.ReloadNetworkConfig();
+            if (result.IsSuccessStatusCode)
+            {
+                return result.ResponseToDictionary;
+            }
+
+            throw new Exception(result.ReasonPhrase);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    public async Task<IDictionary<string, object>> SetNetworkInterface(long id, string name)
+    {
+        try
+        {
+            var result = await proxmoxClient.Nodes[nodeName].Qemu[id.ToString()].Config.UpdateVmAsync(netN:new Dictionary<int,string>(){
+                {0,name}
+            });
+            if (result.IsSuccessStatusCode)
+            {
+                return result.ResponseToDictionary;
+            }
+
+            throw new Exception(result.ReasonPhrase);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+    public async Task<IDictionary<string, object>> SetRouterNetworkInterface(long id, string[] names)
+    {
+        try
+        {
+            var result = await proxmoxClient.Nodes[nodeName].Qemu[id.ToString()].Config.UpdateVmAsync(netN:new Dictionary<int,string>(){
+                {0,names[0]},
+                {1,names[1]},
+                {2,names[2]},
+            });
+            if (result.IsSuccessStatusCode)
+            {
+                return result.ResponseToDictionary;
+            }
+
+            throw new Exception(result.ReasonPhrase);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
 }
