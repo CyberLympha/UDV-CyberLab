@@ -212,10 +212,12 @@ public class ProxmoxService
     {
         try
         {
-            var oldMacAddress = (await proxmoxClient.Nodes[nodeName].Qemu[id.ToString()].Config.VmConfig()).ResponseToDictionary;
-            var g = ((IDictionary<string, object>)oldMacAddress["data"])[$"net{netN}"];
-            string oldAddress=((string)g).Split(',')[0].Split('=')[1];
+            var vmConfig = (await proxmoxClient.Nodes[nodeName].Qemu[id.ToString()].Config.VmConfig()).ResponseToDictionary;
+            var currentNetIface = ((IDictionary<string, object>)vmConfig["data"])[$"net{netN}"];
+
+            string oldAddress=((string)currentNetIface).Split(',')[0].Split('=')[1];
             string newAddress = $"rtl8139={oldAddress},bridge={name},firewall=1";
+            
             var result = await proxmoxClient.Nodes[nodeName].Qemu[id.ToString()].Config.UpdateVmAsync(netN:new Dictionary<int,string>(){
                 {netN,newAddress}
             });
