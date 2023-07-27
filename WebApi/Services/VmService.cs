@@ -16,6 +16,10 @@ public class VmService
     private readonly IMongoCollection<Vm> vmCollection;
     private readonly ProxmoxService proxmox;
     private readonly IConfiguration configuration;
+    private string kaliNode;
+    private string winNode;
+    private string ubuntuNode;
+    private string routerNode;
 
     public VmService(
         IMongoCollection<User> usersCollection, IConfiguration configuration, IMongoCollection<Vm> vmCollection,
@@ -27,10 +31,14 @@ public class VmService
         this.labsCollection = labsCollection;
         this.labsEntityCollection = labsEntityCollection;
         this.proxmox = proxmox;
+        this.kaliNode = this.configuration["ProxmoxCredentials:KaliNode"];
+        this.winNode = this.configuration["ProxmoxCredentials:WinNode"];
+        this.ubuntuNode = this.configuration["ProxmoxCredentials:UbuntuNode"];
+        this.routerNode = this.configuration["ProxmoxCredentials:RouterNode"];
     }
 
 
-    public async Task<bool> CreateGroupVmAsync(long id)
+    public async Task CreateGroupVmAsync(long count)
     {
         var httpContext = new HttpContextAccessor().HttpContext;
 
@@ -42,23 +50,25 @@ public class VmService
         }
 
         var filter = Builders<User>.Filter.Eq("_id", ObjectId.Parse(userId));
-        // var user = (await _usersCollection.FindAsync(filter)).FirstOrDefault();
+        var user = (await usersCollection.FindAsync(filter)).FirstOrDefault();
         try
         {
-            var resultKali = await proxmox.CreateNode(id + 1, "kali");
-            var resultWin = await proxmox.CreateNode(id + 2, "win");
-            var resultUbuntu = await proxmox.CreateNode(id + 3, "ubuntu");
-            var resultRouter = await proxmox.CreateNode(id + 4, "router");
-            var interKali = await proxmox.CreateNetInterface(id + 1,"kali");
-            var interUbuntu = await proxmox.CreateNetInterface(id + 2,"win");
-            var interWin = await proxmox.CreateNetInterface(id + 3,"ubuntu");
-            var reloadNetwork = await proxmox.ReloadNetworkInterface();
-            await proxmox.SetNetworkInterface(id + 1, interKali);
-            await proxmox.SetNetworkInterface(id + 3, interUbuntu);
-            await proxmox.SetNetworkInterface(id + 2, interWin);
-            var interRouterResult =  await proxmox.SetRouterNetworkInterface(id + 4, new  string[]{interWin, interKali, interUbuntu});
+            var resultKali = await proxmox.CreateNode(count + 1, "kali", this.kaliNode);
 
-            return true;
+            var resultWin = await proxmox.CreateNode(count+2, "win", this.winNode);
+            var resultUbuntu = await proxmox.CreateNode(count + 3, "ubuntu", this.ubuntuNode);
+            var resultRouter = await proxmox.CreateNode(count + 4, "router",this.routerNode);
+
+            var interKali = await proxmox.CreateNetInterface(count + 1,"kali", 2);
+            var interWin = await proxmox.CreateNetInterface(count + 2,"win", 3);
+            var interUbuntu = await proxmox.CreateNetInterface(count + 3,"ubuntu",4);
+
+            await proxmox.ReloadNetworkInterface();
+            await Task.Delay(620_000);
+            var res1 = await proxmox.SetNetworkInterface(count + 1, interKali, 1);
+            var res2 = await proxmox.SetNetworkInterface(count + 2, interWin, 0);
+            var res3 = await proxmox.SetNetworkInterface(count + 3, interUbuntu, 1);
+            await proxmox.SetRouterNetworkInterface(count + 4, new  string[]{res1, res2, res3});
         }
         catch (Exception e)
         {

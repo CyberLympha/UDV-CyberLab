@@ -30,15 +30,13 @@ public class LabsService
     {
         var httpContext = new HttpContextAccessor().HttpContext;
         var userId = httpContext?.User.FindFirst(claim => claim.Type == "Id")?.Value;
-        var count = await _vmsCollection.Find(_ => true).CountDocumentsAsync() + 300;
+        var count = await _vmsCollection.Find(_ => true).CountDocumentsAsync() + 1000;
 
-        var result = await _vmService.CreateGroupVmAsync(count);
-
-        if (!result) throw new Exception();
+        await _vmService.CreateGroupVmAsync(count);
 
         LabEntity doc = new LabEntity()
         {
-            Vms = new List<long>() { count + 1, count + 2, count + 3 },
+            Vms = new List<long>() { count + 1, count + 2, count + 3, count + 4 },
             UserId = userId
         };
         Vm ubuntu = new Vm()

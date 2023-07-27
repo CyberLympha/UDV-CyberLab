@@ -16,7 +16,6 @@ public class ProxmoxService
         this.configuration = configuration;
         this.nodeName = this.configuration["ProxmoxCredentials:NodeName"];
         this.kaliNode = this.configuration["ProxmoxCredentials:KaliNode"];
-        this.kaliNode = this.configuration["ProxmoxCredentials:KaliNode"];
         this.winNode = this.configuration["ProxmoxCredentials:WinNode"];
         this.ubuntuNode = this.configuration["ProxmoxCredentials:UbuntuNode"];
         proxmoxClient = new PveClient(this.configuration["ProxmoxCredentials:Host"]);
@@ -153,11 +152,11 @@ public class ProxmoxService
         }
     }
 
-    public async Task<IDictionary<string, object>> CreateNode(long id, string name)
+    public async Task<IDictionary<string, object>> CreateNode(long id, string name, string clonedVmId)
     {
         try
         {
-            var result = await proxmoxClient.Nodes[nodeName].Qemu["101"].Clone
+            var result = await proxmoxClient.Nodes[nodeName].Qemu[clonedVmId].Clone
                 .CloneVm((int)id, full: true, name: name);
             if (result.IsSuccessStatusCode)
             {
@@ -172,14 +171,15 @@ public class ProxmoxService
         }
     }
 
-    public async Task<string> CreateNetInterface(long id, string name)
+    public async Task<string> CreateNetInterface(long id, string name, int subnet)
     {
         try
         {
-            var result = await proxmoxClient.Nodes[nodeName].Network.CreateNetwork(id.ToString()+ name,"bridge",cidr:$"192.168.{id}.0/24");
+            var iface = "vmbr" + id.ToString();
+            var result = await proxmoxClient.Nodes[nodeName].Network.CreateNetwork(iface,type:"bridge",cidr:$"192.168.{subnet}.0/24",autostart: true);
             if (result.IsSuccessStatusCode)
             {
-                return name;
+                return iface;
             }
 
             throw new Exception(result.ReasonPhrase);
@@ -208,18 +208,22 @@ public class ProxmoxService
         }
     }
 
-    public async Task<IDictionary<string, object>> SetNetworkInterface(long id, string name)
+    public async Task<string> SetNetworkInterface(long id, string name, int netN)
     {
         try
         {
+            var oldMacAddress = (await proxmoxClient.Nodes[nodeName].Qemu[id.ToString()].Config.VmConfig()).ResponseToDictionary;
+            var g = ((IDictionary<string, object>)oldMacAddress["data"])[$"net{netN}"];
+            string oldAddress=((string)g).Split(',')[0].Split('=')[1];
+            string newAddress = $"rtl8139={oldAddress},bridge={name},firewall=1";
             var result = await proxmoxClient.Nodes[nodeName].Qemu[id.ToString()].Config.UpdateVmAsync(netN:new Dictionary<int,string>(){
-                {0,name}
+                {netN,newAddress}
             });
+
             if (result.IsSuccessStatusCode)
             {
-                return result.ResponseToDictionary;
+                return newAddress;
             }
-
             throw new Exception(result.ReasonPhrase);
         }
         catch (Exception e)

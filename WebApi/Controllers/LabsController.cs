@@ -31,7 +31,7 @@ namespace WebApi.Controllers
             return await labsService.GetAllLabs();
         }
         
-        [Authorize(Roles = "User,Admin")]
+        // [Authorize(Roles = "User,Admin")]
         [HttpPost("create")]
         public async Task<ActionResult<string>> CreateVm(CreateLabRequest request)
         {
