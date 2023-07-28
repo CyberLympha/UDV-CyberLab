@@ -156,8 +156,8 @@ public class VmService
         }
     }
 
-    public async Task InsertMany(Vm firstVm, Vm secondVm, Vm thirdVm)
+    public async Task InsertMany(List<Vm> listVm)
     {
-        await vmCollection.InsertManyAsync(new List<Vm> { firstVm, secondVm, thirdVm });
+        await vmCollection.InsertManyAsync(listVm);
     }
 }

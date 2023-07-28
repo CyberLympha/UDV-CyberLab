@@ -217,7 +217,7 @@ public class ProxmoxService
 
             string oldAddress=((string)currentNetIface).Split(',')[0].Split('=')[1];
             string newAddress = $"rtl8139={oldAddress},bridge={name},firewall=1";
-            
+
             var result = await proxmoxClient.Nodes[nodeName].Qemu[id.ToString()].Config.UpdateVmAsync(netN:new Dictionary<int,string>(){
                 {netN,newAddress}
             });
@@ -238,9 +238,9 @@ public class ProxmoxService
         try
         {
             var result = await proxmoxClient.Nodes[nodeName].Qemu[id.ToString()].Config.UpdateVmAsync(netN:new Dictionary<int,string>(){
-                {0,names[0]},
-                {1,names[1]},
-                {2,names[2]},
+                {1,names[0]},
+                {2,names[1]},
+                {3,names[2]},
             });
             if (result.IsSuccessStatusCode)
             {

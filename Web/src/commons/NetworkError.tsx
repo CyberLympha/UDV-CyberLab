@@ -1,6 +1,5 @@
 import {AxiosError,} from "axios";
 import type {AxiosResponse} from "axios"
-import {Exception} from "../../api";
 
 
 export class NetworkError extends Error {

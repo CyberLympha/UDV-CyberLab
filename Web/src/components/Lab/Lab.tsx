@@ -3,12 +3,13 @@ import React from "react";
 
 import {apiService} from "../../services";
 import {User, UserRole, VmQemuStatusCurrent} from "../../../api";
-
 import {Vm} from "../Vm/Vm";
-import style from "./Lab.module.scss"
 import {Button} from "../Button/Button";
 import {userStore} from "../../stores";
 import {getReadableUserRole} from "../../helpers/helpers";
+import {MockVm} from "../Vm/MockVm";
+
+import style from "./Lab.module.scss"
 
 export function Lab() {
     const {labId, id} = useParams()
@@ -103,7 +104,9 @@ export function Lab() {
             {isCreating && <div>Создаём виртуальные машины</div>}
         </div>
         <div style={{display: "flex", justifyContent: "space-evenly"}}>
-            {lab?.map(vm => <Vm key={vm.vmid} status={vm} stopped={stopped}/>)}
+            {<Vm key={lab?.[0].vmid} status={lab?.[0] as unknown as VmQemuStatusCurrent} stopped={stopped}/>}
+            {<MockVm name={"убунту"} key={2} status={"Запущена"} ip={"192.168.2.2"}/>}
+            {<MockVm name={"виндоус"} key={3} status={"Запущена"} ip={"192.168.2.1"}/>}
         </div>
         {userStore.user?.role === UserRole.Admin &&
             <div className={style.users}>

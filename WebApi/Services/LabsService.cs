@@ -68,7 +68,7 @@ public class LabsService
             var update = Builders<Lab>.Update.Set("LabsEntitys", tmp);
             await _labsCollection.UpdateOneAsync(filter, update);
             await _userService.UpdateAsync(userId, ObjectId.Parse(doc.Id));
-            await _vmService.InsertMany(ubuntu, kali, xp);
+            await _vmService.InsertMany(new List<Vm>{ubuntu, kali, xp, router});
             return doc.Id;
         }
         catch (Exception e)

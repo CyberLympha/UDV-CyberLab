@@ -1,12 +1,13 @@
 import axios, {AxiosError} from "axios";
 import type {AxiosInstance, AxiosRequestConfig, AxiosResponse} from "axios"
+
 import {NetworkError} from "../commons/NetworkError";
 
 export class HttpClient {
     private client: AxiosInstance;
 
     constructor() {
-        this.client = axios.create({baseURL: "http://localhost:5221/api/", withCredentials: true});
+        this.client = axios.create({baseURL: "http://10.40.229.4:5220/api/", withCredentials: true});
         this.client.interceptors.request.use(
             config => {
                 config.headers['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`;

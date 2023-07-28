@@ -11,6 +11,7 @@ export interface VmProps {
     status: VmQemuStatusCurrent,
     stopped: boolean;
 
+
 }
 
 export function Vm({status, stopped}: VmProps) {
