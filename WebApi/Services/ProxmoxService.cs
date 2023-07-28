@@ -44,7 +44,7 @@ public class ProxmoxService
     {
         try
         {
-            var result = await proxmoxClient.Nodes[nodeName].Qemu[node].Status.Shutdown.VmShutdown();
+            var result = await proxmoxClient.Nodes[nodeName].Qemu[node].Status.Shutdown.VmShutdown(true);
             if (result.IsSuccessStatusCode)
             {
                 return result.ResponseToDictionary;

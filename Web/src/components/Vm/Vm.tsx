@@ -31,7 +31,7 @@ export function Vm({status, stopped}: VmProps) {
         setIp(ip)
         setLoading(false);
 
-    }, [status.vmid])
+    }, [status?.vmid])
 
 
     React.useEffect(() => {

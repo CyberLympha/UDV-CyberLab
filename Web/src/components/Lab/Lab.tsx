@@ -16,6 +16,8 @@ export function Lab() {
     const [lab, setLab] = React.useState<VmQemuStatusCurrent[]>();
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState(false);
+    const [show, setShow] = React.useState(true);
+
     const [users, setUsers] = React.useState<User[]>([]);
     const [stopped, setStopped] = React.useState(false);
     const status = lab?.some(vm => vm.status === "stopped");
@@ -38,7 +40,8 @@ export function Lab() {
     const startLab = async () => {
 
         setLoading(true);
-        setStopped(false)
+        setStopped(false);
+        setShow(true);
         const promises: Promise<{ uuid: string } | Error>[] = [];
         lab?.forEach(x => promises.push(apiService.startVm({vmid: x.vmid!})));
         setLoading(false)
@@ -50,6 +53,7 @@ export function Lab() {
 
     const stopLab = async () => {
         setLoading(true);
+        setShow(false);
         const promises: Promise<{ uuid: string } | Error>[] = [];
         lab?.forEach(x => promises.push(apiService.stopVm({vmid: x.vmid!})));
         await Promise.all(promises);
@@ -104,9 +108,14 @@ export function Lab() {
             {isCreating && <div>Создаём виртуальные машины</div>}
         </div>
         <div style={{display: "flex", justifyContent: "space-evenly"}}>
-            {<Vm key={lab?.[0].vmid} status={lab?.[0] as unknown as VmQemuStatusCurrent} stopped={stopped}/>}
-            {<MockVm name={"убунту"} key={2} status={"Запущена"} ip={"192.168.2.2"}/>}
-            {<MockVm name={"виндоус"} key={3} status={"Запущена"} ip={"192.168.2.1"}/>}
+            {lab?.length &&
+                <>
+                    <Vm key={lab?.[1].vmid} status={lab[1]} stopped={stopped}/>
+                    <MockVm name={"Ubuntu"} key={2} status={"Запущена"} ip={"192.168.4.0"} show={show}/>
+                    <MockVm name={"Windows"} key={3} status={"Запущена"} ip={"192.168.3.0"} show={show}/>
+                </>
+            }
+
         </div>
         {userStore.user?.role === UserRole.Admin &&
             <div className={style.users}>

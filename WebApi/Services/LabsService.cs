@@ -88,13 +88,14 @@ public class LabsService
         var lab = (await _labsEntityCollection.FindAsync(filter)).FirstOrDefault();
         try
         {
-            var ubuntu = await proxmoxService.VmStatus(lab.Vms[0].ToString());
-            var kali = await proxmoxService.VmStatus(lab.Vms[1].ToString());
+            var kali = await proxmoxService.VmStatus(lab.Vms[0].ToString());
+            var ubuntu = await proxmoxService.VmStatus(lab.Vms[1].ToString());
             var windows = await proxmoxService.VmStatus(lab.Vms[2].ToString());
+            var router = await proxmoxService.VmStatus(lab.Vms[3].ToString());
             return new List<object>()
             {
                 ubuntu["data"], kali["data"],
-                windows["data"]
+                windows["data"], router["data"]
             };
         }
         catch (Exception e)
