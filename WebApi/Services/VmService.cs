@@ -43,14 +43,13 @@ public class VmService
         var httpContext = new HttpContextAccessor().HttpContext;
 
         var userId = httpContext?.User.FindFirst(claim => claim.Type == "Id")?.Value;
-
+	Console.WriteLine(userId);
         if (userId == null)
         {
             throw new Exception();
         }
 
-        var filter = Builders<User>.Filter.Eq("_id", ObjectId.Parse(userId));
-        var user = (await usersCollection.FindAsync(filter)).FirstOrDefault();
+
         try
         {
             var resultKali = await proxmox.CreateNode(count + 1, "kali", this.kaliNode);

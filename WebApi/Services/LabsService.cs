@@ -31,7 +31,7 @@ public class LabsService
         var httpContext = new HttpContextAccessor().HttpContext;
         var userId = httpContext?.User.FindFirst(claim => claim.Type == "Id")?.Value;
         var count = await _vmsCollection.Find(_ => true).CountDocumentsAsync() + 1000;
-
+	Console.WriteLine(count);
         await _vmService.CreateGroupVmAsync(count);
 
         LabEntity doc = new LabEntity()
@@ -91,8 +91,8 @@ public class LabsService
             var kali = await proxmoxService.VmStatus(lab.Vms[0].ToString());
             var ubuntu = await proxmoxService.VmStatus(lab.Vms[1].ToString());
             var windows = await proxmoxService.VmStatus(lab.Vms[2].ToString());
-            var router = await proxmoxService.VmStatus(lab.Vms[3].ToString());
-            return new List<object>()
+            var router = await proxmoxService.VmStatus(lab.Vms[3].ToString());    
+	return new List<object>()
             {
                 ubuntu["data"], kali["data"],
                 windows["data"], router["data"]
