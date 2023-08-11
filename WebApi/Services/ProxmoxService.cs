@@ -208,15 +208,17 @@ public class ProxmoxService
         }
     }
 
-    public async Task<string> SetNetworkInterface(long id, string name, int netN)
+    public async Task<string> SetNetworkInterface(long id, string name, int netN, int NetInt)
     {
         try
         {
+       	    string[] interfaces = { "e1000", "virtio", "rtl8139" };
+       	    
             var vmConfig = (await proxmoxClient.Nodes[nodeName].Qemu[id.ToString()].Config.VmConfig()).ResponseToDictionary;
             var currentNetIface = ((IDictionary<string, object>)vmConfig["data"])[$"net{netN}"];
 
             string oldAddress=((string)currentNetIface).Split(',')[0].Split('=')[1];
-            string newAddress = $"rtl8139={oldAddress},bridge={name},firewall=1";
+            string newAddress = $"{interfaces[NetInt]}={oldAddress},bridge={name},firewall=1";
 
             var result = await proxmoxClient.Nodes[nodeName].Qemu[id.ToString()].Config.UpdateVmAsync(netN:new Dictionary<int,string>(){
                 {netN,newAddress}
@@ -238,9 +240,9 @@ public class ProxmoxService
         try
         {
             var result = await proxmoxClient.Nodes[nodeName].Qemu[id.ToString()].Config.UpdateVmAsync(netN:new Dictionary<int,string>(){
-                {1,names[0]},
-                {2,names[1]},
-                {3,names[2]},
+                {0,names[0]},
+                {1,names[1]},
+                {2,names[2]},
             });
             if (result.IsSuccessStatusCode)
             {

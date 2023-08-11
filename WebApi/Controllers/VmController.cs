@@ -55,7 +55,7 @@ namespace WebApi.Controllers
             }
         }
 
-        [Authorize(Roles = "User,Admin")]
+        //[Authorize(Roles = "User,Admin")]
         [HttpGet("ip")]
         [Produces(typeof(VmQemuAgentNetworkGetInterfaces))]
         public async Task<object> GetIpAddress(string vmid)

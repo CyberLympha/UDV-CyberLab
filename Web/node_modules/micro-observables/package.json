@@ -1,0 +1,60 @@
+{
+  "name": "micro-observables",
+  "version": "1.7.2",
+  "description": "A simple Observable library that can be used for easy state management in React applications.",
+  "author": "BeTomorrow",
+  "license": "MIT",
+  "keywords": [
+    "observable",
+    "typescript",
+    "react",
+    "state",
+    "hook"
+  ],
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "module": "dist/micro-observables.esm.js",
+  "files": [
+    "dist",
+    "src",
+    "batching*"
+  ],
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "tsdx lint",
+    "prepublishOnly": "tsdx build && tsdx test"
+  },
+  "engines": {
+    "node": ">=10"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BeTomorrow/micro-observables.git"
+  },
+  "homepage": "https://github.com/BeTomorrow/micro-observables#readme",
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 120,
+    "trailingComma": "es5"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "devDependencies": {
+    "@types/hoist-non-react-statics": "^3.3.1",
+    "@types/react": "^16.9.41",
+    "husky": "^4.2.5",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.0.0",
+    "typescript": "^4.0.3"
+  },
+  "dependencies": {
+    "hoist-non-react-statics": "^3.3.2"
+  }
+}

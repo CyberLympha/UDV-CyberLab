@@ -62,13 +62,21 @@ public class LabsService
         try
         {
             await _labsEntityCollection.InsertOneAsync(doc);
+            Console.WriteLine("1");
             var filter = Builders<Lab>.Filter.Eq("_id", ObjectId.Parse(Id));
+            Console.WriteLine("2");
             var results = (await _labsCollection.FindAsync(filter)).FirstOrDefault();
+            Console.WriteLine("3");
             var tmp = results.LabsEntitys.Append(doc.Id);
+            Console.WriteLine("4");
             var update = Builders<Lab>.Update.Set("LabsEntitys", tmp);
+            Console.WriteLine("5");
             await _labsCollection.UpdateOneAsync(filter, update);
+            Console.WriteLine("6");
             await _userService.UpdateAsync(userId, ObjectId.Parse(doc.Id));
+            Console.WriteLine("7");
             await _vmService.InsertMany(new List<Vm>{ubuntu, kali, xp, router});
+            Console.WriteLine("8");
             return doc.Id;
         }
         catch (Exception e)

@@ -53,21 +53,26 @@ public class VmService
         try
         {
             var resultKali = await proxmox.CreateNode(count + 1, "kali", this.kaliNode);
-
             var resultWin = await proxmox.CreateNode(count+2, "win", this.winNode);
             var resultUbuntu = await proxmox.CreateNode(count + 3, "ubuntu", this.ubuntuNode);
             var resultRouter = await proxmox.CreateNode(count + 4, "router",this.routerNode);
 
-            var interKali = await proxmox.CreateNetInterface(count + 1,"kali", 2);
-            var interWin = await proxmox.CreateNetInterface(count + 2,"win", 3);
-            var interUbuntu = await proxmox.CreateNetInterface(count + 3,"ubuntu",4);
+            var interKali = await proxmox.CreateNetInterface(count + 1,"kali", 1);
+            var interWin = await proxmox.CreateNetInterface(count + 2,"win", 2);
+            var interUbuntu = await proxmox.CreateNetInterface(count + 3,"ubuntu",3);
 
             await proxmox.ReloadNetworkInterface();
-            await Task.Delay(620_000);
-            var res1 = await proxmox.SetNetworkInterface(count + 1, interKali, 1);
-            var res2 = await proxmox.SetNetworkInterface(count + 2, interWin, 0);
-            var res3 = await proxmox.SetNetworkInterface(count + 3, interUbuntu, 1);
-            await proxmox.SetRouterNetworkInterface(count + 4, new  string[]{res1, res2, res3});
+            await Task.Delay(120_000);
+            var res1 = await proxmox.SetNetworkInterface(count + 1, "vmbr0", 1, 1);
+            var res4 = await proxmox.SetNetworkInterface(count + 1, interKali, 0, 1);
+            var res2 = await proxmox.SetNetworkInterface(count + 2, interWin, 0, 0);
+            var res3 = await proxmox.SetNetworkInterface(count + 3, interUbuntu, 0, 1);
+            
+            var res1_router = await proxmox.SetNetworkInterface(count + 4, interKali, 0, 1);
+            var res2_router = await proxmox.SetNetworkInterface(count + 4, interWin, 1, 1);
+            var res3_router = await proxmox.SetNetworkInterface(count + 4, interUbuntu, 2, 1);
+            
+            await proxmox.SetRouterNetworkInterface(count + 4, new  string[]{res1_router, res2_router, res3_router});
         }
         catch (Exception e)
         {
