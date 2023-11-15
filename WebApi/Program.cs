@@ -18,6 +18,8 @@ builder.Services.AddSingleton(new MongoClient("mongodb://localhost:27017").GetDa
     .GetCollection<Lab>("labs"));
 builder.Services.AddSingleton(new MongoClient("mongodb://localhost:27017").GetDatabase("rtf-db")
     .GetCollection<LabEntity>("labsEntity"));
+builder.Services.AddSingleton(new MongoClient("mongodb://localhost:27017").GetDatabase("rtf-db")
+    .GetCollection<LabReservation>("labReservations"));
 
 builder.Services.AddSingleton<VmService>();
 builder.Services.AddSingleton<UserService>();
@@ -25,6 +27,7 @@ builder.Services.AddSingleton<NewsService>();
 builder.Services.AddSingleton<ProxmoxService>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<LabsService>();
+builder.Services.AddSingleton<LabReservationsService>();
 
 builder.Services.AddCors(p => p.AddPolicy("AllowAll",
     b => { b.WithOrigins("http://10.40.229.60:3000","http://localhost:5173").AllowAnyMethod().AllowAnyHeader().AllowCredentials(); }));
