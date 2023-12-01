@@ -13,13 +13,13 @@ public class LabReservationsService
         _labReservationsCollection = labReservationsCollection;
         _userService = userService;
     }
-    public async Task CreateAsync(LabReservation newLabReservation, Lab reservationLab)
+    public async Task CreateAsync(LabReservation newLabReservation)
     {
         if (newLabReservation == null) throw new Exception();
-        if (await Intersects(newLabReservation, reservationLab))
-            throw new Exception("The time has already been resereved");
         try
         {
+            if (await Intersects(newLabReservation))
+                throw new Exception("The time has already been resereved");
             await _labReservationsCollection.InsertOneAsync(newLabReservation);
         }
         catch (Exception e)
@@ -40,7 +40,7 @@ public class LabReservationsService
         }
     }
 
-    public async Task UpdateAsync(LabReservation labReservation, Lab reservationLab, string userId)
+    public async Task UpdateAsync(LabReservation labReservation, string userId)
     {
         var reservationToUpdate = await _labReservationsCollection.FindAsync(bson => bson.Id == labReservation.Id) ??
             throw new Exception("Reservation not found");
@@ -49,7 +49,7 @@ public class LabReservationsService
         {
             if (labReservation.Reservor.Id != userId || user.Role != UserRole.Admin)
                 throw new Exception("User is not the reservor");
-            if (await Intersects(labReservation, reservationLab))
+            if (await Intersects(labReservation))
                 throw new Exception("The time has already been resereved");
 
             var update = Builders<LabReservation>.Update
@@ -108,10 +108,10 @@ public class LabReservationsService
         }
     }
 
-    public async Task<bool> Intersects(LabReservation labReservation, Lab reservationLab)
+    public async Task<bool> Intersects(LabReservation labReservation)
     {
-        var labs = await GetAllLabreservationsAsync(reservationLab);
-        foreach (var _labReservation in labs)
+        var reservations = await GetAllLabreservationsAsync(labReservation.Lab);
+        foreach (var _labReservation in reservations)
         {
             if (labReservation.Intersects(_labReservation))
                 return true;

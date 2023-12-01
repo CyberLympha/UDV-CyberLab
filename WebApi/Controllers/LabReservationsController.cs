@@ -18,11 +18,11 @@ namespace WebApi.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin, Teacher")]
-        public async Task<ActionResult> Create(LabReservation labReservation, Lab reservationLab)
+        public async Task<ActionResult> Create(LabReservation labReservation)
         {
             try
             {
-                await _labReservationsService.CreateAsync(labReservation, reservationLab);
+                await _labReservationsService.CreateAsync(labReservation);
                 return StatusCode(201);
             }
             catch (Exception e)
@@ -53,11 +53,11 @@ namespace WebApi.Controllers
 
         [HttpPut]
         [Authorize(Roles = "Admin, Teacher")]
-        public async Task<IActionResult> Update(LabReservation labReservation, Lab reservationLab, string userId)
+        public async Task<IActionResult> Update(LabReservation labReservation, string userId)
         {
             try
             {
-                await _labReservationsService.UpdateAsync(labReservation, reservationLab, userId);
+                await _labReservationsService.UpdateAsync(labReservation, userId);
                 return Ok();
             }
             catch (Exception e)
