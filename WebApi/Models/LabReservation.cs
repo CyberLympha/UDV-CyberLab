@@ -9,7 +9,6 @@ public class LabReservation
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; } = null!;
 
-    // TODO: add index to db as time start, so that adding new reservation could be O(log n)
     [Required]
     [BsonDateTimeOptions(
     Kind = DateTimeKind.Local,
