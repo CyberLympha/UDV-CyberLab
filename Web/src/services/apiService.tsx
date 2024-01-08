@@ -3,7 +3,7 @@ import {
     RegistrationRequest,
     User,
     LoginRequest,
-    News, Lab, VmQemuAgentNetworkGetInterfaces
+    News, Lab, VmQemuAgentNetworkGetInterfaces, LabReservation, CreateLabReservationRequest
 } from "../../api";
 
 import {HttpClient} from "./httpClient";
@@ -103,5 +103,25 @@ export class ApiService {
 
     public getNewItem(request: { id: string }) {
         return this.httpClient.get<News>('/news/item', request)
+    }
+
+    public createLabReservation(request: CreateLabReservationRequest) {
+        return this.httpClient.post<CreateLabReservationRequest, void>('/schedule/create', request)
+    }
+
+    public getLabReservation(request: {id: string}) {
+        return this.httpClient.get<LabReservation>('/schedule/get{id}', request)
+    }
+
+    public getAllLabReservations(){
+        return this.httpClient.get<LabReservation[]>('/schedule/get')
+    }
+
+    public updateLabReservation(request: {creationRequest: CreateLabReservationRequest, userId:string}) {
+        return this.httpClient.post<{creationRequest: CreateLabReservationRequest, userId:string}, void>('/schedule/update', request)
+    }
+
+    public deleteLabReservation(request: {labId: string, userId: string}) {
+        return this.httpClient.delete<{labId: string, userId: string}>('/schedule/delete')
     }
 }
