@@ -338,3 +338,17 @@ export interface CreateLabReservationRequest {
   reservorId: string|undefined;
   lab: Lab|null;
 }
+
+export interface UpdateLabReservationRequest {
+  /** @minLength 1 */
+  id: string;
+  timeStart: number;
+  timeEnd: number;
+  /** @minLength 1 */
+  theme: string;
+  /** @minLength 1 */
+  description: string;
+  reservorId: string|undefined;
+  lab: Lab|null;
+  currentUserId: string|undefined;
+}

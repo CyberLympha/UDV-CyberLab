@@ -54,10 +54,10 @@ public class LabReservationsService
 
             var filter = Builders<LabReservation>.Filter.Eq("_id", ObjectId.Parse(labReservation.Id));
             var update = Builders<LabReservation>.Update
-                .Set("theme", labReservation.Theme)
-                .Set("description", labReservation.Description)
-                .Set("time_start", labReservation.TimeStart)
-                .Set("time_end", labReservation.TimeEnd);
+                .Set("Theme", labReservation.Theme)
+                .Set("Description", labReservation.Description)
+                .Set("TimeStart", labReservation.TimeStart)
+                .Set("TimeEnd", labReservation.TimeEnd);
             await _labReservationsCollection.UpdateOneAsync(filter, update);
         }
         catch (Exception e)

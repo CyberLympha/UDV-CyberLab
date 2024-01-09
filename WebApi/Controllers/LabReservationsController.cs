@@ -63,20 +63,21 @@ namespace WebApi.Controllers
 
         [HttpPost("update")]
         [Authorize(Roles = "Admin, Teacher")]
-        public async Task<IActionResult> Update(CreateLabReservationRequest creationRequest, string userId)
+        public async Task<IActionResult> Update(UpdateLabReservationRequest updateRequest)
         {
             try
             {
                 var labReservation = new LabReservation()
                 {
-                    Description = creationRequest.Description,
-                    Theme = creationRequest.Theme,
-                    Lab = creationRequest.Lab,
-                    Reservor = await _userService.GetAsyncById(creationRequest.ReservorId),
-                    TimeEnd = new DateTime(creationRequest.TimeEnd),
-                    TimeStart = new DateTime(creationRequest.TimeStart),
+                    Id = updateRequest.Id,
+                    Description = updateRequest.Description,
+                    Theme = updateRequest.Theme,
+                    Lab = updateRequest.Lab,
+                    Reservor = await _userService.GetAsyncById(updateRequest.ReservorId),
+                    TimeEnd = new DateTime(updateRequest.TimeEnd),
+                    TimeStart = new DateTime(updateRequest.TimeStart),
                 };
-                await _labReservationsService.UpdateAsync(labReservation, userId);
+                await _labReservationsService.UpdateAsync(labReservation, updateRequest.CurrentUserId);
                 return Ok();
             }
             catch (Exception e)

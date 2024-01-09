@@ -5,28 +5,24 @@ import 'react-datepicker/dist/react-datepicker.css';
 import React, { useState } from 'react';
 import { Button as LocalButton } from '../../Button/Button';
 import { apiService } from '../../../services';
-import {CreateLabReservationRequest, Lab } from '../../../../api';
+import {CreateLabReservationRequest, LabReservation, UpdateLabReservationRequest } from '../../../../api';
 import { userStore } from '../../../stores';
-import style from './AddLabReservation.module.scss'
+import {convertDateToNetTicks} from "../AddLabReservation/AddLabReservation"
+
+import style from './EditLabReservation.module.scss'
 
 interface Props {
   show: boolean;
   handleClose: () => void;
-  selectedLab: Lab | null;
-  selectedWeek: Date;
-  fetchScheduleData: (selectedWeek: Date, selectedLab: Lab | null) => void;
+  selectedReservation: LabReservation;
+  updateTable: () => void
 }
 
-export function convertDateToNetTicks(date: Date): number {
-  return date.getTime() * 10000 + 621355968 * 1000000000 - date.getTimezoneOffset() * 600000000
-}
-
-export const AddLabReservation: React.FC<Props> = ({
+export const EditLabReservation: React.FC<Props> = ({
   show,
   handleClose,
-  selectedLab,
-  selectedWeek,
-  fetchScheduleData,
+  selectedReservation,
+  updateTable,
 }) => {
   const [timeStart, setTimeStart] = useState(new Date());
   const [timeEnd, setTimeEnd] = useState(new Date());
@@ -34,19 +30,20 @@ export const AddLabReservation: React.FC<Props> = ({
   const [description, setDescription] = useState('');
 
   const handleSaveReservation = async () => {
-    const newReservation: CreateLabReservationRequest = {
+    const updateRequest: UpdateLabReservationRequest = {
+      id: selectedReservation.id,
       timeStart: convertDateToNetTicks(timeStart),
       timeEnd: convertDateToNetTicks(timeEnd),
       theme,
       description,
-      reservorId: userStore.user?.id,
-      lab: selectedLab,
+      reservorId: selectedReservation.reservor.id,
+      lab: selectedReservation?.lab,
+      currentUserId: userStore.user?.id,
     };
-
-    const response = await apiService.createLabReservation(newReservation);
+    const response = await apiService.updateLabReservation(updateRequest);
     if (!(response instanceof Error)) {
       handleClose();
-      fetchScheduleData(selectedWeek, selectedLab);
+      updateTable();
     } else {
       // Handle error case, e.g., show error message
     }
@@ -55,7 +52,7 @@ export const AddLabReservation: React.FC<Props> = ({
   return (
     <Modal className={style.addReservationOverlay} show={show} onHide={handleClose} dialogClassName={style.addReservationModal}>
       <Modal.Header closeButton>
-        <Modal.Title>Добавить резервацию</Modal.Title>
+        <Modal.Title>Изменить резервацию</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <form className={style.addReservationForm}>

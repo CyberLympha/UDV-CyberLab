@@ -1,11 +1,13 @@
-import { AddLabReservation } from './AddLabReservation/AddLabReservation';
-import { ScheduleTable } from './ScheduleTable/ScheduleTable';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { LabReservation, UserRole, Lab } from '../../../api';
 import { apiService } from '../../services';
 import {userStore} from "../../stores";
 import { Button as LocalButton } from '../Button/Button';
+import { AddLabReservation } from './AddLabReservation/AddLabReservation';
+import { ScheduleTable } from './ScheduleTable/ScheduleTable';
+import {LabReservationCard} from "./LabReservationCard/LabReservationCard"
 import style from './LabSchedule.module.scss';
 
 export function LabSchedule() {
@@ -16,6 +18,7 @@ export function LabSchedule() {
   const [selectedReservation, setSelectedReservation] = useState<LabReservation | null>(null);
   const [showReservationModal, setShowReservationModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  
 
   const [labs, setLabs] = useState<Lab[]>([]);
   const [selectedLab, setSelectedLab] = useState<Lab | null>(null);
@@ -41,18 +44,6 @@ export function LabSchedule() {
   const handleReservationClick = (reservation: LabReservation) => {
     setSelectedReservation(reservation);
     setShowReservationModal(true);
-  };
-
-  const handleCloseReservationModal = () => {
-    setShowReservationModal(false);
-  };
-
-  const handleDeleteReservationModal = async () => {
-    const response = await apiService.deleteLabReservation(selectedReservation?.id, selectedReservation?.reservor?.id)
-    if (!(response instanceof Error)) {
-      fetchScheduleData(selectedWeek, selectedLab);
-    }
-    handleCloseReservationModal();
   };
 
   const fetchScheduleData = async (selectedWeek: Date, selectedLab: Lab | null) => {
@@ -138,24 +129,13 @@ export function LabSchedule() {
         selectedWeek={selectedWeek}
         handleReservationClick={handleReservationClick}
       />
-      <div className={style.reservationOverlay} style={{ display: showReservationModal ? 'block' : 'none' }}>
-        <div className={style.reservationCardModal}>
-          <div className={style.reservationCardContent}>
-            <p>{selectedReservation?.timeStart} - {selectedReservation?.timeEnd}</p>
-            <p>{selectedReservation?.theme}</p>
-            <p>{selectedReservation?.reservor.firstName}</p>
-            <p>{selectedReservation?.description}</p>
-          </div>
-          <LocalButton variant="secondary" onClick={handleCloseReservationModal}>
-            Закрыть
-          </LocalButton>
-          {(userStore.user?.role === UserRole.Admin || (userStore.user?.id === selectedReservation?.id && userStore.user?.role === UserRole.Teacher)) &&
-          <LocalButton className={style.deleteButton} variant="secondary" onClick={handleDeleteReservationModal}>
-            Удалить
-          </LocalButton>}
-        </div>
-      </div>
-        <AddLabReservation
+      <LabReservationCard
+        selectedReservation = {selectedReservation}
+        showReservationModal = {showReservationModal}
+        setShowReservationModal = {setShowReservationModal}
+        updateTable = {() => fetchScheduleData(selectedWeek, selectedLab)}
+      />
+      <AddLabReservation
         show={showAddModal}
         handleClose={handleCloseAddModal}
         selectedLab={selectedLab}
