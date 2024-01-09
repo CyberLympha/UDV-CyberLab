@@ -109,8 +109,8 @@ export class ApiService {
         return this.httpClient.post<CreateLabReservationRequest, void>('/schedule/create', request)
     }
 
-    public getLabReservation(request: {id: string}) {
-        return this.httpClient.get<LabReservation>('/schedule/get{id}', request)
+    public getLabReservation(id: string) {
+        return this.httpClient.get<LabReservation>(`/schedule/get/${id}`, id)
     }
 
     public getAllLabReservations(){
@@ -121,7 +121,7 @@ export class ApiService {
         return this.httpClient.post<{creationRequest: CreateLabReservationRequest, userId:string}, void>('/schedule/update', request)
     }
 
-    public deleteLabReservation(request: {labId: string, userId: string}) {
-        return this.httpClient.delete<{labId: string, userId: string}>('/schedule/delete')
+    public deleteLabReservation(reservationId: string, userId: string) {
+        return this.httpClient.delete<string>(`/schedule/delete/${reservationId}/${userId}`)
     }
 }

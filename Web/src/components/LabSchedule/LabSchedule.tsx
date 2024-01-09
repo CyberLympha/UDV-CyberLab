@@ -1,6 +1,3 @@
-import 'react-datepicker/dist/react-datepicker.css';
-import 'react-time-picker/dist/TimePicker.css';
-
 import { AddLabReservation } from './AddLabReservation/AddLabReservation';
 import { ScheduleTable } from './ScheduleTable/ScheduleTable';
 import { useState, useEffect } from 'react';
@@ -50,6 +47,14 @@ export function LabSchedule() {
     setShowReservationModal(false);
   };
 
+  const handleDeleteReservationModal = async () => {
+    const response = await apiService.deleteLabReservation(selectedReservation?.id, selectedReservation?.reservor?.id)
+    if (!(response instanceof Error)) {
+      fetchScheduleData(selectedWeek, selectedLab);
+    }
+    handleCloseReservationModal();
+  };
+
   const fetchScheduleData = async (selectedWeek: Date, selectedLab: Lab | null) => {
     const response = await apiService.getAllLabReservations();
 
@@ -67,7 +72,7 @@ export function LabSchedule() {
         reservationDate.getMonth() === selectedWeek.getMonth()
       );
   
-      const isCorrectLab = selectedLab ? reservation.lab.id === selectedLab.id : true;
+      const isCorrectLab = selectedLab ? reservation.lab.id === selectedLab.id : false;
   
       return isCorrectWeek && isCorrectLab;
     });
@@ -136,14 +141,18 @@ export function LabSchedule() {
       <div className={style.reservationOverlay} style={{ display: showReservationModal ? 'block' : 'none' }}>
         <div className={style.reservationCardModal}>
           <div className={style.reservationCardContent}>
-            <p>Full Date: {selectedReservation?.timeStart} - {selectedReservation?.timeEnd}</p>
-            <p>Theme: {selectedReservation?.theme}</p>
-            <p>Reservor: {selectedReservation?.reservor.firstName}</p>
-            <p>Description: {selectedReservation?.description}</p>
+            <p>{selectedReservation?.timeStart} - {selectedReservation?.timeEnd}</p>
+            <p>{selectedReservation?.theme}</p>
+            <p>{selectedReservation?.reservor.firstName}</p>
+            <p>{selectedReservation?.description}</p>
           </div>
           <LocalButton variant="secondary" onClick={handleCloseReservationModal}>
-            Close
+            Закрыть
           </LocalButton>
+          {(userStore.user?.role === UserRole.Admin || (userStore.user?.id === selectedReservation?.id && userStore.user?.role === UserRole.Teacher)) &&
+          <LocalButton className={style.deleteButton} variant="secondary" onClick={handleDeleteReservationModal}>
+            Удалить
+          </LocalButton>}
         </div>
       </div>
         <AddLabReservation

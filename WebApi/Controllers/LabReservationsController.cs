@@ -42,7 +42,7 @@ namespace WebApi.Controllers
             }
         }
 
-        [HttpGet("get{id}")]
+        [HttpGet("get/{id}")]
         public async Task<ActionResult<LabReservation>> Get(string id)
         {
             try
@@ -56,7 +56,6 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("get")]
-        [Authorize(Roles = "Admin")]
         public async Task<List<LabReservation>> GetAll()
         {
             return await _labReservationsService.GetAllAsync();
@@ -86,7 +85,7 @@ namespace WebApi.Controllers
             }
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete("delete/{labReservationId}/{userId}")]
         [Authorize(Roles = "Admin, Teacher")]
         public async Task<IActionResult> Delete(string labReservationId, string userId)
         {
