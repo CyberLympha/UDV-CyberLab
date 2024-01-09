@@ -28,10 +28,10 @@ public class LabReservation
 
     public bool Intersects(LabReservation other)
     {
-        if (other.TimeStart <= TimeEnd && other.TimeStart >= TimeStart) return true;
-        if (TimeStart <= other.TimeEnd && TimeStart >= other.TimeStart) return true;
-        if (other.TimeEnd <= TimeEnd && other.TimeEnd >= TimeStart) return true;
-        if (TimeEnd <= other.TimeEnd && TimeEnd >= other.TimeStart) return true;
+        if (other.TimeStart < TimeEnd && other.TimeStart >= TimeStart) return true;
+        if (TimeStart < other.TimeEnd && TimeStart >= other.TimeStart) return true;
+        if (other.TimeEnd <= TimeEnd && other.TimeEnd > TimeStart) return true;
+        if (TimeEnd <= other.TimeEnd && TimeEnd > other.TimeStart) return true;
         return false;
     }
 }

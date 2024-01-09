@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LabReservation, UserRole, Lab } from '../../../api';
 import { apiService } from '../../services';
+import {userStore} from "../../stores";
 import { Button as LocalButton } from '../Button/Button';
 import style from './LabSchedule.module.scss';
 
@@ -122,9 +123,10 @@ export function LabSchedule() {
         </div>
       )}
     </div>
+    {(userStore.user?.role === UserRole.Admin || userStore.user?.role === UserRole.Teacher) &&
         <div className={style.addButton}>
           <LocalButton onClick={handleAddButtonClick}>+ Добавить</LocalButton>
-        </div>
+        </div>}
       </div>
       <ScheduleTable
         scheduleData={scheduleData}
