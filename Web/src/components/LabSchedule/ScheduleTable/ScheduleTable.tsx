@@ -26,7 +26,9 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
         {Array.from({ length: 7 }, (_, index) => {
           const currentDate = new Date(startDate);
           currentDate.setDate(currentDate.getDate() + index);
-          return <th key={index}>{`${daysOfWeek[index]} ${currentDate.getDate()}.${currentDate.getMonth() + 1}`}</th>;
+          const day = currentDate.getDate().toString().padStart(2, '0');
+          const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+          return <th key={index}>{`${daysOfWeek[index]} ${day}.${month}`}</th>;
         })}
       </tr>
     );

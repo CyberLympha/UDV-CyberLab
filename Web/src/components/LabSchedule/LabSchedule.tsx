@@ -89,6 +89,20 @@ export function LabSchedule() {
     setIsLabMenuOpen(!isLabMenuOpen);
   };
 
+  const getWeekRange = (selectedWeek) => {
+    const startOfWeek = new Date(selectedWeek);
+    startOfWeek.setDate(selectedWeek.getDate() - selectedWeek.getDay()); // Move to the start of the week
+  
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6); // Get the end of the week
+  
+    const startDay = startOfWeek.getDate();
+    const endDay = endOfWeek.getDate();
+    const month = startOfWeek.toLocaleDateString(undefined, { month: 'long' });
+  
+    return `${startDay}-${endDay} ${month}`;
+  };
+
   useEffect(() => {
     fetchLabs();
   }, []);
@@ -102,7 +116,7 @@ export function LabSchedule() {
       <div className={style.header}>
         <div className={style.weekNavigation}>
           <LocalButton onClick={goToPreviousWeek}>Назад</LocalButton>
-          <div>{selectedWeek.toDateString()}</div>
+          <div>{getWeekRange(selectedWeek)}</div>
           <LocalButton onClick={goToNextWeek}>Вперед</LocalButton>
         </div>
         <div className={style.labSelection}>
