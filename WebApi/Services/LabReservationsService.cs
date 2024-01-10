@@ -114,6 +114,8 @@ public class LabReservationsService
         var reservations = await GetAllLabReservationsAsync(labReservation.Lab);
         foreach (var _labReservation in reservations)
         {
+            if (labReservation.Id == _labReservation.Id)
+                continue;
             if (labReservation.Intersects(_labReservation))
                 return true;
         }

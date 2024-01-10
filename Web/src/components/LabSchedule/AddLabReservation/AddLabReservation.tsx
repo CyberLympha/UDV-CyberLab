@@ -1,3 +1,4 @@
+import {useToast} from "@chakra-ui/react";
 import Modal from 'react-bootstrap/Modal';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -32,6 +33,7 @@ export const AddLabReservation: React.FC<Props> = ({
   const [timeEnd, setTimeEnd] = useState(new Date());
   const [theme, setTheme] = useState('');
   const [description, setDescription] = useState('');
+  const toast = useToast();
 
   const handleSaveReservation = async () => {
     const newReservation: CreateLabReservationRequest = {
@@ -47,8 +49,23 @@ export const AddLabReservation: React.FC<Props> = ({
     if (!(response instanceof Error)) {
       handleClose();
       fetchScheduleData(selectedWeek, selectedLab);
+      toast({
+        title: 'Резервация была успешно создана',
+        status: "success",
+        duration: 4000,
+        isClosable: true,
+        position: "top"
+    })
     } else {
-      // Handle error case, e.g., show error message
+      toast({
+        title: 'Ошибка при создании резервации',
+        description: `${response}`,
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+        position: "top",
+        containerStyle: {zIndex: 9999},
+    })
     }
   };
 

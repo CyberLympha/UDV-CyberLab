@@ -1,11 +1,12 @@
 import Modal from 'react-bootstrap/Modal';
 import DatePicker from 'react-datepicker';
+import {useToast} from "@chakra-ui/react";
 import 'react-datepicker/dist/react-datepicker.css';
 
 import React, { useState } from 'react';
 import { Button as LocalButton } from '../../Button/Button';
 import { apiService } from '../../../services';
-import {CreateLabReservationRequest, LabReservation, UpdateLabReservationRequest } from '../../../../api';
+import { LabReservation, UpdateLabReservationRequest } from '../../../../api';
 import { userStore } from '../../../stores';
 import {convertDateToNetTicks} from "../AddLabReservation/AddLabReservation"
 
@@ -28,6 +29,7 @@ export const EditLabReservation: React.FC<Props> = ({
   const [timeEnd, setTimeEnd] = useState(new Date());
   const [theme, setTheme] = useState('');
   const [description, setDescription] = useState('');
+  const toast = useToast();
 
   const handleSaveReservation = async () => {
     const updateRequest: UpdateLabReservationRequest = {
@@ -44,18 +46,33 @@ export const EditLabReservation: React.FC<Props> = ({
     if (!(response instanceof Error)) {
       handleClose();
       updateTable();
+      toast({
+        title: 'Резервация была успешно изменена',
+        status: "success",
+        duration: 4000,
+        isClosable: true,
+        position: "top"
+    })
     } else {
-      // Handle error case, e.g., show error message
+      toast({
+        title: 'Ошибка при редактировании резервации',
+        description: `${response}`,
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+        position: "top",
+        containerStyle: {zIndex: 9999},
+    })
     }
   };
 
   return (
-    <Modal className={style.addReservationOverlay} show={show} onHide={handleClose} dialogClassName={style.addReservationModal}>
+    <Modal className={style.editReservationOverlay} show={show} onHide={handleClose} dialogClassName={style.editReservationModal}>
       <Modal.Header closeButton>
         <Modal.Title>Изменить резервацию</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <form className={style.addReservationForm}>
+        <form className={style.editReservationForm}>
         <div className={style.formGroup}>
               <label>Тема:</label>
               <input type="text" value={theme} onChange={(e) => setTheme(e.target.value)} />
