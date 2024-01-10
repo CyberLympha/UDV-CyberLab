@@ -1,6 +1,7 @@
 import {useToast} from "@chakra-ui/react";
 import Modal from 'react-bootstrap/Modal';
 import DatePicker from 'react-datepicker';
+import ru from 'date-fns/locale/ru';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import React, { useState } from 'react';
@@ -29,6 +30,7 @@ export const AddLabReservation: React.FC<Props> = ({
   selectedWeek,
   fetchScheduleData,
 }) => {
+  const [selectedDate, setDate] = useState(new Date());
   const [timeStart, setTimeStart] = useState(new Date());
   const [timeEnd, setTimeEnd] = useState(new Date());
   const [theme, setTheme] = useState('');
@@ -37,8 +39,18 @@ export const AddLabReservation: React.FC<Props> = ({
 
   const handleSaveReservation = async () => {
     const newReservation: CreateLabReservationRequest = {
-      timeStart: convertDateToNetTicks(timeStart),
-      timeEnd: convertDateToNetTicks(timeEnd),
+      timeStart: convertDateToNetTicks(new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate(),
+      timeStart.getHours(),
+      timeStart.getMinutes())),
+      timeEnd: convertDateToNetTicks(new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      selectedDate.getDate(),
+      timeEnd.getHours(),
+      timeEnd.getMinutes())),
       theme,
       description,
       reservorId: userStore.user?.id,
@@ -69,6 +81,22 @@ export const AddLabReservation: React.FC<Props> = ({
     }
   };
 
+  const isTimeNotPassed = (date) => {
+    if (selectedDate > new Date()){
+      return true
+    }
+    const isPastTime = new Date().getTime() > date.getTime();
+    return !isPastTime;
+    };
+
+  const isTimeInTablerange = (time: Date): boolean => {
+    return  time.getHours() >= 7 && time.getHours() < 17 || (time.getHours() === 17 && time.getMinutes() <= 0);
+  };
+
+  const filterTime = (date: Date) => {
+    return isTimeNotPassed(date) && isTimeInTablerange(date);
+  }
+
   return (
     <Modal className={style.addReservationOverlay} show={show} onHide={handleClose} dialogClassName={style.addReservationModal}>
       <Modal.Header closeButton>
@@ -84,6 +112,16 @@ export const AddLabReservation: React.FC<Props> = ({
               <label>Описание:</label>
               <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
             </div>
+            <div className={style.formGroup}>
+            <label>Дата:</label>
+            <DatePicker 
+            selected={selectedDate} 
+            onChange={(date: Date) => setDate(date)} 
+            dateFormat="d MMMM, yyyy"
+            minDate={new Date()}
+            locale={ru}
+            className={style.datePicker} />
+          </div>
             <div className={style.timeInputs}>
               <div className={style.formGroup}>
                 <label>Время начала:</label>
@@ -91,8 +129,12 @@ export const AddLabReservation: React.FC<Props> = ({
             selected={timeStart}
             onChange={(date: Date) => setTimeStart(date)}
             showTimeSelect
-            timeFormat="HH:mm"
-            dateFormat="MMMM d, yyyy h:mm aa"
+            showTimeSelectOnly 
+            timeIntervals={15}
+            timeCaption="Time" 
+            dateFormat="h:mm aa"
+            locale={ru}
+            filterTime={filterTime}
             className={style.datePicker}
           />
               </div>
@@ -102,8 +144,12 @@ export const AddLabReservation: React.FC<Props> = ({
             selected={timeEnd}
             onChange={(date: Date) => setTimeEnd(date)}
             showTimeSelect
-            timeFormat="HH:mm"
-            dateFormat="MMMM d, yyyy h:mm aa"
+            showTimeSelectOnly 
+            timeIntervals={15}
+            timeCaption="Time" 
+            dateFormat="h:mm aa"
+            locale={ru}
+            filterTime={filterTime}
             className={style.datePicker}
           />
               </div>
