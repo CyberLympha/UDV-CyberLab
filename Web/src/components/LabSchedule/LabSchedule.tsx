@@ -91,10 +91,10 @@ export function LabSchedule() {
 
   const getWeekRange = (selectedWeek) => {
     const startOfWeek = new Date(selectedWeek);
-    startOfWeek.setDate(selectedWeek.getDate() - selectedWeek.getDay()); // Move to the start of the week
+    startOfWeek.setDate(selectedWeek.getDate() - selectedWeek.getDay());
   
     const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6); // Get the end of the week
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
   
     const startDay = startOfWeek.getDate();
     const endDay = endOfWeek.getDate();

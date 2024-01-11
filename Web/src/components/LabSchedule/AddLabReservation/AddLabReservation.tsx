@@ -90,7 +90,9 @@ export const AddLabReservation: React.FC<Props> = ({
     };
 
   const isTimeInTablerange = (time: Date): boolean => {
-    return  time.getHours() >= 7 && time.getHours() < 17 || (time.getHours() === 17 && time.getMinutes() <= 0);
+    return  time.getHours() > 6 && time.getHours() < 23 
+    || (time.getHours() === 17 && time.getMinutes() <= 50) 
+    || (time.getHours() === 6 && time.getMinutes() >= 50);
   };
 
   const filterTime = (date: Date) => {
@@ -130,7 +132,7 @@ export const AddLabReservation: React.FC<Props> = ({
             onChange={(date: Date) => setTimeStart(date)}
             showTimeSelect
             showTimeSelectOnly 
-            timeIntervals={15}
+            timeIntervals={10}
             timeCaption="Time" 
             dateFormat="h:mm aa"
             locale={ru}
@@ -145,7 +147,7 @@ export const AddLabReservation: React.FC<Props> = ({
             onChange={(date: Date) => setTimeEnd(date)}
             showTimeSelect
             showTimeSelectOnly 
-            timeIntervals={15}
+            timeIntervals={10}
             timeCaption="Time" 
             dateFormat="h:mm aa"
             locale={ru}

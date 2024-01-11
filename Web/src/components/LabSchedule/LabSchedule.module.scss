@@ -1,15 +1,15 @@
 .container {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
   padding: 10px;
+  gap: 50px;
 }
 
 .weekNavigation {
@@ -20,11 +20,30 @@
 
 .labSelection {
   position: relative;
+
+  .labMenu {
+    top: calc(100% + 10px);
+    left: 0;
+    z-index: 1000;
+    border: 1px solid #ccc;
+  }
+
+  &.open {
+    .labMenu {
+      display: block;
+    }
+  }
 }
 
 .selectedLab {
   padding: 8px;
+  border: 1px solid #ccc;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
 .labMenu {

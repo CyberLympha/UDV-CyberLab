@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { LabReservation } from '.../../../api';
 import style from './ScheduleTable.module.scss';
 
@@ -8,6 +8,16 @@ interface ScheduleTableProps {
   handleReservationClick: (reservation: LabReservation) => void;
 }
 
+interface LabReservationCard {
+  reservation: LabReservation;
+  isStartingNextRow: boolean;
+  top: number;
+  bottom: number;
+  height: number;
+  topCellIndex: number;
+  bottomCellIndex: number;
+}
+
 export const ScheduleTable: React.FC<ScheduleTableProps> = ({
   scheduleData,
   selectedWeek,
@@ -15,7 +25,17 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
 }) => {
   const renderScheduleTable = () => {
     const daysOfWeek = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
-    const timeSlots = ['7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'];
+    const timeSlots = [
+      '06:50 - 08:20',
+      '08:30 - 10:00',
+      '10:15 - 11:45',
+      '12:00 - 13:30',
+      '14:15 - 15:45',
+      '16:00 - 17:30',
+      '17:40 - 19:10',
+      '19:15 - 20:45',
+      '20:50 - 22:50',
+    ];
   
     const startDate = new Date(selectedWeek);
     startDate.setDate(startDate.getDate() - startDate.getDay());
@@ -34,52 +54,119 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
     );
   
     const tableRows = timeSlots.map((timeSlot, rowIndex) => {
+      const [startTime, endTime] = timeSlot.split(' - ');
+      const cellHeight = 40;
+      const cellPadding = 10;
+      const cellFullHeight = cellHeight + cellPadding*2;
+      const calculatePixelsPerMinute = (timeEnd:Date, timeStart: Date) =>{
+        return cellFullHeight / (timeEnd.getTime() - timeStart.getTime());
+      }
+
       return (
         <tr key={rowIndex}>
-          <td>{timeSlot}</td>
+          <td className={style.timeSlot}>{timeSlot}</td>
           {Array.from({ length: 7 }, (_, index) => {
             const currentDate = new Date(startDate);
             currentDate.setDate(currentDate.getDate() + index);
-  
-            const reservations = scheduleData.filter((reservation) => {
-              const reservationStartDate = new Date(reservation.timeStart);
-              const reservationEndDate = new Date(reservation.timeEnd);
-              return (
-                reservationStartDate.getDate() === currentDate.getDate() &&
-                reservationStartDate.getMonth() === currentDate.getMonth() &&
-                reservationStartDate.getFullYear() === currentDate.getFullYear() &&
-                reservationStartDate.getHours().toString() === timeSlot.split(':')[0]
-              );
-            });
-  
+    
+            const cellStartTime = new Date(currentDate);
+            cellStartTime.setHours(parseInt(startTime.split(':')[0]), parseInt(startTime.split(':')[1]), 0, 0);
+            const cellEndTime = new Date(currentDate);
+            cellEndTime.setHours(parseInt(endTime.split(':')[0]), parseInt(endTime.split(':')[1]), 0, 0);
+    
+            const labReservationCards = [];
+    
+            for (const reservation of scheduleData) {
+              const resStartTime = new Date(reservation.timeStart);
+              const resEndTime = new Date(reservation.timeEnd);
+
+              if (resStartTime >= cellStartTime && resStartTime <= cellEndTime) {
+                const labReservationCard: LabReservationCard = {
+                  reservation: reservation,
+                  isStartingNextRow: false,
+                  top: 0,
+                  bottom: cellFullHeight,
+                  height: 0,
+                  topCellIndex: 0,
+                  bottomCellIndex: 0,
+                };
+    
+                for (let i = 0; i < timeSlots.length; i++) {
+                  const [slotStartTime, slotEndTime] = timeSlots[i].split(' - ');
+                  const cellTimeStart = new Date(reservation.timeStart);
+                  cellTimeStart.setHours(parseInt(slotStartTime.split(':')[0]), parseInt(slotStartTime.split(':')[1]), 0, 0);
+                  const cellTimeEnd = new Date(reservation.timeStart);
+                  cellTimeEnd.setHours(parseInt(slotEndTime.split(':')[0]), parseInt(slotEndTime.split(':')[1]), 0, 0);
+                  
+                  if (resStartTime < cellTimeEnd && resStartTime >= cellTimeStart) {
+                    labReservationCard.top = (resStartTime.getTime() - cellTimeStart.getTime()) * calculatePixelsPerMinute(cellTimeEnd, cellTimeStart);
+                    labReservationCard.topCellIndex = i;
+                    break;
+                  }
+
+                  else if (cellTimeStart >= resStartTime) {
+                    labReservationCard.topCellIndex = i;
+                    labReservationCard.top = cellFullHeight;
+                    labReservationCard.isStartingNextRow = true;
+                    break;
+                  }
+                }
+    
+                for (let i = 0; i < timeSlots.length; i++) {
+                  const [slotStartTime, slotEndTime] = timeSlots[i].split(' - ');
+                  const cellTimeStart = new Date(reservation.timeEnd);
+                  cellTimeStart.setHours(parseInt(slotStartTime.split(':')[0]), parseInt(slotStartTime.split(':')[1]), 0, 0);
+                  const cellTimeEnd = new Date(reservation.timeEnd);
+                  cellTimeEnd.setHours(parseInt(slotEndTime.split(':')[0]), parseInt(slotEndTime.split(':')[1]), 0, 0);
+    
+                  if (resEndTime <= cellTimeStart) {
+                    labReservationCard.height = (i - 1 - labReservationCard.topCellIndex)*cellFullHeight + cellFullHeight;
+                    break;
+                  }
+
+                  else if (resEndTime <= cellTimeEnd) {
+                    labReservationCard.bottomCellIndex = i;
+                    const bottom = cellFullHeight - (cellTimeEnd.getTime() - resEndTime.getTime()) * calculatePixelsPerMinute(cellTimeEnd, cellTimeStart);
+                    labReservationCard.height = (i - 1 - labReservationCard.topCellIndex)*cellFullHeight + bottom + cellFullHeight - labReservationCard.top;
+                    break;
+                  }
+                }
+                
+                labReservationCards.push(labReservationCard);
+              }
+            }
+    
             return (
-              <td key={index}>
-                {reservations.length > 0 ? (
-                  reservations.map((reservation, resIndex) => (
+              <td key={index} className={style.cell}>
+                {labReservationCards.map((labReservationCard, resIndex) => { 
+                  const overlapStyle = {
+                    top: `${labReservationCard.top}px`,
+                    height: `${labReservationCard.height}px`,
+                  };
+
+                  return (
                     <div
                       key={resIndex}
-                      className={style.reservationCell}
+                      className={style.reservationCard}
+                      style={overlapStyle}
+                      onClick={() => handleReservationClick(labReservationCard.reservation)}
                     >
-                      <div
-                        className={style.reservationCard}
-                        onClick={() => handleReservationClick(reservation)}
-                      >
-                        {`${reservation.timeStart.split('T')[1].split(':')[0]}:${reservation.timeStart.split('T')[1].split(':')[1]} -
-                      ${reservation.timeEnd.split('T')[1].split(':')[0]}:${reservation.timeEnd.split('T')[1].split(':')[1]}`}
+                      <span className={style.time}>{`${labReservationCard.reservation.timeStart.split('T')[1].split(':')[0]}:${labReservationCard.reservation.timeStart.split('T')[1].split(':')[1]} -
+                        ${labReservationCard.reservation.timeEnd.split('T')[1].split(':')[0]}:${labReservationCard.reservation.timeEnd.split('T')[1].split(':')[1]}`}
+                      </span>
                       <br/>
-                      {`${reservation.theme}`}
-                      </div>
+                      <span className={style.theme}>{`${labReservationCard.reservation.theme}`}</span>
                     </div>
-                  ))
-                ) : (
-                  <div className={style.emptyCell}></div>
-                )}
+                  );
+                })}
               </td>
             );
           })}
         </tr>
       );
     });
+    
+    
   
     return (
       <table className={style.scheduleTable}>
