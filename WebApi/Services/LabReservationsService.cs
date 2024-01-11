@@ -13,13 +13,13 @@ public class LabReservationsService
         _labReservationsCollection = labReservationsCollection;
         _userService = userService;
     }
-    public async Task CreateAsync(LabReservation newLabReservation, Lab reservationLab)
+    public async Task CreateAsync(LabReservation newLabReservation)
     {
         if (newLabReservation == null) throw new Exception();
-        if (await Intersects(newLabReservation, reservationLab))
-            throw new Exception("The time has already been resereved");
         try
         {
+            if (await Intersects(newLabReservation))
+                throw new Exception("The time has already been resereved");
             await _labReservationsCollection.InsertOneAsync(newLabReservation);
         }
         catch (Exception e)
@@ -40,24 +40,25 @@ public class LabReservationsService
         }
     }
 
-    public async Task UpdateAsync(LabReservation labReservation, Lab reservationLab, string userId)
+    public async Task UpdateAsync(LabReservation labReservation, string userId)
     {
         var reservationToUpdate = await _labReservationsCollection.FindAsync(bson => bson.Id == labReservation.Id) ??
             throw new Exception("Reservation not found");
         var user = await _userService.GetAsyncById(userId);
         try
         {
-            if (labReservation.Reservor.Id != userId || user.Role != UserRole.Admin)
-                throw new Exception("User is not the reservor");
-            if (await Intersects(labReservation, reservationLab))
+            if (labReservation.Reservor.Id != userId && user.Role != UserRole.Admin)
+                throw new Exception($"User is not the reservor");
+            if (await Intersects(labReservation))
                 throw new Exception("The time has already been resereved");
 
+            var filter = Builders<LabReservation>.Filter.Eq("_id", ObjectId.Parse(labReservation.Id));
             var update = Builders<LabReservation>.Update
-                .Set("theme", labReservation.Theme)
-                .Set("description", labReservation.Description)
-                .Set("time_start", labReservation.TimeStart)
-                .Set("time_end", labReservation.TimeEnd);
-            await _labReservationsCollection.UpdateOneAsync((FilterDefinition<LabReservation>)reservationToUpdate, update);
+                .Set("Theme", labReservation.Theme)
+                .Set("Description", labReservation.Description)
+                .Set("TimeStart", labReservation.TimeStart)
+                .Set("TimeEnd", labReservation.TimeEnd);
+            await _labReservationsCollection.UpdateOneAsync(filter, update);
         }
         catch (Exception e)
         {
@@ -72,7 +73,7 @@ public class LabReservationsService
         var user = await _userService.GetAsyncById(userId);
         try
         {
-            if (labReservationToDelete.Reservor.Id != userId || user.Role != UserRole.Admin)
+            if (labReservationToDelete.Reservor.Id != userId && user.Role != UserRole.Admin)
                 throw new Exception("User is not the reservor");
             await _labReservationsCollection.DeleteOneAsync(bson => bson.Id == labReservationId);
         }
@@ -94,7 +95,7 @@ public class LabReservationsService
         }
     }
 
-    public async Task<List<LabReservation>> GetAllLabreservationsAsync(Lab reservationLab)
+    public async Task<List<LabReservation>> GetAllLabReservationsAsync(Lab reservationLab)
     {
         try
         {
@@ -108,11 +109,13 @@ public class LabReservationsService
         }
     }
 
-    public async Task<bool> Intersects(LabReservation labReservation, Lab reservationLab)
+    public async Task<bool> Intersects(LabReservation labReservation)
     {
-        var labs = await GetAllLabreservationsAsync(reservationLab);
-        foreach (var _labReservation in labs)
+        var reservations = await GetAllLabReservationsAsync(labReservation.Lab);
+        foreach (var _labReservation in reservations)
         {
+            if (labReservation.Id == _labReservation.Id)
+                continue;
             if (labReservation.Intersects(_labReservation))
                 return true;
         }

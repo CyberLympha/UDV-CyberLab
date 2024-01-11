@@ -253,6 +253,7 @@ export enum UserRole {
   User = "User",
   Admin = "Admin",
   SuperUser = "SuperUser",
+  Teacher = "Teacher",
 }
 
 export interface VmQemuAgentNetworkGetInterfaces {
@@ -310,4 +311,44 @@ export interface VmQemuStatusCurrent {
   balloon?: number;
   ballooninfo?: BalloonInfoInt;
   proxmoxSupport?: ProxmoxSupportInt;
+}
+
+export interface LabReservation {
+  /** @minLength 1 */
+  id: string;
+  /** @minLength 1 */
+  timeStart: string;
+  /** @minLength 1 */
+  timeEnd: string;
+  /** @minLength 1 */
+  theme: string;
+  /** @minLength 1 */
+  description: string;
+  reservor: User;
+  lab: Lab;
+}
+
+export interface CreateLabReservationRequest {
+  timeStart: number;
+  timeEnd: number;
+  /** @minLength 1 */
+  theme: string;
+  /** @minLength 1 */
+  description: string;
+  reservorId: string|undefined;
+  lab: Lab|null;
+}
+
+export interface UpdateLabReservationRequest {
+  /** @minLength 1 */
+  id: string;
+  timeStart: number;
+  timeEnd: number;
+  /** @minLength 1 */
+  theme: string;
+  /** @minLength 1 */
+  description: string;
+  reservorId: string|undefined;
+  lab: Lab|null;
+  currentUserId: string|undefined;
 }

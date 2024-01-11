@@ -25,6 +25,7 @@ const navLinks: NavLink[] = [
     {to: "/ratings", name: "Оценки", roles: [UserRole.User, UserRole.Admin]},
     {to: "/ctf", name: "Соревнования", roles: [UserRole.User, UserRole.Admin]},
     {to: "/admin", name: "Администрирование", roles: [UserRole.Admin]},
+    {to: "/schedule", name: "Расписание лаборатории", roles: [UserRole.User, UserRole.Admin]},
 
 ]
 

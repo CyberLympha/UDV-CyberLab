@@ -5,24 +5,35 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace WebApi.Controllers
 {
-    [Route("/api/[controller]")]
+    [Route("/api/schedule")]
     [ApiController]
     public class LabReservationsController : ControllerBase
     {
         private readonly LabReservationsService _labReservationsService;
+        private readonly UserService _userService;
 
-        public LabReservationsController(LabReservationsService labReservationsService)
+        public LabReservationsController(LabReservationsService labReservationsService, UserService userService)
         {
             _labReservationsService = labReservationsService;
+            _userService = userService;
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         [Authorize(Roles = "Admin, Teacher")]
-        public async Task<ActionResult> Create(LabReservation labReservation, Lab reservationLab)
+        public async Task<ActionResult> Create(CreateLabReservationRequest creationRequest)
         {
             try
             {
-                await _labReservationsService.CreateAsync(labReservation, reservationLab);
+                var labReservation = new LabReservation()
+                {
+                    Description = creationRequest.Description,
+                    Theme = creationRequest.Theme,
+                    Lab = creationRequest.Lab,
+                    Reservor = await _userService.GetAsyncById(creationRequest.ReservorId),
+                    TimeEnd = new DateTime(creationRequest.TimeEnd),
+                    TimeStart = new DateTime(creationRequest.TimeStart),
+                };
+                await _labReservationsService.CreateAsync(labReservation);
                 return StatusCode(201);
             }
             catch (Exception e)
@@ -31,7 +42,7 @@ namespace WebApi.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("get/{id}")]
         public async Task<ActionResult<LabReservation>> Get(string id)
         {
             try
@@ -44,20 +55,29 @@ namespace WebApi.Controllers
             }
         }
 
-        [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [HttpGet("get")]
         public async Task<List<LabReservation>> GetAll()
         {
             return await _labReservationsService.GetAllAsync();
         }
 
-        [HttpPut]
+        [HttpPost("update")]
         [Authorize(Roles = "Admin, Teacher")]
-        public async Task<IActionResult> Update(LabReservation labReservation, Lab reservationLab, string userId)
+        public async Task<IActionResult> Update(UpdateLabReservationRequest updateRequest)
         {
             try
             {
-                await _labReservationsService.UpdateAsync(labReservation, reservationLab, userId);
+                var labReservation = new LabReservation()
+                {
+                    Id = updateRequest.Id,
+                    Description = updateRequest.Description,
+                    Theme = updateRequest.Theme,
+                    Lab = updateRequest.Lab,
+                    Reservor = await _userService.GetAsyncById(updateRequest.ReservorId),
+                    TimeEnd = new DateTime(updateRequest.TimeEnd),
+                    TimeStart = new DateTime(updateRequest.TimeStart),
+                };
+                await _labReservationsService.UpdateAsync(labReservation, updateRequest.CurrentUserId);
                 return Ok();
             }
             catch (Exception e)
@@ -66,7 +86,7 @@ namespace WebApi.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("delete/{labReservationId}/{userId}")]
         [Authorize(Roles = "Admin, Teacher")]
         public async Task<IActionResult> Delete(string labReservationId, string userId)
         {

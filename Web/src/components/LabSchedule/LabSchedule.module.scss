@@ -1,0 +1,39 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+}
+
+.weekNavigation {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.labSelection {
+  position: relative;
+}
+
+.selectedLab {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.labMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 5px;
+}

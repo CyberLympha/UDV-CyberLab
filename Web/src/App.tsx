@@ -7,7 +7,7 @@ import {observer} from "mobx-react-lite";
 import {apiService} from "./services";
 import {userStore} from "./stores";
 import {Login} from "./components/Login";
-import {AuthApp} from "./components/AuthApp";
+import {AuthApp} from "./components/Vm/AuthApp";
 import {Registration} from "./components/Registration";
 import style from "./App.module.scss"
 
