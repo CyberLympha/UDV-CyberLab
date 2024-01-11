@@ -1,6 +1,7 @@
 import Modal from 'react-bootstrap/Modal';
 import DatePicker from 'react-datepicker';
 import {useToast} from "@chakra-ui/react";
+import ru from 'date-fns/locale/ru';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import React, { useState } from 'react';
@@ -25,6 +26,7 @@ export const EditLabReservation: React.FC<Props> = ({
   selectedReservation,
   updateTable,
 }) => {
+  const [selectedDate, setDate] = useState(new Date());
   const [timeStart, setTimeStart] = useState(new Date());
   const [timeEnd, setTimeEnd] = useState(new Date());
   const [theme, setTheme] = useState('');
@@ -66,6 +68,24 @@ export const EditLabReservation: React.FC<Props> = ({
     }
   };
 
+  const isTimeNotPassed = (date) => {
+    if (selectedDate > new Date()){
+      return true
+    }
+    const isPastTime = new Date().getTime() > date.getTime();
+    return !isPastTime;
+    };
+
+  const isTimeInTablerange = (time: Date): boolean => {
+    return  time.getHours() > 6 && time.getHours() < 23 
+    || (time.getHours() === 17 && time.getMinutes() <= 50) 
+    || (time.getHours() === 6 && time.getMinutes() >= 50);
+  };
+
+  const filterTime = (date: Date) => {
+    return isTimeNotPassed(date) && isTimeInTablerange(date);
+  }
+
   return (
     <Modal className={style.editReservationOverlay} show={show} onHide={handleClose} dialogClassName={style.editReservationModal}>
       <Modal.Header closeButton>
@@ -81,6 +101,16 @@ export const EditLabReservation: React.FC<Props> = ({
               <label>Описание:</label>
               <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
             </div>
+            <div className={style.formGroup}>
+            <label>Дата:</label>
+            <DatePicker 
+            selected={selectedDate} 
+            onChange={(date: Date) => setDate(date)} 
+            dateFormat="d MMMM, yyyy"
+            minDate={new Date()}
+            locale={ru}
+            className={style.datePicker} />
+          </div>
             <div className={style.timeInputs}>
               <div className={style.formGroup}>
                 <label>Время начала:</label>
@@ -88,8 +118,12 @@ export const EditLabReservation: React.FC<Props> = ({
             selected={timeStart}
             onChange={(date: Date) => setTimeStart(date)}
             showTimeSelect
-            timeFormat="HH:mm"
-            dateFormat="MMMM d, yyyy h:mm aa"
+            showTimeSelectOnly 
+            timeIntervals={5}
+            timeCaption="Time" 
+            dateFormat="h:mm aa"
+            locale={ru}
+            filterTime={filterTime}
             className={style.datePicker}
           />
               </div>
@@ -99,8 +133,12 @@ export const EditLabReservation: React.FC<Props> = ({
             selected={timeEnd}
             onChange={(date: Date) => setTimeEnd(date)}
             showTimeSelect
-            timeFormat="HH:mm"
-            dateFormat="MMMM d, yyyy h:mm aa"
+            showTimeSelectOnly 
+            timeIntervals={5}
+            timeCaption="Time" 
+            dateFormat="h:mm aa"
+            locale={ru}
+            filterTime={filterTime}
             className={style.datePicker}
           />
               </div>

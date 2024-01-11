@@ -132,7 +132,7 @@ export const AddLabReservation: React.FC<Props> = ({
             onChange={(date: Date) => setTimeStart(date)}
             showTimeSelect
             showTimeSelectOnly 
-            timeIntervals={10}
+            timeIntervals={5}
             timeCaption="Time" 
             dateFormat="h:mm aa"
             locale={ru}
@@ -147,7 +147,7 @@ export const AddLabReservation: React.FC<Props> = ({
             onChange={(date: Date) => setTimeEnd(date)}
             showTimeSelect
             showTimeSelectOnly 
-            timeIntervals={10}
+            timeIntervals={5}
             timeCaption="Time" 
             dateFormat="h:mm aa"
             locale={ru}
