@@ -30,7 +30,7 @@ builder.Services.AddSingleton<LabsService>();
 builder.Services.AddSingleton<LabReservationsService>();
 
 builder.Services.AddCors(p => p.AddPolicy("AllowAll",
-    b => { b.WithOrigins("http://10.40.229.60:3000","http://localhost:5173", "http://localhost:4173").AllowAnyMethod().AllowAnyHeader().AllowCredentials(); }));
+    b => { b.WithOrigins("http://10.40.229.60:3000","http://localhost:5173").AllowAnyMethod().AllowAnyHeader().AllowCredentials(); }));
 
 builder.Services.AddControllers();
 
