@@ -73,7 +73,8 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
       const [startTime, endTime] = timeSlot.split(' - ');
       const cellHeight = 40;
       const cellPadding = 10;
-      const cellFullHeight = cellHeight + cellPadding * 2;
+      const border = 1;
+      const cellFullHeight = cellHeight + cellPadding * 2 + border * 0.8;
       const calculatePixelsPerMinute = (timeEnd: Date, timeStart: Date) => {
         return cellFullHeight / (timeEnd.getTime() - timeStart.getTime());
       }
@@ -181,11 +182,12 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
                       style={overlapStyle}
                       onClick={() => handleReservationClick(labReservationCard.reservation)}
                     >
-                      <span className={style.time}>{`${labReservationCard.reservation.timeStart.split('T')[1].split(':')[0]}:${labReservationCard.reservation.timeStart.split('T')[1].split(':')[1]} -
+                      <div className={style.text}>
+                        <span className={style.time}>{`${labReservationCard.reservation.timeStart.split('T')[1].split(':')[0]}:${labReservationCard.reservation.timeStart.split('T')[1].split(':')[1]} -
                         ${labReservationCard.reservation.timeEnd.split('T')[1].split(':')[0]}:${labReservationCard.reservation.timeEnd.split('T')[1].split(':')[1]}`}
-                      </span>
-                      <br />
-                      <span className={style.theme}>{`${labReservationCard.reservation.theme}`}</span>
+                        </span>
+                        <span className={style.theme}>{`${labReservationCard.reservation.theme}`}</span>
+                      </div>
                     </div>
                   );
                 })}

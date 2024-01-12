@@ -39,6 +39,9 @@
   white-space: nowrap;
   cursor: pointer;
   z-index: 1;
+}
+
+.reservationCard .text{
   display: flex;
   flex-direction: column;
 }
@@ -51,6 +54,7 @@
 
 .reservationCard .theme {
   font-weight: 600;
+  margin: 0;
 }
 .reservationCard .time{
   margin: 0;
