@@ -53,7 +53,7 @@ export const LabReservationCard: React.FC<LabReservationCardProps> = ({
             {" "}{resTimeStart.getHours().toString().padStart(2, '0')}:{resTimeStart.getMinutes().toString().padStart(2, '0')}-
             {resTimeEnd.getHours()}:{resTimeEnd.getMinutes().toString().padStart(2, '0')}</p>
           <p className={style.theme}>{selectedReservation?.theme}</p>
-          <p className={style.reservor}>👤 {selectedReservation?.reservor.firstName}</p>
+          <p className={style.reservor}>👤 {selectedReservation?.reservor.firstName} {selectedReservation?.reservor.secondName}</p>
           <div className={style.description}>
             <p className={style.theme}>Описание:</p>
             <p className={style.description}>{selectedReservation?.description}</p>

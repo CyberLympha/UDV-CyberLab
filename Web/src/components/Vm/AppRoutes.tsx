@@ -1,9 +1,7 @@
 import {Navigate, Route, Routes} from "react-router-dom";
-import React from "react";
 import {observer} from "mobx-react-lite";
 
 import {userStore} from "../../stores";
-
 import {SideMenu} from "../SideMenu/SideMenu";
 import {News} from "../News/News";
 import {Labs} from "../Labs/Labs";

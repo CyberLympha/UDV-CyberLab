@@ -9,9 +9,11 @@ export function getReadableVmStatus(status?: string | null) {
 export function getReadableUserRole(role?: UserRole) {
     switch (role) {
         case UserRole.Admin:
-            return "Преподаватаель"
+            return "Админ"
         case UserRole.User:
             return "Студент"
+        case UserRole.Teacher:
+            return "Учитель"
         default:
             return "Студент"
     }

@@ -19,7 +19,6 @@ export function LabSchedule() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [labs, setLabs] = useState<Lab[]>([]);
   const [selectedLab, setSelectedLab] = useState<Lab | null>(null);
-  const [labSelectionWidth, setLabSelectionWidth] = useState<number | null>(null);
   const labSelectionRef = useRef<HTMLDivElement>(null);
 
   const fetchLabs = async () => {
@@ -112,12 +111,6 @@ export function LabSchedule() {
   }, [selectedWeek, selectedLab]);
 
   useEffect(() => {
-    if (labSelectionRef.current) {
-      setLabSelectionWidth(labSelectionRef.current.offsetWidth);
-    }
-  }, [labSelectionRef, labs]);
-
-  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         labSelectionRef.current &&
@@ -145,13 +138,13 @@ export function LabSchedule() {
             <LocalButton className={style.weekButton} onClick={goToNextWeek}>Вперед</LocalButton>
           </div>
           <div className={style.labSelection} ref={labSelectionRef}>
-            <div className={style.selectedLab} onClick={toggleLabMenu} style={{ width: labSelectionWidth ? `${labSelectionWidth}px` : 'auto' }}>
+            <div className={style.selectedLab} onClick={toggleLabMenu}>
               {selectedLab ? selectedLab.title : 'Select Lab'} ▼
             </div>
             {isLabMenuOpen && (
-              <div className={style.labMenu} style={{ width: labSelectionWidth ? `${labSelectionWidth}px` : 'auto' }}>
+              <div className={style.labMenu}>
                 {labs.map((lab) => (
-                  <div key={lab.id} onClick={() => handleLabSelection(lab)}>
+                  <div key={lab.id} onClick={() => handleLabSelection(lab)} className={lab === selectedLab ? style.selected : ''}>
                     {lab.title}
                   </div>
                 ))}

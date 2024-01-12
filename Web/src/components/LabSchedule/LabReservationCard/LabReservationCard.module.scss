@@ -19,6 +19,7 @@
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   z-index: 10000;
+  max-width: 400px;
 }
 
 .reservationCardContent {
@@ -38,14 +39,17 @@
   font-style: normal;
   font-weight: 700;
   line-height: normal;
+  max-width: 330px;
 }
 
 .reservationCardContent .reservor {
-  padding-left: 10px;
+  padding-top: 5px;
+  padding-left: 12px;
   font-size: 12px;
   font-style: normal;
   font-weight: 600;
   line-height: normal;
+  max-width: 330px;
 }
 
 .reservationCardContent .description p {
@@ -53,11 +57,14 @@
   font-style: normal;
   font-weight: 500;
   line-height: normal;
+  max-width: 330px;
 }
 
 .reservationCardContent .description .theme {
+  padding-top: 10px;
   font-size: 16px;
   font-style: normal;
   font-weight: 700;
   line-height: normal;
+  max-width: 330px;
 }
