@@ -1,15 +1,15 @@
 import Modal from 'react-bootstrap/Modal';
 import DatePicker from 'react-datepicker';
-import {useToast} from "@chakra-ui/react";
-import ru from 'date-fns/locale/ru';
-import 'react-datepicker/dist/react-datepicker.css';
-
+import { useToast } from "@chakra-ui/react";
 import React, { useState } from 'react';
+import ru from 'date-fns/locale/ru';
+
+import 'react-datepicker/dist/react-datepicker.css';
 import { Button as LocalButton } from '../../Button/Button';
 import { apiService } from '../../../services';
 import { LabReservation, UpdateLabReservationRequest } from '../../../../api';
 import { userStore } from '../../../stores';
-import {convertDateToNetTicks} from "../AddLabReservation/AddLabReservation"
+import { ConvertDateToNetTicks } from "../AddLabReservation/AddLabReservation"
 
 import style from './EditLabReservation.module.scss'
 
@@ -36,8 +36,8 @@ export const EditLabReservation: React.FC<Props> = ({
   const handleSaveReservation = async () => {
     const updateRequest: UpdateLabReservationRequest = {
       id: selectedReservation.id,
-      timeStart: convertDateToNetTicks(timeStart),
-      timeEnd: convertDateToNetTicks(timeEnd),
+      timeStart: ConvertDateToNetTicks(timeStart),
+      timeEnd: ConvertDateToNetTicks(timeEnd),
       theme,
       description,
       reservorId: selectedReservation.reservor.id,
@@ -54,7 +54,7 @@ export const EditLabReservation: React.FC<Props> = ({
         duration: 4000,
         isClosable: true,
         position: "top"
-    })
+      })
     } else {
       toast({
         title: 'Ошибка при редактировании резервации',
@@ -63,23 +63,23 @@ export const EditLabReservation: React.FC<Props> = ({
         duration: 4000,
         isClosable: true,
         position: "top",
-        containerStyle: {zIndex: 9999},
-    })
+        containerStyle: { zIndex: 9999 },
+      })
     }
   };
 
-  const isTimeNotPassed = (date) => {
-    if (selectedDate > new Date()){
+  const isTimeNotPassed = (date: Date) => {
+    if (selectedDate > new Date()) {
       return true
     }
     const isPastTime = new Date().getTime() > date.getTime();
     return !isPastTime;
-    };
+  };
 
   const isTimeInTablerange = (time: Date): boolean => {
-    return  time.getHours() > 6 && time.getHours() < 23 
-    || (time.getHours() === 17 && time.getMinutes() <= 50) 
-    || (time.getHours() === 6 && time.getMinutes() >= 50);
+    return time.getHours() > 6 && time.getHours() < 23
+      || (time.getHours() === 17 && time.getMinutes() <= 50)
+      || (time.getHours() === 6 && time.getMinutes() >= 50);
   };
 
   const filterTime = (date: Date) => {
@@ -93,56 +93,57 @@ export const EditLabReservation: React.FC<Props> = ({
       </Modal.Header>
       <Modal.Body>
         <form className={style.editReservationForm}>
-        <div className={style.formGroup}>
-              <label>Тема:</label>
-              <input type="text" value={theme} onChange={(e) => setTheme(e.target.value)} />
-            </div>
-            <div className={style.formGroup}>
-              <label>Описание:</label>
-              <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
-            </div>
-            <div className={style.formGroup}>
-            <label>Дата:</label>
-            <DatePicker 
-            selected={selectedDate} 
-            onChange={(date: Date) => setDate(date)} 
-            dateFormat="d MMMM, yyyy"
-            minDate={new Date()}
-            locale={ru}
-            className={style.datePicker} />
+          <div className={style.formGroup}>
+            <label>Тема:</label>
+            <input type="text" value={theme} onChange={(e) => setTheme(e.target.value)} />
           </div>
-            <div className={style.timeInputs}>
-              <div className={style.formGroup}>
-                <label>Время начала:</label>
-                <DatePicker
-            selected={timeStart}
-            onChange={(date: Date) => setTimeStart(date)}
-            showTimeSelect
-            showTimeSelectOnly 
-            timeIntervals={5}
-            timeCaption="Time" 
-            dateFormat="h:mm aa"
-            locale={ru}
-            filterTime={filterTime}
-            className={style.datePicker}
-          />
-              </div>
-              <div className={style.formGroup}>
-                <label>Время конца:</label>
-                <DatePicker
-            selected={timeEnd}
-            onChange={(date: Date) => setTimeEnd(date)}
-            showTimeSelect
-            showTimeSelectOnly 
-            timeIntervals={5}
-            timeCaption="Time" 
-            dateFormat="h:mm aa"
-            locale={ru}
-            filterTime={filterTime}
-            className={style.datePicker}
-          />
-              </div>
+          <div className={style.formGroup}>
+            <label>Описание:</label>
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
+          </div>
+          <div className={style.formGroup}>
+            <label>Дата:</label>
+            <br/>
+            <DatePicker
+              selected={selectedDate}
+              onChange={(date: Date) => setDate(date)}
+              dateFormat="d MMMM, yyyy"
+              minDate={new Date()}
+              locale={ru}
+              className={style.datePicker} />
+          </div>
+          <div className={style.timeInputs}>
+            <div className={style.formGroup}>
+              <label>Время начала:</label>
+              <DatePicker
+                selected={timeStart}
+                onChange={(date: Date) => setTimeStart(date)}
+                showTimeSelect
+                showTimeSelectOnly
+                timeIntervals={5}
+                timeCaption="Time"
+                dateFormat="h:mm aa"
+                locale={ru}
+                filterTime={filterTime}
+                className={style.datePicker}
+              />
             </div>
+            <div className={style.formGroup}>
+              <label>Время конца:</label>
+              <DatePicker
+                selected={timeEnd}
+                onChange={(date: Date) => setTimeEnd(date)}
+                showTimeSelect
+                showTimeSelectOnly
+                timeIntervals={5}
+                timeCaption="Time"
+                dateFormat="h:mm aa"
+                locale={ru}
+                filterTime={filterTime}
+                className={style.datePicker}
+              />
+            </div>
+          </div>
         </form>
       </Modal.Body>
       <Modal.Footer>

@@ -1,13 +1,16 @@
 .scheduleTable {
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   width: 100%;
+  overflow: hidden
 }
 
 .scheduleTable th,
 .scheduleTable td {
-  border: 1px solid #ddd;
+  border: 1px solid #F0F0F0;
   position: relative;
   min-height: 40px;
+  background-color: white;
 }
 
 .reservationCard:hover {
@@ -19,7 +22,7 @@
   height: 40px;
   padding-top: 10px;
   padding-bottom: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #F0F0F0;
 }
 
 .reservationCard {
@@ -29,7 +32,7 @@
   width: 98%;
   border-radius: 5px;
   background: rgba(14, 165, 233, 0.10);
-  border: 1px solid #3366cc;
+  border-left: 2px solid #0EA5E9;
   box-sizing: border-box;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -38,19 +41,50 @@
   z-index: 1;
 }
 
-.reservationCard span{
+.reservationCard span {
   padding-left: 4px;
   font-size: 12px;
   font-weight: 400;
 }
 
-.reservationCard .theme{
+.reservationCard .theme {
   font-weight: 600;
 }
 
-.timeSlot{
+.timeSlot {
   padding-left: 10px;
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
+  width: 12%;
+}
+
+.daySlot {
+  text-align: left;
+  padding-left: 10px;
+}
+
+.daySlot .dayName {
+  font-size: 10px;
+  color: #71717A;
+}
+
+.daySlot .date {
+  font-size: 18px;
+}
+
+tr:first-child th:first-child {
+  border-top-left-radius: 10px;
+}
+
+tr:first-child th:last-child {
+  border-top-right-radius: 10px;
+}
+
+tr:last-child td:first-child {
+  border-bottom-left-radius: 10px;
+}
+
+tr:last-child td:last-child {
+  border-bottom-right-radius: 10px;
 }

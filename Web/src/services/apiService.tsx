@@ -37,7 +37,7 @@ export class ApiService {
     }
 
     public getLabs() {
-        return this.httpClient.get<{ labs: Lab[] }>('/labs/get')
+        return this.httpClient.get<Lab[]>('/labs/get')
 
     }
 

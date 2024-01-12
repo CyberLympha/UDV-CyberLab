@@ -25,7 +25,7 @@ export const LabReservationCard: React.FC<LabReservationCardProps> = ({
   const handleCloseReservationModal = () => {
     setShowReservationModal(false);
   };
-    
+
   const handleDeleteReservationModal = async () => {
     const response = await apiService.deleteLabReservation(selectedReservation?.id, selectedReservation?.reservor?.id)
     if (!(response instanceof Error)) {
@@ -49,11 +49,11 @@ export const LabReservationCard: React.FC<LabReservationCardProps> = ({
     <div className={style.reservationOverlay} style={{ display: showReservationModal ? 'block' : 'none' }}>
       <div className={style.reservationCardModal}>
         <div className={style.reservationCardContent}>
-          <p className={style.time}>{resTimeStart.getDate().toString().padStart(2, '0')}.{(resTimeStart.getMonth() + 1).toString().padStart(2, '0')}
-          {" "}{resTimeStart.getHours().toString().padStart(2, '0')}:{resTimeStart.getMinutes().toString().padStart(2, '0')}-
-          {resTimeEnd.getHours()}:{resTimeEnd.getMinutes().toString().padStart(2, '0')}</p>
+          <p className={style.time}>{resTimeStart.getDate()} {resTimeStart.toLocaleDateString(undefined, { month: 'long' })}
+            {" "}{resTimeStart.getHours().toString().padStart(2, '0')}:{resTimeStart.getMinutes().toString().padStart(2, '0')}-
+            {resTimeEnd.getHours()}:{resTimeEnd.getMinutes().toString().padStart(2, '0')}</p>
           <p className={style.theme}>{selectedReservation?.theme}</p>
-          <p className={style.reservor}>{selectedReservation?.reservor.firstName}</p>
+          <p className={style.reservor}>👤 {selectedReservation?.reservor.firstName}</p>
           <div className={style.description}>
             <p className={style.theme}>Описание:</p>
             <p className={style.description}>{selectedReservation?.description}</p>
@@ -73,8 +73,8 @@ export const LabReservationCard: React.FC<LabReservationCardProps> = ({
         <EditLabReservation
           show={showEditReservationModal}
           handleClose={handleCloseEditreservationsModal}
-          selectedReservation = {selectedReservation}
-          updateTable = {updateTable}
+          selectedReservation={selectedReservation}
+          updateTable={updateTable}
         />
       </div>
     </div>
