@@ -62,11 +62,11 @@ export const LabReservationCard: React.FC<LabReservationCardProps> = ({
         <LocalButton variant="secondary" onClick={handleCloseReservationModal}>
           Закрыть
         </LocalButton>
-        {(userStore.user?.role === UserRole.Admin || (userStore.user?.id === selectedReservation?.id && userStore.user?.role === UserRole.Teacher)) &&
+        {(userStore.user?.role === UserRole.Admin || (userStore.user?.id === selectedReservation?.reservor.id && userStore.user?.role === UserRole.Teacher)) &&
           <LocalButton className={style.deleteButton} variant="secondary" onClick={handleDeleteReservationModal}>
             Удалить
           </LocalButton>}
-        {(userStore.user?.role === UserRole.Admin || (userStore.user?.id === selectedReservation?.id && userStore.user?.role === UserRole.Teacher)) &&
+        {(userStore.user?.role === UserRole.Admin || (userStore.user?.id === selectedReservation?.reservor.id && userStore.user?.role === UserRole.Teacher)) &&
           <LocalButton className={style.editButton} variant="secondary" onClick={handleEditReservationButtonClick}>
             Изменить
           </LocalButton>}

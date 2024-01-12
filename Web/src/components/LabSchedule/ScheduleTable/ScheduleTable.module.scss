@@ -39,6 +39,8 @@
   white-space: nowrap;
   cursor: pointer;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .reservationCard span {
@@ -49,6 +51,9 @@
 
 .reservationCard .theme {
   font-weight: 600;
+}
+.reservationCard .time{
+  margin: 0;
 }
 
 .timeSlot {
