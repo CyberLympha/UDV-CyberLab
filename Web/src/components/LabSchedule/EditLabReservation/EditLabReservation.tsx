@@ -36,8 +36,18 @@ export const EditLabReservation: React.FC<Props> = ({
   const handleSaveReservation = async () => {
     const updateRequest: UpdateLabReservationRequest = {
       id: selectedReservation.id,
-      timeStart: ConvertDateToNetTicks(timeStart),
-      timeEnd: ConvertDateToNetTicks(timeEnd),
+      timeStart: ConvertDateToNetTicks(new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate(),
+        timeStart.getHours(),
+        timeStart.getMinutes())),
+      timeEnd: ConvertDateToNetTicks(new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate(),
+        timeEnd.getHours(),
+        timeEnd.getMinutes())),
       theme,
       description,
       reservorId: selectedReservation.reservor.id,

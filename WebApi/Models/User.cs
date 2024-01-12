@@ -11,7 +11,7 @@ public enum UserRole
     User,
     Admin,
     SuperUser,
-    Teacher
+    Teacher,
 }
 
 public class User
