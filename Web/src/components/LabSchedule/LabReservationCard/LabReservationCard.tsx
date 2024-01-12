@@ -42,15 +42,22 @@ export const LabReservationCard: React.FC<LabReservationCardProps> = ({
   const handleCloseEditreservationsModal = () => {
     setShowEditReservationModal(false);
   };
+  const resTimeStart = new Date(selectedReservation?.timeStart);
+  const resTimeEnd = new Date(selectedReservation?.timeEnd);
 
   return (
     <div className={style.reservationOverlay} style={{ display: showReservationModal ? 'block' : 'none' }}>
       <div className={style.reservationCardModal}>
         <div className={style.reservationCardContent}>
-          <p>{selectedReservation?.timeStart} - {selectedReservation?.timeEnd}</p>
-          <p>{selectedReservation?.theme}</p>
-          <p>{selectedReservation?.reservor.firstName}</p>
-          <p>{selectedReservation?.description}</p>
+          <p className={style.time}>{resTimeStart.getDate().toString().padStart(2, '0')}.{(resTimeStart.getMonth() + 1).toString().padStart(2, '0')}
+          {" "}{resTimeStart.getHours().toString().padStart(2, '0')}:{resTimeStart.getMinutes().toString().padStart(2, '0')}-
+          {resTimeEnd.getHours()}:{resTimeEnd.getMinutes().toString().padStart(2, '0')}</p>
+          <p className={style.theme}>{selectedReservation?.theme}</p>
+          <p className={style.reservor}>{selectedReservation?.reservor.firstName}</p>
+          <div className={style.description}>
+            <p className={style.theme}>Описание:</p>
+            <p className={style.description}>{selectedReservation?.description}</p>
+          </div>
         </div>
         <LocalButton variant="secondary" onClick={handleCloseReservationModal}>
           Закрыть

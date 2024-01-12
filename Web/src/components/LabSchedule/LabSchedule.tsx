@@ -156,6 +156,7 @@ export function LabSchedule() {
         selectedWeek={selectedWeek}
         fetchScheduleData={fetchScheduleData}
       />
+      <span className={style.note}>*В расписании указано время Екатеринбурга(UTC+5:00)</span>
     </div>
   );
 }

@@ -120,14 +120,24 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
                   cellTimeEnd.setHours(parseInt(slotEndTime.split(':')[0]), parseInt(slotEndTime.split(':')[1]), 0, 0);
     
                   if (resEndTime <= cellTimeStart) {
-                    labReservationCard.height = (i - 1 - labReservationCard.topCellIndex)*cellFullHeight + cellFullHeight;
+                    if(labReservationCard.top === cellFullHeight){
+                      labReservationCard.height = (i - 1 - labReservationCard.topCellIndex)*cellFullHeight + cellFullHeight;
+                    }
+                    else{
+                      labReservationCard.height = (i - 1 - labReservationCard.topCellIndex)*cellFullHeight + cellFullHeight - labReservationCard.top;
+                    }
                     break;
                   }
 
                   else if (resEndTime <= cellTimeEnd) {
                     labReservationCard.bottomCellIndex = i;
                     const bottom = cellFullHeight - (cellTimeEnd.getTime() - resEndTime.getTime()) * calculatePixelsPerMinute(cellTimeEnd, cellTimeStart);
+                    if(labReservationCard.top === cellFullHeight){
+                      labReservationCard.height = (i - 1 - labReservationCard.topCellIndex)*cellFullHeight + bottom + cellFullHeight;
+                    }
+                    else{
                     labReservationCard.height = (i - 1 - labReservationCard.topCellIndex)*cellFullHeight + bottom + cellFullHeight - labReservationCard.top;
+                    }
                     break;
                   }
                 }
