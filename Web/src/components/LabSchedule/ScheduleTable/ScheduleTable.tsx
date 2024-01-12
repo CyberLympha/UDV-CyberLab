@@ -38,7 +38,7 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
     ];
 
     const startDate = new Date(selectedWeek);
-    startDate.setDate(startDate.getDate() - startDate.getDay());
+    startDate.setDate(startDate.getDate() - startDate.getDay() + 1);
 
     const isCurrentDay = (date: Date) => {
       const currentDate = new Date();
