@@ -72,7 +72,7 @@ export const ScheduleTable: React.FC<ScheduleTableProps> = ({
     const tableRows = timeSlots.map((timeSlot, rowIndex) => {
       const [startTime, endTime] = timeSlot.split(' - ');
       const cellHeight = 40;
-      const cellPadding = 10;
+      const cellPadding = 12;
       const border = 1;
       const cellFullHeight = cellHeight + cellPadding * 2 + border * 0.8;
       const calculatePixelsPerMinute = (timeEnd: Date, timeStart: Date) => {

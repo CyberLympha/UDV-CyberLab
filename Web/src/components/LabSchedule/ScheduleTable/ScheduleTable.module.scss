@@ -20,8 +20,8 @@
 .cell {
   position: relative;
   height: 40px;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 12px;
+  padding-bottom: 12px;
   border: 1px solid #F0F0F0;
 }
 
@@ -36,7 +36,6 @@
   box-sizing: border-box;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
   cursor: pointer;
   z-index: 1;
 }
@@ -44,12 +43,15 @@
 .reservationCard .text{
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
 }
 
 .reservationCard span {
   padding-left: 4px;
   font-size: 12px;
   font-weight: 400;
+  overflow-wrap: break-word;
+  width: 98%;
 }
 
 .reservationCard .theme {
