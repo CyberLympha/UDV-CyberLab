@@ -41,7 +41,7 @@ export function Vm({status, stopped}: VmProps) {
 
 
         }
-        let interval: number;
+        let interval: number | NodeJS.Timeout;
         if (status.status === "running") {
             void getIp()
             interval = setInterval(() => getIp(), 30000);

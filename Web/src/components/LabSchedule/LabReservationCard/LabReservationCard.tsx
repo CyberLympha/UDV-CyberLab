@@ -25,7 +25,7 @@ export const LabReservationCard: React.FC<LabReservationCardProps> = ({
   const handleCloseReservationModal = () => {
     setShowReservationModal(false);
   };
-    
+
   const handleDeleteReservationModal = async () => {
     const response = await apiService.deleteLabReservation(selectedReservation?.id, selectedReservation?.reservor?.id)
     if (!(response instanceof Error)) {
@@ -42,32 +42,39 @@ export const LabReservationCard: React.FC<LabReservationCardProps> = ({
   const handleCloseEditreservationsModal = () => {
     setShowEditReservationModal(false);
   };
+  const resTimeStart = new Date(selectedReservation?.timeStart);
+  const resTimeEnd = new Date(selectedReservation?.timeEnd);
 
   return (
     <div className={style.reservationOverlay} style={{ display: showReservationModal ? 'block' : 'none' }}>
       <div className={style.reservationCardModal}>
         <div className={style.reservationCardContent}>
-          <p>{selectedReservation?.timeStart} - {selectedReservation?.timeEnd}</p>
-          <p>{selectedReservation?.theme}</p>
-          <p>{selectedReservation?.reservor.firstName}</p>
-          <p>{selectedReservation?.description}</p>
+          <p className={style.time}>{resTimeStart.getDate()} {resTimeStart.toLocaleDateString(undefined, { month: 'long' })}
+            {" "}{resTimeStart.getHours().toString().padStart(2, '0')}:{resTimeStart.getMinutes().toString().padStart(2, '0')}-
+            {resTimeEnd.getHours()}:{resTimeEnd.getMinutes().toString().padStart(2, '0')}</p>
+          <p className={style.theme}>{selectedReservation?.theme}</p>
+          <p className={style.reservor}>👤 {selectedReservation?.reservor.firstName} {selectedReservation?.reservor.secondName}</p>
+          <div className={style.description}>
+            <p className={style.theme}>Описание:</p>
+            <p className={style.description}>{selectedReservation?.description}</p>
+          </div>
         </div>
         <LocalButton variant="secondary" onClick={handleCloseReservationModal}>
           Закрыть
         </LocalButton>
-        {(userStore.user?.role === UserRole.Admin || (userStore.user?.id === selectedReservation?.id && userStore.user?.role === UserRole.Teacher)) &&
+        {(userStore.user?.role === UserRole.Admin || (userStore.user?.id === selectedReservation?.reservor.id && userStore.user?.role === UserRole.Teacher)) &&
           <LocalButton className={style.deleteButton} variant="secondary" onClick={handleDeleteReservationModal}>
             Удалить
           </LocalButton>}
-        {(userStore.user?.role === UserRole.Admin || (userStore.user?.id === selectedReservation?.id && userStore.user?.role === UserRole.Teacher)) &&
+        {(userStore.user?.role === UserRole.Admin || (userStore.user?.id === selectedReservation?.reservor.id && userStore.user?.role === UserRole.Teacher)) &&
           <LocalButton className={style.editButton} variant="secondary" onClick={handleEditReservationButtonClick}>
             Изменить
           </LocalButton>}
         <EditLabReservation
           show={showEditReservationModal}
           handleClose={handleCloseEditreservationsModal}
-          selectedReservation = {selectedReservation}
-          updateTable = {updateTable}
+          selectedReservation={selectedReservation}
+          updateTable={updateTable}
         />
       </div>
     </div>

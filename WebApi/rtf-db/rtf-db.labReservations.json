@@ -1,0 +1,1196 @@
+[{
+  "_id": {
+    "$oid": "6587f5d4715f3d8f1d0c399a"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2023-12-24T10:47:22.427Z"
+    },
+    "Ticks": {
+      "$numberLong": "638390116424270000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2023-12-24T10:47:22.427Z"
+    },
+    "Ticks": {
+      "$numberLong": "638390116424270000"
+    }
+  },
+  "Theme": "Молекулярная биология",
+  "Description": "Исследование структуры и функций молекул в клетках для студентов биологии",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "Козлов Данил",
+    "SecondName": "Юрьевич",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": null,
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "65880b9c5de6bd5d3b5101eb"
+    },
+    "Title": "Lab Title",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "659bd4f5f2ffafc933064690"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2023-12-24T07:00:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638390880000000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2023-12-24T08:00:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638390952000000000"
+    }
+  },
+  "Theme": "Искусственный интеллект в медицине",
+  "Description": "Описание здесь то что будет происходить в лаборатории в это время и тд",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "Козлов Данил",
+    "SecondName": "Юрьевич",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": null,
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "65880b9c5de6bd5d3b5101eb"
+    },
+    "Title": "Lab Title",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "659c32b4d03497305809a22b"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-08T19:00:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638403372000000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-08T20:00:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638403408000000000"
+    }
+  },
+  "Theme": "Электроника и микроконтроллеры",
+  "Description": "Практические занятия по проектированию электронных схем и программированию микроконтроллеров",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "Козлов Данил",
+    "SecondName": "Юрьевич",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "65880b9c5de6bd5d3b5101eb"
+    },
+    "Title": "Lab Title",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "659c3949d03497305809a22e"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-09T09:00:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638403876000000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-09T10:00:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638403912000000000"
+    }
+  },
+  "Theme": "Квантовая химия",
+  "Description": "Обсуждение и проведение экспериментов в области квантовой химии и спектроскопии",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "Козлов Данил",
+    "SecondName": "Юрьевич",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "65880b9c5de6bd5d3b5101eb"
+    },
+    "Title": "Lab Title",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "659ce7920b768c61ca3e7f1c"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-09T05:00:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638403732000000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-09T06:00:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638403768000000000"
+    }
+  },
+  "Theme": "Разработка веб-приложений",
+  "Description": "Проектирование и создание веб-приложений с использованием современных технологий",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "Козлов Данил",
+    "SecondName": "Юрьевич",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "659ce7409ffc480cabdea397"
+    },
+    "Title": "Вторая лаба",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "659d7d48f534a713c3df12b0"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-10T03:00:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638404524000000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-10T04:00:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638404560000000000"
+    }
+  },
+  "Theme": "Эксперименты с фотонами",
+  "Description": "Исследование свойств света и проведение опытов с фотонами",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "Козлов Данил",
+    "SecondName": "Юрьевич",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "65880b9c5de6bd5d3b5101eb"
+    },
+    "Title": "Lab Title",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "659d8750f534a713c3df12b1"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-10T06:00:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638404632000000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-10T07:00:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638404668000000000"
+    }
+  },
+  "Theme": "Робототехника",
+  "Description": "Создание и программирование роботов для выполнения различных задач",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "Козлов Данил",
+    "SecondName": "Юрьевич",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "659ce7409ffc480cabdea397"
+    },
+    "Title": "Вторая лаба",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "659e23e0374ec2ad21ce741d"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-10T05:00:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638404596000000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-10T06:00:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638404632000000000"
+    }
+  },
+  "Theme": "Генетические исследования",
+  "Description": "Анализ генетических данных и исследование влияния генов на различные фенотипы",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "Козлов Данил",
+    "SecondName": "Юрьевич",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "65880b9c5de6bd5d3b5101eb"
+    },
+    "Title": "Lab Title",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "659e50b132455f6a89980d64"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "4047-01-19T00:03:26.812Z"
+    },
+    "Ticks": {
+      "$numberLong": "1276809698068120000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "4047-01-19T01:03:26.812Z"
+    },
+    "Ticks": {
+      "$numberLong": "1276809734068120000"
+    }
+  },
+  "Theme": "Архитектура компьютерных систем",
+  "Description": "Изучение принципов построения и функционирования современных компьютерных систем",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "Козлов Данил",
+    "SecondName": "Юрьевич",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "65880b9c5de6bd5d3b5101eb"
+    },
+    "Title": "Lab Title",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "659e706c32455f6a89980d67"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-11T05:00:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638405460000000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-11T06:45:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638405523000000000"
+    }
+  },
+  "Theme": "Биоинформатика",
+  "Description": "Анализ биологических данных с использованием вычислительных методов",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "Козлов Данил",
+    "SecondName": "Юрьевич",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "65880b9c5de6bd5d3b5101eb"
+    },
+    "Title": "Lab Title",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "659f730532455f6a89980d68"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-12T01:30:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638406198000000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-12T03:00:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638406252000000000"
+    }
+  },
+  "Theme": "Сетевые технологии",
+  "Description": "Настройка и управление компьютерными сетями для передачи данных",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "Козлов Данил",
+    "SecondName": "Юрьевич",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "65880b9c5de6bd5d3b5101eb"
+    },
+    "Title": "Lab Title",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "659faf0480029a18c0abd2b1"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-12T00:00:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638406144000000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-12T01:15:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638406189000000000"
+    }
+  },
+  "Theme": "Энергетические технологии",
+  "Description": "Исследование современных методов производства и хранения энергии",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "Козлов Данил",
+    "SecondName": "Юрьевич",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "65880b9c5de6bd5d3b5101eb"
+    },
+    "Title": "Lab Title",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "659faf5b80029a18c0abd2b2"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-11T13:50:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638405778000000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-11T15:45:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638405847000000000"
+    }
+  },
+  "Theme": "Виртуальная реальность и игровые технологии",
+  "Description": "Разработка и тестирование виртуальных миров и игр",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "Козлов Данил",
+    "SecondName": "Юрьевич",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "65880b9c5de6bd5d3b5101eb"
+    },
+    "Title": "Lab Title",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "659faf9f80029a18c0abd2b3"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-12T13:50:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638406642000000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-12T15:50:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638406714000000000"
+    }
+  },
+  "Theme": "Астрофизика",
+  "Description": "Исследование свойств звезд, галактик и космических объектов",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "Козлов Данил",
+    "SecondName": "Юрьевич",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "65880b9c5de6bd5d3b5101eb"
+    },
+    "Title": "Lab Title",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "659fb37180029a18c0abd2b4"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-13T23:50:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638407866000000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-14T08:45:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638408187000000000"
+    }
+  },
+  "Theme": "Нанотехнологии в медицине",
+  "Description": "Применение наноматериалов для разработки новых методов лечения и диагностики",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "danil",
+    "SecondName": "kozlob",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "65880b9c5de6bd5d3b5101eb"
+    },
+    "Title": "Lab Title",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "659ffbd080029a18c0abd2b5"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-12T06:00:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638406360000000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-12T08:00:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638406432000000000"
+    }
+  },
+  "Theme": "Культурная антропология",
+  "Description": "Анализ культурных особенностей различных обществ и племен",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "danil",
+    "SecondName": "kozlob",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "65880b9c5de6bd5d3b5101eb"
+    },
+    "Title": "Lab Title",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "65a01af480029a18c0abd2b6"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-12T12:10:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638406582000000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-12T13:20:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638406624000000000"
+    }
+  },
+  "Theme": "Исследование климата и экологии",
+  "Description": "Сбор данных о климатических изменениях и влиянии на окружающую среду",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "danil",
+    "SecondName": "kozlob",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "65880b9c5de6bd5d3b5101eb"
+    },
+    "Title": "Lab Title",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "65a111cc1b407f1bfaae338f"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-12T10:17:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638406514200000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-12T11:25:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638406555000000000"
+    }
+  },
+  "Theme": "Теория игр в экономике",
+  "Description": "Применение теории игр для анализа стратегий в экономике и бизнесе",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "danil",
+    "SecondName": "kozlob",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "659ce7409ffc480cabdea397"
+    },
+    "Title": "Вторая лаба",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "65a111e61b407f1bfaae3390"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-12T11:30:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638406558000000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-12T12:15:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638406585000000000"
+    }
+  },
+  "Theme": "Геология и изучение горных пород",
+  "Description": "Исследование геологического строения и формирования горных образований.",
+  "Reservor": {
+    "_id": {
+      "$oid": "659d5c07f534a713c3df12ae"
+    },
+    "FirstName": "teacher",
+    "SecondName": "teacher",
+    "Email": "teacher",
+    "Password": "$2a$11$zj/H2JOMni/ZwJpH6aaUKe7reH0/qSyLCliQft.V1EELu7Bd2S5Le",
+    "Role": 4,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "659ce7409ffc480cabdea397"
+    },
+    "Title": "Вторая лаба",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "65a12d27fd7f823dc309c44d"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-13T14:10:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638407518000000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-13T13:20:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638407488000000000"
+    }
+  },
+  "Theme": "История искусства и архитектуры",
+  "Description": "Анализ исторических стилей и течений в искусстве и архитектуре",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "danil",
+    "SecondName": "kozlob",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "659ce7409ffc480cabdea397"
+    },
+    "Title": "Вторая лаба",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "65a12d70fd7f823dc309c44e"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-12T03:50:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638406282000000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-12T05:20:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638406336000000000"
+    }
+  },
+  "Theme": "Лингвистические исследования",
+  "Description": "Изучение структуры языков и языковых процессов в обществе",
+  "Reservor": {
+    "_id": {
+      "$oid": "659d5c07f534a713c3df12ae"
+    },
+    "FirstName": "teacher",
+    "SecondName": "teacher",
+    "Email": "teacher",
+    "Password": "$2a$11$zj/H2JOMni/ZwJpH6aaUKe7reH0/qSyLCliQft.V1EELu7Bd2S5Le",
+    "Role": 4,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "659ce7409ffc480cabdea397"
+    },
+    "Title": "Вторая лаба",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "65a1324afd7f823dc309c44f"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-13T02:35:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638407101000000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-13T04:10:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638407158000000000"
+    }
+  },
+  "Theme": "Современные методы обучения",
+  "Description": "Применение инновационных методов и технологий в образовательном процессе",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "danil",
+    "SecondName": "kozlob",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "659ce7409ffc480cabdea397"
+    },
+    "Title": "Вторая лаба",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "65a2c3130209c176e11cfb23"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-15T02:30:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638408826000000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-15T05:10:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638408922000000000"
+    }
+  },
+  "Theme": "Судебная медицина",
+  "Description": "Анализ методов и технол",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "Козлов Данил",
+    "SecondName": "Юрьевич",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "65880b9c5de6bd5d3b5101eb"
+    },
+    "Title": "Лаборатория Ирит-Ртф",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "65a2c33e0209c176e11cfb24"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-15T05:50:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638408946000000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-15T08:25:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638409039000000000"
+    }
+  },
+  "Theme": "Современные методы обучения",
+  "Description": "Применение инновационных методов и технологий в образовательном процессе",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "Козлов Данил",
+    "SecondName": "Юрьевич",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "65880b9c5de6bd5d3b5101eb"
+    },
+    "Title": "Лаборатория Ирит-Ртф",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "65a2c3600209c176e11cfb25"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-16T10:05:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638409963000000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-16T13:20:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638410080000000000"
+    }
+  },
+  "Theme": "Геология и изучение горных пород",
+  "Description": "Исследование геологического строения и формирования горных образований.",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "Козлов Данил",
+    "SecondName": "Юрьевич",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "65880b9c5de6bd5d3b5101eb"
+    },
+    "Title": "Лаборатория Ирит-Ртф",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+},
+{
+  "_id": {
+    "$oid": "65a2c3d20209c176e11cfb26"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-16T00:15:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638409609000000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-16T02:50:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638409702000000000"
+    }
+  },
+  "Theme": "Теория игр в экономике",
+  "Description": "Применение теории игр для анализа стратегий в экономике и бизнесе",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "Козлов Данил",
+    "SecondName": "Юрьевич",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "65880b9c5de6bd5d3b5101eb"
+    },
+    "Title": "Лаборатория Ирит-Ртф",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
+}]

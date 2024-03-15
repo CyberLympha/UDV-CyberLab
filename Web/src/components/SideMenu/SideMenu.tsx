@@ -19,13 +19,13 @@ interface NavLink {
 }
 
 const navLinks: NavLink[] = [
-    {to: "/news", name: "Новости", roles: [UserRole.User, UserRole.Admin]},
-    {to: "/labs", name: "Лабораторные работы", roles: [UserRole.User, UserRole.Admin]},
-    {to: "/tests", name: "Тесты", roles: [UserRole.User, UserRole.Admin]},
-    {to: "/ratings", name: "Оценки", roles: [UserRole.User, UserRole.Admin]},
-    {to: "/ctf", name: "Соревнования", roles: [UserRole.User, UserRole.Admin]},
+    {to: "/news", name: "Новости", roles: [UserRole.User, UserRole.Admin, UserRole.Teacher]},
+    {to: "/labs", name: "Лабораторные работы", roles: [UserRole.User, UserRole.Admin, UserRole.Teacher]},
+    {to: "/tests", name: "Тесты", roles: [UserRole.User, UserRole.Admin, UserRole.Teacher]},
+    {to: "/ratings", name: "Оценки", roles: [UserRole.User, UserRole.Admin, UserRole.Teacher]},
+    {to: "/ctf", name: "Соревнования", roles: [UserRole.User, UserRole.Admin, UserRole.Teacher]},
     {to: "/admin", name: "Администрирование", roles: [UserRole.Admin]},
-    {to: "/schedule", name: "Расписание лаборатории", roles: [UserRole.User, UserRole.Admin]},
+    {to: "/schedule", name: "Расписание лаборатории", roles: [UserRole.User, UserRole.Admin, UserRole.Teacher]},
 
 ]
 

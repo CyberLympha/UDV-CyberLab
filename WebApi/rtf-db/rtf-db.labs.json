@@ -1,0 +1,55 @@
+[{
+  "_id": {
+    "$oid": "659ce7409ffc480cabdea397"
+  },
+  "Title": "Лаборатория ИНМТ",
+  "ShortDescription": "Short description of the lab",
+  "Description": "Detailed description of the lab",
+  "LabsEntitys": [
+    "659bc278f2ffafc933064687"
+  ]
+},
+{
+  "_id": {
+    "$oid": "65a0fdfebfa13f3ed8a66b41"
+  },
+  "Title": "Лаборатория Где-то там",
+  "ShortDescription": "Short description of the lab",
+  "Description": "Detailed description of the lab",
+  "LabsEntitys": [
+    "659bc278f2ffafc933064687"
+  ]
+},
+{
+  "_id": {
+    "$oid": "65a0ff82bfa13f3ed8a66b43"
+  },
+  "Title": "Лаборатория №3",
+  "ShortDescription": "Short description of the lab",
+  "Description": "Detailed description of the lab",
+  "LabsEntitys": [
+    "659bc278f2ffafc933064687"
+  ]
+},
+{
+  "_id": {
+    "$oid": "65a104c7bfa13f3ed8a66b44"
+  },
+  "Title": "Лаборатория Главный Корпус",
+  "ShortDescription": "Short description of the lab",
+  "Description": "Detailed description of the lab",
+  "LabsEntitys": [
+    "659bc278f2ffafc933064687"
+  ]
+},
+{
+  "_id": {
+    "$oid": "65880b9c5de6bd5d3b5101eb"
+  },
+  "Title": "Лаборатория Ирит-Ртф",
+  "ShortDescription": "Short description of the lab",
+  "Description": "Detailed description of the lab",
+  "LabsEntitys": [
+    "659bc278f2ffafc933064687"
+  ]
+}]

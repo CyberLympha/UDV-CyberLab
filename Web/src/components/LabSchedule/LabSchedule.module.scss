@@ -1,15 +1,33 @@
 .container {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
+  box-sizing: border-box !important;
+  background-color: #f6f6f6;
+  border-radius: 24px;
+  padding: 8px;
+  height: 100%;
+  scroll-behavior: smooth;
+}
+
+.container::-webkit-scrollbar {
+  width: 0 !important;
+  display: none;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
   padding: 10px;
+  width: 99%;
+  gap: 10px;
+}
+
+.header .leftSection {
+  display: flex;
+  align-items: center;
+  gap: 50px;
 }
 
 .weekNavigation {
@@ -18,22 +36,66 @@
   gap: 10px;
 }
 
+
 .labSelection {
   position: relative;
+
+  .labMenu {
+    z-index: 999;
+    padding: 8px;
+    max-height: 100px;
+    overflow-y: auto;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border: 1px solid #ccc;
+
+    div{
+      cursor: pointer;
+
+      &:hover {
+        background-color: #f2f2f2;
+      }
+
+      &.selected {
+        background-color: #a0d3ff;
+      }
+    }
+  }
+
+  &.open {
+    .labMenu {
+      display: block;
+    }
+  }
 }
 
 .selectedLab {
   padding: 8px;
-  cursor: pointer;
-}
-
-.labMenu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  display: flex;
-  flex-direction: column;
   background-color: #fff;
   border: 1px solid #ccc;
-  padding: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  color: var(--Black, #313144);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 112%;
+  letter-spacing: 0.48px;
+}
+
+
+.note {
+  margin-top: 16px;
+  padding-left: 5px;
+  color: rgb(99, 99, 99);
+  font-size: 14px;
 }

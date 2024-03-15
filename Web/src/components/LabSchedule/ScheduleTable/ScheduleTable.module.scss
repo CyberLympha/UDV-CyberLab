@@ -1,29 +1,101 @@
-.emptyCell{
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    min-width: 150px;
-    min-height: 50px;
-    padding: 7px;
-    background-color: white;
-}
-  
-.reservationCell{
-    border-radius: 5px;
-    background: rgba(14, 165, 233, 0.10);
-    min-width: 150px;
-    min-height: 50px;
-  
-    &:hover {
-      cursor: pointer;
-    }
-    display: flex;
-    padding: 7px;
-    flex-direction: column;
-    align-items: flex-start;
-    flex: 1 0 0;  
+.scheduleTable {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  overflow: hidden
 }
 
-.scheduleTable{
-  background-color: #F6F6F6;
+.scheduleTable th,
+.scheduleTable td {
+  border: 1px solid #F0F0F0;
+  position: relative;
+  min-height: 40px;
+  background-color: white;
+}
+
+.reservationCard:hover {
+  background-color: #0EA5E9;
+}
+
+.cell {
+  position: relative;
+  height: 40px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  border: 1px solid #F0F0F0;
+}
+
+.reservationCard {
+  position: absolute;
+  margin: 0px;
+  justify-content: space-between;
+  width: 98%;
+  border-radius: 5px;
+  background: rgba(14, 165, 233, 0.10);
+  border-left: 2px solid #0EA5E9;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.reservationCard .text{
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+.reservationCard span {
+  padding-left: 4px;
+  font-size: 12px;
+  font-weight: 400;
+  overflow-wrap: break-word;
+  width: 98%;
+}
+
+.reservationCard .theme {
+  font-weight: 600;
+  margin: 0;
+}
+.reservationCard .time{
+  margin: 0;
+}
+
+.timeSlot {
+  padding-left: 10px;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  width: 12%;
+}
+
+.daySlot {
+  text-align: left;
+  padding-left: 10px;
+}
+
+.daySlot .dayName {
+  font-size: 10px;
+  color: #71717A;
+}
+
+.daySlot .date {
+  font-size: 18px;
+}
+
+tr:first-child th:first-child {
+  border-top-left-radius: 10px;
+}
+
+tr:first-child th:last-child {
+  border-top-right-radius: 10px;
+}
+
+tr:last-child td:first-child {
+  border-bottom-left-radius: 10px;
+}
+
+tr:last-child td:last-child {
+  border-bottom-right-radius: 10px;
 }
