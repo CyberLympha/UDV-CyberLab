@@ -1,9 +1,7 @@
-﻿using System.Diagnostics;
-using System.Net;
-using Corsinvest.ProxmoxVE.Api;
-using MongoDB.Bson;
-using MongoDB.Driver;
-using WebApi.Models;
+﻿using MongoDB.Driver;
+using WebApi.Model.AuthModels;
+using WebApi.Model.LabModels;
+using WebApi.Model.VirtualMachineModels;
 
 
 namespace WebApi.Services;

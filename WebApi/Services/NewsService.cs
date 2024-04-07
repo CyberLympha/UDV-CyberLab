@@ -1,6 +1,5 @@
-﻿using Corsinvest.ProxmoxVE.Api;
-using MongoDB.Driver;
-using WebApi.Models;
+﻿using MongoDB.Driver;
+using WebApi.Model.NewsModel;
 
 namespace WebApi.Services;
 
