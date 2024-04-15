@@ -3,7 +3,8 @@ import {
     RegistrationRequest,
     User,
     LoginRequest,
-    News, Lab, VmQemuAgentNetworkGetInterfaces, LabReservation, CreateLabReservationRequest, UpdateLabReservationRequest
+    News, Test, Lab, VmQemuAgentNetworkGetInterfaces,
+    LabReservation, CreateLabReservationRequest, UpdateLabReservationRequest, Question
 } from "../../api";
 
 import {HttpClient} from "./httpClient";
@@ -14,6 +15,35 @@ export class ApiService {
 
     constructor(httpClient: HttpClient) {
         this.httpClient = httpClient
+    }
+
+    public getTests() {
+        return this.httpClient.get<Test[]>('/tests')
+    }
+
+    public getTest(testId: string) {
+        return this.httpClient.get<Test>(`/tests/${testId}`)
+    }
+
+    public postTest(request: Test) {
+        return this.httpClient.post<Test, {
+            id: string,
+            name: string,
+            description: string,
+            questions: string[]
+        }>('/tests', request)
+    }
+
+    public getQuestions() {
+        return this.httpClient.get<Question[]>(`/Questions`)
+    }
+
+    public getQuestion(questionId: string) {
+        return this.httpClient.get<Question>(`/Questions/${questionId}`)
+    }
+
+    public deleteQuestion(questionId: string) {
+        return this.httpClient.delete<string>(`/Questions/delete/${questionId}`)
     }
 
     public login(request: LoginRequest) {
@@ -38,7 +68,6 @@ export class ApiService {
 
     public getLabs() {
         return this.httpClient.get<Lab[]>('/labs/get')
-
     }
 
     public setPassword(vmid: number, username: string, password: string, ssh: string) {

@@ -3,6 +3,8 @@ using System.Text.Json.Serialization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
+using WebApi.Model.QuestionModels;
+using WebApi.Model.TestModels;
 using WebApi.Models;
 using WebApi.Services;
 
@@ -20,6 +22,10 @@ builder.Services.AddSingleton(new MongoClient("mongodb://localhost:27017").GetDa
     .GetCollection<LabEntity>("labsEntity"));
 builder.Services.AddSingleton(new MongoClient("mongodb://localhost:27017").GetDatabase("rtf-db")
     .GetCollection<LabReservation>("labReservations"));
+builder.Services.AddSingleton(new MongoClient("mongodb://localhost:27017").GetDatabase("rtf-db")
+    .GetCollection<Test>("tests"));
+builder.Services.AddSingleton(new MongoClient("mongodb://localhost:27017").GetDatabase("rtf-db")
+    .GetCollection<Question>("questions"));
 
 builder.Services.AddSingleton<VmService>();
 builder.Services.AddSingleton<UserService>();
@@ -28,6 +34,9 @@ builder.Services.AddSingleton<ProxmoxService>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<LabsService>();
 builder.Services.AddSingleton<LabReservationsService>();
+builder.Services.AddSingleton<TestsService>();
+builder.Services.AddSingleton<QuestionsService>();
+builder.Services.AddSingleton<QuestionValidationService>();
 
 builder.Services.AddCors(p => p.AddPolicy("AllowAll",
     b => { b.WithOrigins("http://10.40.229.60:3000","http://localhost:5173").AllowAnyMethod().AllowAnyHeader().AllowCredentials(); }));

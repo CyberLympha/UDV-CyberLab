@@ -31,9 +31,10 @@ namespace WebApi.Controllers
             {
                 Email = request.Email,
                 Password = passwordHash,
-                Role = UserRole.User,
+                Role = UserRole.Admin,
                 FirstName = request.FirstName,
                 SecondName = request.SecondName,
+                IsApproved = true,
             };
             try
             {

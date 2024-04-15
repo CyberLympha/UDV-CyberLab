@@ -1,3 +1,19 @@
+export interface Test {
+  id: string;
+  name: string;
+  description: string;
+  questions: string[];
+}
+
+export interface Question {
+  id: string;
+  text: string;
+  description: string;
+  questionType: string;
+  correctAnswer: string;
+  questionData: string[];
+}
+
 export interface BalloonInfoInt {
   /** @format int64 */
   actual?: number;

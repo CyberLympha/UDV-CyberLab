@@ -7,7 +7,9 @@ export class HttpClient {
     private client: AxiosInstance;
 
     constructor() {
-        this.client = axios.create({baseURL: "http://10.40.229.60:5220/api/", withCredentials: true});
+        // this.client = axios.create({baseURL: "http://10.40.229.60:5220/api/", withCredentials: true});
+        this.client = axios.create({baseURL: "https://localhost:44360/api/", withCredentials: true});
+
         this.client.interceptors.request.use(
             config => {
                 config.headers['Authorization'] = `Bearer ${localStorage.getItem('access_token')}`;

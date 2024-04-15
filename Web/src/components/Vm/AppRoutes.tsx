@@ -10,6 +10,7 @@ import { NewsAdd } from "../NewsAdd/NewsAdd";
 import {NewsEdit} from "../NewsEdit/NewsEdit";
 import {Admin} from "../Admin/Admin";
 import {LabSchedule} from "../LabSchedule/LabSchedule";
+import {Tests} from "../Tests/Tests";
 
 
 const Protected = observer(({children}: { children: JSX.Element }) => {
@@ -32,6 +33,7 @@ export function AppRoutes() {
                 <Route path={"/labs/:labId/:id"} element={<Protected><Lab/></Protected>}/>
                 <Route path={"/admin"} element={<Protected><Admin/></Protected>}/>
                 <Route path={"/schedule"} element={<Protected><LabSchedule/></Protected>}/>
+                <Route path={"/tests"} element={<Protected><Tests/></Protected>}/>
                 <Route path="*" element={<Navigate to={"/news"} replace/>}/>
             </Route>
 
