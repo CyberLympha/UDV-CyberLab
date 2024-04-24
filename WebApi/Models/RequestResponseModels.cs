@@ -73,3 +73,57 @@ public class UpdateLabReservationRequest
     [Required] public Lab Lab { get; set; } = null!;
     [Required] public string CurrentUserId { get; set; } = null!;
 }
+
+public class CreateLabWorkRequest
+{
+    /// <summary>
+    /// The id of the virtual machine that is template for the machine for the user to do the lab work
+    /// </summary>
+    [Required]
+    public required string VmId { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the title of the laboratory work.
+    /// </summary>
+    [Required]
+    public required string Title { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the short description of the laboratory work.
+    /// </summary>
+    [Required]
+    public required string ShortDescription { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the detailed description of the laboratory work.
+    /// </summary>
+    [Required]
+    public required string Description { get; set; }
+}
+
+public record UpdateLabWorkRequest
+{
+    /// <summary>
+    /// The id of the virtual machine that is template for the machine for the user to do the lab work
+    /// </summary>
+    [Required]
+    public required string VmId { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the title of the laboratory work.
+    /// </summary>
+    [Required]
+    public required string Title { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the short description of the laboratory work.
+    /// </summary>
+    [Required]
+    public required string ShortDescription { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the detailed description of the laboratory work.
+    /// </summary>
+    [Required]
+    public required string Description { get; set; }
+}
