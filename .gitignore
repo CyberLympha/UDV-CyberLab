@@ -70,6 +70,7 @@ LICENSE
 README.md
 *.idea
 *.sln.DotSettings.user
+*.DotSettings.user
 
 # Docker
 Dockerfile
