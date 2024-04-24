@@ -100,6 +100,21 @@ public class VirtualDesktopService
         return StopWebsocketProxy(vmId) && hasStoppedVm;
     }
 
+    /// <summary>
+    /// Retrieves a url to connect to websocket proxy.
+    /// </summary>
+    /// <param name="userId">The ID of the user that starting vm.</param>
+    /// <param name="protocol">Current client protocol.</param>
+    /// <returns>The url to connect to websocket proxy.</returns>
+    public async Task<string> BuildWebsocketProxyUrl(string userId, string protocol)
+    {
+        var user = await userService.GetAsyncById(userId);
+        var vm = await vmService.GetByIdAsync(user.VmId);
+        var prefix = protocol == "https:" ? "wss" : "ws";
+        
+        return $"{prefix}://{BuildWebsocketProxyHostAddress(vm.VmId.ToString())}/{websocketProxySettings.Path}";
+    }
+    
     private async Task<bool> StartWebsocketProxy(string vmId)
     {
         if (!await proxmoxService.IsVncExists(vmId))
@@ -107,8 +122,13 @@ public class VirtualDesktopService
                 return false;
 
         return websocketProxyService.Start(
-            $"{websocketProxySettings.WebsocketHost}:{int.Parse(vmId)}",
+            $"{BuildWebsocketProxyHostAddress(vmId)}",
             $"{proxmoxService.HostAddress}:{websocketProxySettings.ProxmoxVncStartingPort + int.Parse(vmId)}");
+    }
+    
+    private string BuildWebsocketProxyHostAddress(string vmId)
+    {
+        return $"{websocketProxySettings.WebsocketHost}:{int.Parse(vmId)}";
     }
 
     private bool StopWebsocketProxy(string vmId)
