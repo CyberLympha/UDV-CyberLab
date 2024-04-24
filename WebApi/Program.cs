@@ -39,7 +39,8 @@ builder.Services.AddSingleton<VirtualDesktopService, VirtualDesktopService>();
 builder.Services.AddSingleton<WebsocketProxySettings, WebsocketProxySettings>(x => new WebsocketProxySettings()
     {
         WebsocketHost = builder.Configuration["WebsocketProxy:WebsocketHost"],
-        ProxmoxVncStartingPort = int.Parse(builder.Configuration["WebsocketProxy:ProxmoxVncStartingPort"])
+        ProxmoxVncStartingPort = int.Parse(builder.Configuration["WebsocketProxy:ProxmoxVncStartingPort"]),
+        Path = builder.Configuration["WebsocketProxy:Path"],
     });
 
 builder.Services.AddCors(p => p.AddPolicy("AllowAll",
