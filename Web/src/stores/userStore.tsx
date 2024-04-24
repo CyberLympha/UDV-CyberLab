@@ -24,6 +24,10 @@ export class UserStore {
         this.user!.labs = lab;
     }
 
+    setVmId = (vmId: string) =>{
+        this.user!.vmId = vmId;
+    }
+
     deleteUser = () => {
         this.user = null;
 
