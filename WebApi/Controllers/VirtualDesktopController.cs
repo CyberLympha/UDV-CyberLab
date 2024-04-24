@@ -51,4 +51,20 @@ public class VirtualDesktopController : ControllerBase
 
         return Ok(res);
     }
+    
+    /// <summary>
+    /// Retrieves a url to connect to websocket proxy.
+    /// </summary>
+    /// <param name="userId">The ID of the user that starting vm.</param>
+    /// <param name="protocol">Current client protocol.</param>
+    /// <returns>An action result containing the url to connect to websocket proxy.</returns>
+    [HttpGet("websocket-url/{userId}/{protocol}", Name = nameof(GetWebsocketUrl))]
+    [Produces("application/json", "application/xml")]
+    [ProducesResponseType(typeof(string), 200)]
+    public async Task<IActionResult> GetWebsocketUrl([FromRoute] string userId, [FromRoute] string protocol)
+    {
+        var res = await virtualDesktopService.BuildWebsocketProxyUrl(userId, protocol);
+
+        return Ok(res);
+    }
 }
