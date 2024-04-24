@@ -18,4 +18,10 @@ public record WebsocketProxySettings
     /// </summary>
     [Required]
     public required int ProxmoxVncStartingPort { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the websocket url path.
+    /// </summary>
+    [Required]
+    public required string Path { get; set; }
 }
