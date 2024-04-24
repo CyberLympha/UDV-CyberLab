@@ -2,6 +2,23 @@
   "_id": {
     "$oid": "659aa2c90aebec86bca61f16"
   },
-  "VmId": 123,
-  "Name": "VM1"
+  "VmId": 100,
+  "Name": "first",
+  "LabWorkId": "6629247cf862108e585f2a59"
+},
+{
+  "_id": {
+    "$oid": "662929992aa05f30ba2ea57c"
+  },
+  "VmId": 200,
+  "Name": "200",
+  "LabWorkId": "6629247cf862108e585f2a59"
+},
+{
+  "_id": {
+    "$oid": "66292f8343226c0a540915c5"
+  },
+  "VmId": 101,
+  "Name": "101",
+  "LabWorkId": "6629247cf862108e585f2a59"
 }]
