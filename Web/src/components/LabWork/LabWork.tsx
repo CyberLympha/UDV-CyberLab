@@ -61,18 +61,6 @@ export function LabWorkPage() {
             return;
         }
         const response = await apiService.startVirtualDesktop(userId, labWorkId!);
-        if (!userStore.user?.vmId){
-            userStore.setVmId("");
-        }
-        if (!userStore.user?.vmId){
-            setIsLoading(false);
-            return;
-        }
-        const vmIdResponse = await apiService.getVmId(userStore.user?.vmId);
-        if (vmIdResponse instanceof Error) {
-            setIsLoading(false);
-            return;
-        }
         if (response instanceof Error) {
             setIsLoading(false);
             return;
@@ -96,6 +84,14 @@ export function LabWorkPage() {
             isClosable: true,
             position: "top"
         })
+
+        const responseWebsocketUrl = await apiService.getWebsocketUrl(userId, labWorkId!);
+        if (responseWebsocketUrl instanceof Error) {
+            setIsLoading(false);
+            //TODO
+            return;
+        }
+        localStorage.setItem('websocketUrl', responseWebsocketUrl);
         setIsLoading(false);
         setLabStarted(true);
     }
