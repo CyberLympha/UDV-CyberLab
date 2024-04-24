@@ -8,9 +8,10 @@
 
     <ItemGroup>
         <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
-        <PackageReference Include="Corsinvest.ProxmoxVE.Api" Version="7.4.1" />
-        <PackageReference Include="Corsinvest.ProxmoxVE.Api.Metadata" Version="7.4.1" />
-        <PackageReference Include="Corsinvest.ProxmoxVE.Api.Shared" Version="7.4.1" />
+        <PackageReference Include="Corsinvest.ProxmoxVE.Api" Version="8.1.6" />
+        <PackageReference Include="Corsinvest.ProxmoxVE.Api.Extension" Version="8.1.6" />
+        <PackageReference Include="Corsinvest.ProxmoxVE.Api.Metadata" Version="8.1.6" />
+        <PackageReference Include="Corsinvest.ProxmoxVE.Api.Shared" Version="8.1.6" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.4" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.6" />
@@ -18,6 +19,10 @@
         <PackageReference Include="MongoDB.Driver" Version="2.19.1" />
         <PackageReference Include="MongoDB.Driver.Core" Version="2.19.1" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Repositories\" />
     </ItemGroup>
 
 </Project>
