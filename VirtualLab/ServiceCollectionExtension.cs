@@ -27,7 +27,7 @@ public static class ServiceCollectionExtension
     {
         var client = new PveClient("10.40.229.10");
         //todo: в будущем реализовать класс, который будет брать из переменных окружения токен.
-        client.ApiToken = "";
+        client.ApiToken = "root@pam!devil=267a9777-68d0-42d1-b1e7-8b73007a0998";
 
         services.AddSingleton<INetworkService, Proxmox>();
         services.AddSingleton<IVmService, Proxmox>();

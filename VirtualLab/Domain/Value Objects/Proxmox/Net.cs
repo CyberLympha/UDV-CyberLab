@@ -3,14 +3,19 @@ namespace VirtualLab.Domain.Value_Objects.Proxmox;
 // todo: сделать лучше
 public class Net
 {
-    private int _number;
-    private string _value;
-    public KeyValuePair<int, string> Get => new(_number, _value);
+    private Dictionary<string, string> Parameters { get; set; } = new();
 
-    // по сути можно заюзать паттерн builder, в потенциале, если запросы будут более сложные.
-    public Net(string model, string bridge, int number)
+    
+    // todo: пока что максимально простая реализация, потом допилить.
+    public Net(string model, string bridge)
     {
-        _number = number;
-        _value = $"model={model},bridge={bridge}";
+        Parameters.Add("model", model);
+        Parameters.Add("bridge", bridge);
     }
+    
+    
+    
+    public string this[string index] => Parameters[index];
+    public string GetFull => string.Join(",", Parameters.Select(x => $"{x.Key}={x.Value}"));
+    public string Bridge => Parameters["bridge"];
 }

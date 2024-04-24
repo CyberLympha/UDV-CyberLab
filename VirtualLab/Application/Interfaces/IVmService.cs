@@ -1,6 +1,7 @@
 using FluentResults;
 using VirtualLab.Domain.Value_Objects;
 using VirtualLab.Domain.Value_Objects.Proxmox;
+using VirtualLab.Domain.Value_Objects.Proxmox.Requests;
 
 namespace VirtualLab.Application.Interfaces;
 
@@ -9,13 +10,13 @@ namespace VirtualLab.Application.Interfaces;
 public interface IVmService
 {
     // 1
-    public Task<Result> Clone(CloneVmTemplate vmTemplate, string node);
+    public Task<Result> Clone(CloneRequest request, string node);
     
     // 4 поставить другой интерфейс
-    public Task<Result> ChangeDeviceInterface(ChangeInterfaceForVm request);
+    public Task<Result> UpdateDeviceInterface(UpdateInterfaceForVm request);
     
     // 5 запуск машни
     public Task<Result> StartVm(LaunchVm request);
-    public Task<Result> GetIp(long id); // получим ли мы только ip, пока хз
+    public Task<Result> GetIp(string node, int qemu); // получим ли мы только ip, пока хз
 }
 

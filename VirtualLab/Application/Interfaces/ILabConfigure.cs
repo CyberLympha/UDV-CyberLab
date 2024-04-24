@@ -8,5 +8,5 @@ namespace VirtualLab.Application.Interfaces;
 public interface ILabConfigureGenerate
 {
    
-    public Task<Result<LabNodeConfig>> GenerateLabConfig(Guid labId);
+    public Task<Result<LabCreateRequest>> GenerateLabConfig(Guid labId);
 }

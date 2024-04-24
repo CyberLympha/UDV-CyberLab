@@ -2,75 +2,98 @@ using FluentResults;
 using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Value_Objects;
 using VirtualLab.Domain.Value_Objects.Proxmox;
+using VirtualLab.Domain.Value_Objects.Proxmox.Requests;
+using Vostok.Logging.Abstractions;
 
 namespace VirtualLab.Application;
 
 // название мне так же не очень нравятится. но суть в том, что это класс отвечает за создание лабы и предоставление её пользователю, кароче работает с proxomx и только.
 
-public class LabVmManagementService : ILabVmManagementService {
+public class LabVmManagementService : ILabVmManagementService
+{
     private readonly IVmService _vm;
     private readonly INetworkService _networkDevice;
-
-    public LabVmManagementService(IVmService vm, INetworkService networkDevice)
+    private readonly ILog _log;
+    public LabVmManagementService(IVmService vm, INetworkService networkDevice, ILog log)
     {
         _vm = vm;
         _networkDevice = networkDevice;
+        log.ForContext("LabVmManagment");
+        _log = log;
     }
 
 
-    public async Task<Result<LabEntryPoint>> CreateLab(LabNodeConfig labNodeConfig)
+    public async Task<Result<LabEntryPoint>> CreateLab(LabCreateRequest labCreateRequest)
     {
-        await _networkDevice.Create(new CreateInterface());
-        await _networkDevice.Apply(labNodeConfig.Node);
-     
-        foreach (var cloneVmTemplate in labNodeConfig.CloneVmTemplates)
+        var response = await CreateInterfaces(labCreateRequest);
+        if (response.IsFailed)
         {
-            await CreateVmByTemplate(cloneVmTemplate, labNodeConfig.Nets, labNodeConfig.Node);
+            _log.Error($"create interface occured with errors:{response.Reasons}"); //todo: сделать так везде.
+            return response;
         }
         
-        //_vm.GetIp();
+
+        response = await _networkDevice.Apply(labCreateRequest.Node);
+        if (response.IsFailed) return response;
+        
+
+        foreach (var cloneVmTemplate in labCreateRequest.ClonesRequest)
+        {
+            response = await CreateVmByTemplate(cloneVmTemplate, labCreateRequest.Nets, labCreateRequest.Node);
+            if (response.IsFailed) return response;
+        }
+
+        
+        foreach (var template in labCreateRequest.ClonesRequest)
+        {
+            if (template.Template.WithVmbr0)
+            {
+                response = await _vm.GetIp(labCreateRequest.Node, template.NewId);
+                
+            }
+        }
+        
 
         throw new NotImplementedException();
+    }
+
+    private async Task<Result> CreateInterfaces(LabCreateRequest labCreateRequest)
+    {
+        foreach (var net in labCreateRequest.Nets)
+        {
+            var response = await _networkDevice.CreateInterface(new CreateInterface
+            {
+                Node = labCreateRequest.Node,
+                Type = "Bridge",
+                IFace = net.Bridge
+            });
+            if (response.IsFailed) return response;
+        }
+
+        return Result.Ok();
     }
 
     // меня напрягает здесь node, как вообще будет работать node
-    private async Task CreateVmByTemplate(CloneVmTemplate cloneVmTemplate, NetCollection nets, string node)
+    private async Task<Result> CreateVmByTemplate(CloneRequest cloneRequest, NetCollection nets, string node)
     {
-        await _vm.Clone(cloneVmTemplate, node);
-
-        await _vm.ChangeDeviceInterface(new ChangeInterfaceForVm()
+        var response = await _vm.Clone(cloneRequest, node);
+        if (response.IsFailed) return response;
+        // todo: refactoring in future
+        response = await _vm.UpdateDeviceInterface(new UpdateInterfaceForVm()
         {
             Node = node,
-            Qemu = cloneVmTemplate.NewId,
+            Qemu = cloneRequest.NewId,
             Nets = nets
         });
+        if (response.IsFailed) return response;
 
-
-        await _vm.StartVm(new LaunchVm()
+        response = await _vm.StartVm(new LaunchVm()
         {
             Node = node,
-            Qemu = cloneVmTemplate.NewId
+            Qemu = cloneRequest.NewId
         });
-    }
-    
-    // просто есть. метод бесполезный и не нужный.
-    public Task<Result<LabEntryPoint>> CreateVmWithLab(CloneVmTemplate cloneVmTemplate, string node)
-    {
-        _vm.Clone(cloneVmTemplate, node);
+        if (response.IsFailed) return response;
 
-        //_network.CreateNetworkDevice();
-        _networkDevice.Apply(node);
-
-        //_vm.ChangeInterface();
-
-
-        _vm.StartVm(new LaunchVm()
-        {
-            Node = node, Qemu = cloneVmTemplate.NewId
-        }); // todo: можно заюзать implicate метод в LaunchVm.
-
-        //_vm.GetIp()
-
-        throw new NotImplementedException();
+        return Result.Ok();
     }
 }

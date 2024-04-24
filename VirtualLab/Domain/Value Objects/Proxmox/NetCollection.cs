@@ -2,25 +2,25 @@ using System.Collections;
 
 namespace VirtualLab.Domain.Value_Objects.Proxmox;
 
-public class NetCollection : IEnumerable<KeyValuePair<int, string>>
+public class NetCollection : IEnumerable<Net>
 {
-    private int CountNet;
-    private readonly List<Net> _nets = new();
-    public IReadOnlyDictionary<int, string> Get => _nets.ToDictionary(n => n.Get.Key, n => n.Get.Value);
+    private readonly Dictionary<int, Net> _nets = new();
+    public int Count => _nets.Count;
+    public IReadOnlyDictionary<int, string> Value => _nets.ToDictionary(x => x.Key, x => x.Value.GetFull);
 
-    public void Add(string model, string bridge)
+    public void Add(NetSettings netSettings)
     {
-        var net = new Net(model, bridge, ++CountNet);
+        var net = new Net(netSettings.Model, netSettings.Bridge);
 
-        _nets.Add(net);
+        _nets.Add(Count, net);
     }
 
 
-    public IEnumerator<KeyValuePair<int, string>> GetEnumerator()
+    public IEnumerator<Net> GetEnumerator()
     {
-        foreach (var net in _nets)
+        for (var i = 0; i < _nets.Count; i++)
         {
-            yield return net.Get;
+            yield return _nets[i];
         }
     }
 

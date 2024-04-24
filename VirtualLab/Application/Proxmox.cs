@@ -1,8 +1,11 @@
 using Corsinvest.ProxmoxVE.Api;
+using FluentResults;
 using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Value_Objects;
 using VirtualLab.Domain.Value_Objects.Proxmox;
+using VirtualLab.Domain.Value_Objects.Proxmox.Requests;
 using VirtualLab.Infrastructure;
+using VirtualLab.Infrastructure.Extensions;
 using Vostok.Logging.Abstractions;
 using Result = FluentResults.Result;
 
@@ -12,74 +15,85 @@ public class Proxmox : IVmService, INetworkService // кажется в итог
 {
     private readonly PveClient _client;
     private ILog _log;
+
     public Proxmox(PveClient client, ILog log)
     {
         _client = client;
         _log = log;
     }
 
-    // сначала клонируем
-    public async Task<Result> Clone(CloneVmTemplate vmTemplate, string node)
+    public async Task<Result> Clone(CloneRequest request, string node)
     {
-        var result = await _client.Nodes[node].Qemu[vmTemplate.VmIdTemplate].Clone.CloneVm(vmTemplate.NewId);
+        var result = await _client.Nodes[node].Qemu[request.Template.Id].Clone.CloneVm(request.NewId);
 
-        return result.ResponseInError
-            ? Result.Fail(ApiResultError.GenerateTemplateCloneFailure(result.GetError()))
-            : Result.Ok();
+
+        return result.Match(
+            Result.Ok,
+            ApiResultError.GenerateTemplateCloneFailure,
+            ApiResultError.GenerateTemplateCloneFailure);
     }
 
-    // возможно будет 2
     public Task<Result> GetAllNetworks(string node)
     {
         throw new NotImplementedException();
     }
 
-    // создаём новый интерйес 3
-    public async Task<Result> Create(CreateInterface request)
+    public async Task<Result> CreateInterface(CreateInterface request)
     {
         var result = await _client.Nodes[request.Node].Network.CreateNetwork(request.IFace, request.Type);
-        _log.Info($"inteface created {request}");
         
-        return result.ResponseInError
-            ? Result.Fail(ApiResultError.NetworkCreateError(result.GetError(), request.Node))
-            : Result.Ok();
+        return result.Match(
+            Result.Ok,
+            reasonPhrases => ApiResultError.NetworkCreateError(reasonPhrases, request.Node),
+            errors => ApiResultError.NetworkCreateError(errors, request.Node)
+        );
     }
 
-    // подтвержаем его 4
     public async Task<Result> Apply(string node)
     {
         var result = await _client.Nodes[node].Network.ReloadNetworkConfig();
 
-        return result.ResponseInError
-            ? Result.Fail(ApiResultError.NetworkApplyError(result.GetError(), node))
-            : Result.Ok();
+        return result.Match(
+            Result.Ok, 
+            reasonPhrases => ApiResultError.NetworkApplyError(reasonPhrases, node),
+            errors => ApiResultError.NetworkApplyError(errors, node)
+        );
     }
 
-    // меняем интефейс у клонов templeta на новый интерфейс. 5
-    public async Task<Result> ChangeDeviceInterface(ChangeInterfaceForVm request)
+    public async Task<Result> UpdateDeviceInterface(UpdateInterfaceForVm request)
     {
-        var nets = new Dictionary<int, string>(request.Nets);
+        var nets = new Dictionary<int, string>(request.Nets.Value);
         var result = await _client.Nodes[request.Node].Qemu[request.Qemu].Config.UpdateVmAsync(netN: nets);
 
-        return result.ResponseInError
-            ? Result.Fail(ApiResultError.ChangeIntefaceFailure(result.GetError(), request))
-            : Result.Ok();
+       
+        return result.Match(
+            Result.Ok, 
+            reasonPhrases => ApiResultError.ChangeIntefaceFailure(reasonPhrases, request),
+            errors => ApiResultError.ChangeIntefaceFailure(errors, request)
+        );
     }
-
-
-    // запускаем эти машины 6
+    
     public async Task<Result> StartVm(LaunchVm request)
     {
         var result = await _client.Nodes[request.Node].Qemu[request.Qemu].Status.Start.VmStart();
 
-        return result.ResponseInError
-            ? Result.Fail(ApiResultError.VmStartFailure(result.GetError(), request))
-            : Result.Ok();
+        return result.Match(
+            Result.Ok, // todo возможно, что данные в какой node ошибка прописываеется в ответе от proxmox.
+            reasonPhrases => ApiResultError.VmStartFailure(reasonPhrases, request), 
+            errors => ApiResultError.VmStartFailure(errors, request)
+        );
     }
 
 
-    public Task<Result> GetIp(long id)
+
+    public async Task<Result> GetIp(string node, int qemu)
     {
+        var result = await _client.Nodes[node].Qemu[qemu].Agent.NetworkGetInterfaces.NetworkGetInterfaces();
+
+        if (!result.IsSuccessStatusCode) return Result.Fail(result.ReasonPhrase);
+        var interfaces = result.Response[0]["name"];
+        //todo: доделать
+
         throw new NotImplementedException();
     }
 }

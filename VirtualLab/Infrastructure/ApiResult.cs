@@ -12,8 +12,8 @@ public class ApiResultError
     public static string GenerateTemplateCloneFailure(string error) => $"Clone Not Make Because: {error}";
     public static string VmStartFailure(string error, LaunchVm request) => $"vm {request} not start Because {error}";
 
-    public static string ChangeIntefaceFailure(string error, ChangeInterfaceForVm changeInterfaceForVm) =>
-        $"vm {changeInterfaceForVm}, not changed because: {error}";
+    public static string ChangeIntefaceFailure(string error, UpdateInterfaceForVm updateInterfaceForVm) =>
+        $"vm {updateInterfaceForVm}, not changed because: {error}";
     
     // это ошибки связанные с Network
     public static string NetworkApplyError(string error, string node) => $"Node: {node} not applied because: {error}";

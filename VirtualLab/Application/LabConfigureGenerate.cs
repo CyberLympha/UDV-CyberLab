@@ -3,6 +3,7 @@ using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Interfaces.Repositories;
 using VirtualLab.Domain.Value_Objects;
 using VirtualLab.Domain.Value_Objects.Proxmox;
+using VirtualLab.Domain.Value_Objects.Proxmox.Requests;
 using Vostok.Logging.Abstractions;
 
 namespace VirtualLab.Application;
@@ -19,30 +20,45 @@ public class LabConfigureGenerate : ILabConfigureGenerate
         _log = log;
     }
 
-    public async Task<Result<LabNodeConfig>> GenerateLabConfig(Guid labId)
+    public async Task<Result<LabCreateRequest>> GenerateLabConfig(Guid labId)
     {
         var lab = await _labs.Get(labId);
         if (lab.IsFailed)
         {
             return Result.Fail(lab.Errors);
         }
-
-
+        
         var nets = new NetCollection();
-        nets.Add("virtio", "vmbr4");
-        var labConfig = new LabNodeConfig()
+        nets.Add(new NetSettings
         {
-            Node = "1",
-            CloneVmTemplates = new List<CloneVmTemplate>()
+            Bridge = "vmbr4",
+            Model = "Virtio"
+        });
+        var labConfig = new LabCreateRequest()
+        {
+            Node = "pve",
+            ClonesRequest = new List<CloneRequest>()
             {
                 new()
                 {
-                    VmIdTemplate = 200,
+                    Template = new Template()
+                    {
+                        WithVmbr0 = true,
+                        Id = 200,
+                        Name = "test",
+                        Password = "test"
+                    },
                     NewId = 500,
                 },
                 new()
                 {
-                    VmIdTemplate = 201,
+                    Template = new Template()
+                    {
+                        WithVmbr0 = false,
+                        Id = 201,
+                        Name = "test",
+                        Password = "test"
+                    },
                     NewId = 501,
                 }
             },
