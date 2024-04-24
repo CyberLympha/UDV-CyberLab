@@ -41,22 +41,22 @@ public class LabsService
         };
         Vm ubuntu = new Vm()
         {
-            Vmid = (int)(count + 1),
+            VmId = (int)(count + 1),
             Name = "ubuntu",
         };
         Vm kali = new Vm()
         {
-            Vmid = (int)(count + 2),
+            VmId = (int)(count + 2),
             Name = "kali",
         };
         Vm xp = new Vm()
         {
-            Vmid = (int)(count + 3),
+            VmId = (int)(count + 3),
             Name = "xp",
         };
         Vm router = new Vm()
         {
-            Vmid = (int)(count + 4),
+            VmId = (int)(count + 4),
             Name = "router",
         };
         try
