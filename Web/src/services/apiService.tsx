@@ -3,7 +3,8 @@ import {
     RegistrationRequest,
     User,
     LoginRequest,
-    News, Lab, VmQemuAgentNetworkGetInterfaces, LabReservation, CreateLabReservationRequest, UpdateLabReservationRequest
+    News, Lab, VmQemuAgentNetworkGetInterfaces, LabReservation, CreateLabReservationRequest, UpdateLabReservationRequest,
+    LabWork
 } from "../../api";
 
 import {HttpClient} from "./httpClient";
@@ -123,5 +124,29 @@ export class ApiService {
 
     public deleteLabReservation(reservationId: string, userId: string) {
         return this.httpClient.delete<string>(`/schedule/delete/${reservationId}/${userId}`)
+    }
+
+    public startVirtualDesktop(userId: string, labWorkId: string) {
+        return this.httpClient.post<string, boolean>(`/virtual-desktop/start/${userId}/${labWorkId}`, "")
+    }
+
+    public stopVirtualDesktop(userId: string) {
+        return this.httpClient.post<string, boolean>(`/virtual-desktop/stop/${userId}`, "")
+    }
+
+    public getLabWorks() {
+        return this.httpClient.get<LabWork[]>('/lab-works/get')
+    }
+
+    public getLabWork(labWorkId: string) {
+        return this.httpClient.get<LabWork>(`/lab-works/get/${labWorkId}`)
+    }
+
+    public createLabWork(id: string) {
+        return this.httpClient.post<{ id: string }, string>('/lab-works/create', {id})
+    }
+
+    public getVmId(vmId: string) {
+        return this.httpClient.get<string>(`/vm/get-vmId/${vmId}`)
     }
 }
