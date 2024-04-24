@@ -105,6 +105,15 @@ export interface Lab {
   labsEntitys?: string[];
 }
 
+export interface LabWork {
+  /** @minLength 1 */
+  id: string;
+  vmId: string;
+  title?: string;
+  shortDescription?: string;
+  description?: string;
+}
+
 export interface LoginRequest {
   /** @minLength 1 */
   email: string;
@@ -246,6 +255,7 @@ export interface User {
   /** @minLength 1 */
   labs: string;
   isApproved: boolean;
+  vmId: string;
 }
 
 export enum UserRole {
