@@ -146,7 +146,7 @@ export class ApiService {
         return this.httpClient.post<{ id: string }, string>('/lab-works/create', {id})
     }
 
-    public getVmId(vmId: string) {
-        return this.httpClient.get<string>(`/vm/get-vmId/${vmId}`)
+    public getWebsocketUrl(userId: string, protocol: string) {
+        return this.httpClient.get<string>(`/virtual-desktop/websocket-url/${userId}/${protocol}`)
     }
 }
