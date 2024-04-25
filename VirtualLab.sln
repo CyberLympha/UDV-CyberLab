@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualLab", "VirtualLab\VirtualLab.csproj", "{311E62B5-A115-48C4-851E-0F27AD6241F2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authorization", "Authorization\Authorization.csproj", "{1C2F91D6-3701-4681-A72A-9FA5F9276CCC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{311E62B5-A115-48C4-851E-0F27AD6241F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{311E62B5-A115-48C4-851E-0F27AD6241F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{311E62B5-A115-48C4-851E-0F27AD6241F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C2F91D6-3701-4681-A72A-9FA5F9276CCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C2F91D6-3701-4681-A72A-9FA5F9276CCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C2F91D6-3701-4681-A72A-9FA5F9276CCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C2F91D6-3701-4681-A72A-9FA5F9276CCC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
