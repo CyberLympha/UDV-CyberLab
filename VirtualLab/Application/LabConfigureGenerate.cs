@@ -31,7 +31,7 @@ public class LabConfigureGenerate : ILabConfigureGenerate
         var nets = new NetCollection();
         nets.Add(new NetSettings
         {
-            Bridge = "vmbr4",
+            Bridge = "vmbr10",
             Model = "virtio"
         });
         var labConfig = new LabCreateRequest()
@@ -44,7 +44,7 @@ public class LabConfigureGenerate : ILabConfigureGenerate
                     Template = new Template()
                     {
                         WithVmbr0 = true,
-                        Id = 200,
+                        Id = 104,
                         Name = "test",
                         Password = "test"
                     },
@@ -55,7 +55,7 @@ public class LabConfigureGenerate : ILabConfigureGenerate
                     Template = new Template()
                     {
                         WithVmbr0 = false,
-                        Id = 201,
+                        Id = 105,
                         Name = "test",
                         Password = "test"
                     },

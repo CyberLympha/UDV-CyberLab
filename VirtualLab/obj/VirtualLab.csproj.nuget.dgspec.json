@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\VOISTINU\\RiderProjects\\ProxmoxApi\\VirtualLab\\VirtualLab.csproj": {}
+    "C:\\Users\\А\\RiderProjects\\UDV-CyberLab\\VirtualLab\\VirtualLab.csproj": {}
   },
   "projects": {
-    "C:\\Users\\VOISTINU\\RiderProjects\\ProxmoxApi\\VirtualLab\\VirtualLab.csproj": {
+    "C:\\Users\\А\\RiderProjects\\UDV-CyberLab\\VirtualLab\\VirtualLab.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\VOISTINU\\RiderProjects\\ProxmoxApi\\VirtualLab\\VirtualLab.csproj",
+        "projectUniqueName": "C:\\Users\\А\\RiderProjects\\UDV-CyberLab\\VirtualLab\\VirtualLab.csproj",
         "projectName": "VirtualLab",
-        "projectPath": "C:\\Users\\VOISTINU\\RiderProjects\\ProxmoxApi\\VirtualLab\\VirtualLab.csproj",
-        "packagesPath": "C:\\Users\\VOISTINU\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\VOISTINU\\RiderProjects\\ProxmoxApi\\VirtualLab\\obj\\",
+        "projectPath": "C:\\Users\\А\\RiderProjects\\UDV-CyberLab\\VirtualLab\\VirtualLab.csproj",
+        "packagesPath": "C:\\Users\\А\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\А\\RiderProjects\\UDV-CyberLab\\VirtualLab\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\VOISTINU\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\А\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -98,7 +98,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.201/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Users\\А\\.dotnet\\sdk\\8.0.203/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

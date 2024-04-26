@@ -40,7 +40,7 @@ public class Proxmox : IVmService, INetworkService // кажется в итог
 
     public async Task<Result> CreateInterface(CreateInterface request)
     {
-        var result = await _client.Nodes[request.Node].Network.CreateNetwork(request.IFace, request.Type);
+        var result = await _client.Nodes[request.Node].Network.CreateNetwork(request.IFace, request.Type, autostart: true);
 
         return result.Match(
             Result.Ok,
@@ -92,7 +92,9 @@ public class Proxmox : IVmService, INetworkService // кажется в итог
         if (!result.IsSuccessStatusCode) return Result.Fail(result.ReasonPhrase);
 
         // todo: декомпозиция. эта часть кода явно должн быть как минум в методе, а можно и в расширений, хотяя.
+        // todo: и вообще не здесь
         var interfaces = result.Response;
+        
         foreach (var @interface in interfaces)
         {
             if (interfaces["name"] == "vmbr0")

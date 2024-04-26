@@ -72,7 +72,7 @@ public class LabVmManagementService : ILabVmManagementService
             var response = await _networkDevice.CreateInterface(new CreateInterface
             {
                 Node = labCreateRequest.Node,
-                Type = "Bridge",
+                Type = "bridge",
                 IFace = net.Bridge
             });
             if (response.IsFailed) return response;
