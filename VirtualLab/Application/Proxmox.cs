@@ -41,7 +41,7 @@ public class Proxmox : IVmService, INetworkService // кажется в итог
     public async Task<Result> CreateInterface(CreateInterface request)
     {
         var result = await _client.Nodes[request.Node].Network.CreateNetwork(request.IFace, request.Type);
-        
+
         return result.Match(
             Result.Ok,
             reasonPhrases => ApiResultError.NetworkCreateError(reasonPhrases, request.Node),
@@ -54,7 +54,7 @@ public class Proxmox : IVmService, INetworkService // кажется в итог
         var result = await _client.Nodes[node].Network.ReloadNetworkConfig();
 
         return result.Match(
-            Result.Ok, 
+            Result.Ok,
             reasonPhrases => ApiResultError.NetworkApplyError(reasonPhrases, node),
             errors => ApiResultError.NetworkApplyError(errors, node)
         );
@@ -65,35 +65,44 @@ public class Proxmox : IVmService, INetworkService // кажется в итог
         var nets = new Dictionary<int, string>(request.Nets.Value);
         var result = await _client.Nodes[request.Node].Qemu[request.Qemu].Config.UpdateVmAsync(netN: nets);
 
-       
+
         return result.Match(
-            Result.Ok, 
+            Result.Ok,
             reasonPhrases => ApiResultError.ChangeIntefaceFailure(reasonPhrases, request),
             errors => ApiResultError.ChangeIntefaceFailure(errors, request)
         );
     }
-    
+
     public async Task<Result> StartVm(LaunchVm request)
     {
         var result = await _client.Nodes[request.Node].Qemu[request.Qemu].Status.Start.VmStart();
 
         return result.Match(
             Result.Ok, // todo возможно, что данные в какой node ошибка прописываеется в ответе от proxmox.
-            reasonPhrases => ApiResultError.VmStartFailure(reasonPhrases, request), 
+            reasonPhrases => ApiResultError.VmStartFailure(reasonPhrases, request),
             errors => ApiResultError.VmStartFailure(errors, request)
         );
     }
 
 
-
-    public async Task<Result> GetIp(string node, int qemu)
+    public async Task<Result<Ip>> GetIp(string node, int qemu)
     {
         var result = await _client.Nodes[node].Qemu[qemu].Agent.NetworkGetInterfaces.NetworkGetInterfaces();
 
         if (!result.IsSuccessStatusCode) return Result.Fail(result.ReasonPhrase);
-        var interfaces = result.Response[0]["name"];
+
+        // todo: декомпозиция. эта часть кода явно должн быть как минум в методе, а можно и в расширений, хотяя.
+        var interfaces = result.Response;
+        foreach (var @interface in interfaces)
+        {
+            if (interfaces["name"] == "vmbr0")
+            {
+                var ip = interfaces["ip-addresses"]["ip-address"] as string;
+                return new Ip() { IpV4 = ip };
+            }
+        }
         //todo: доделать
 
-        throw new NotImplementedException();
+        return Result.Fail("не нашлось");
     }
 }

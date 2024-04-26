@@ -32,7 +32,7 @@ public class LabConfigureGenerate : ILabConfigureGenerate
         nets.Add(new NetSettings
         {
             Bridge = "vmbr4",
-            Model = "Virtio"
+            Model = "virtio"
         });
         var labConfig = new LabCreateRequest()
         {

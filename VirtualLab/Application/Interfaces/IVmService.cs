@@ -17,6 +17,6 @@ public interface IVmService
     
     // 5 запуск машни
     public Task<Result> StartVm(LaunchVm request);
-    public Task<Result> GetIp(string node, int qemu); // получим ли мы только ip, пока хз
+    public Task<Result<Ip>> GetIp(string node, int qemu); // получим ли мы только ip, пока хз
 }
 

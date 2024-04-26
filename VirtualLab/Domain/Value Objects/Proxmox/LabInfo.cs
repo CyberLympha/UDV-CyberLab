@@ -7,7 +7,6 @@ namespace VirtualLab.Domain.Value_Objects.Proxmox;
 public record LabCreateRequest // он record здесь мало смысла.
 {
     public string Node { get; init; } 
-    public List<CloneRequest> ClonesRequest { get;  init; }
-    public NetCollection Nets { get; init; } 
-    
+    public List<CloneRequest> ClonesRequest { get;  init; } 
+    public NetCollection Nets { get; init; } // todo: у каждого вм должны быть свой интерфейсы;
 }

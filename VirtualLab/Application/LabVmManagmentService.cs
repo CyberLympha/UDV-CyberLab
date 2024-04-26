@@ -14,6 +14,7 @@ public class LabVmManagementService : ILabVmManagementService
     private readonly IVmService _vm;
     private readonly INetworkService _networkDevice;
     private readonly ILog _log;
+
     public LabVmManagementService(IVmService vm, INetworkService networkDevice, ILog log)
     {
         _vm = vm;
@@ -31,28 +32,35 @@ public class LabVmManagementService : ILabVmManagementService
             _log.Error($"create interface occured with errors:{response.Reasons}"); //todo: сделать так везде.
             return response;
         }
-        
+
 
         response = await _networkDevice.Apply(labCreateRequest.Node);
         if (response.IsFailed) return response;
-        
 
+        //todo: то есть до этого ты сделал метод, в котором foreach, а сейчас забил?
         foreach (var cloneVmTemplate in labCreateRequest.ClonesRequest)
         {
             response = await CreateVmByTemplate(cloneVmTemplate, labCreateRequest.Nets, labCreateRequest.Node);
             if (response.IsFailed) return response;
         }
 
-        
+        //todo: максимально тупая реализация.
         foreach (var template in labCreateRequest.ClonesRequest)
         {
-            if (template.Template.WithVmbr0)
+            if (!template.Template.WithVmbr0) continue;
+
+
+            var responseIp = await _vm.GetIp(labCreateRequest.Node, template.NewId);
+            if (responseIp.IsFailed) return response;
+            // пока масксимально просто для первых тестов.
+            return new LabEntryPoint()
             {
-                response = await _vm.GetIp(labCreateRequest.Node, template.NewId);
-                
-            }
+                Ip = responseIp.Value.IpV4,
+                Name = template.Template.Name,
+                Password = template.Template.Password
+            };
         }
-        
+
 
         throw new NotImplementedException();
     }
