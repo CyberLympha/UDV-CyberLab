@@ -10,7 +10,7 @@ namespace VirtualLab.Application.Interfaces;
 public interface IVmService
 {
     // 1
-    public Task<Result> Clone(CloneRequest request, string node);
+    public Task<Result> Clone(CloneVmConfig vmConfig, string node);
     
     // 4 поставить другой интерфейс
     public Task<Result> UpdateDeviceInterface(UpdateInterfaceForVm request);

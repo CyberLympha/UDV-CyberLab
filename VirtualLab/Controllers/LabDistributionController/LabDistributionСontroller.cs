@@ -3,47 +3,62 @@ using ProxmoxApi;
 using ProxmoxApi.Domen.Entities;
 using VirtualLab.Application;
 using VirtualLab.Application.Interfaces;
+using VirtualLab.Controllers.LabCreationService.Dto;
+using VirtualLab.Domain.Entities;
 using VirtualLab.Domain.Value_Objects;
+using Guid = VirtualLab.Domain.Entities.Guid;
 
 namespace VirtualLab.Controllers.LabDistributionController;
 
 [ApiController]
 [Route("[Controller]")]
-public class LabsDistributionController : ControllerBase
+public class LabsController : ControllerBase
 {
-    private readonly ILabProvider _labProvider;
-    private readonly ILabVmManagementService _labVmManagementService;
-    private readonly ILabConfigureGenerate _labConfigureGenerate;
+    private readonly IUserLabProvider _userLabProvider;
+    private readonly ILabCreationService _labCreationService;
+    private readonly ILabManager _labManager;
 
-    public LabsDistributionController(ILabProvider labProvider,
-        ILabVmManagementService labVmManagementService,
-        ILabConfigureGenerate labConfigureGenerate)
+    public LabsController(
+        IUserLabProvider userLabProvider,
+        ILabCreationService labCreationService, 
+        ILabManager labManager)
     {
-        _labProvider = labProvider;
-        _labVmManagementService = labVmManagementService;
-        _labConfigureGenerate = labConfigureGenerate;
+        _userLabProvider = userLabProvider;
+        _labCreationService = labCreationService;
+        _labManager = labManager;
     }
 
-    [HttpGet("my/labs")] // ограничение на роли
-    public async Task<ActionResult<IReadOnlyCollection<UserLabsInfo>>> Get()
+    [HttpPost()]
+    public async Task<ActionResult> Create([FromBody] LabCreateRequest request)
+    {
+        var lab = Guid.From(request);
+        var result = await _labCreationService.Create(lab);
+        if (result.IsFailed) return BadRequest();
+
+
+        return Ok();
+    }
+
+    [HttpGet] // ограничение на роли
+    public async Task<ActionResult<IReadOnlyCollection<UserLabInfo>>> Get()
     {
         var user = new User();
-        var labs = await _labProvider.GetAllByUser(user);
+        var labs = await _userLabProvider.GetInfoAll(user);
 
         return labs.Match(
             v => Ok(v),
             e => NotFound(e));
     }
 
-    [HttpGet("start/{labId:guid}")]
-    public async Task<ActionResult<LabEntryPoint>> CreateLab(Guid labId)
-    {
-        var configLab = await _labConfigureGenerate.GenerateLabConfig(labId);
-        if (configLab.IsFailed) return BadRequest(configLab.Reasons);
-        
-        var labEntryPoint = await _labVmManagementService.CreateLab(configLab.Value);
 
-        return labEntryPoint.Match(
+    // todo: метод всё более жирный; нужно придумать еще один класс, который будет логично это в себе инкапсулировать.
+    [HttpGet]
+    [HttpGet("{labId:guid}/start")] //todo: очень важно реализовать проверку, а есть ли эта лаба у юзера. сейчас лаба создаётся по LabId, а не по userLabId, что даёт возможность создавать бесконечно лаб. для одного пользователя))
+    public async Task<ActionResult<IReadOnlyList<LabEntryPoint>>> Start(System.Guid labId)
+    {
+        var createLab = await _labManager.StartNew(labId);
+            
+        return createLab.Match(
             s => Ok(s),
             e => BadRequest(e));
     }

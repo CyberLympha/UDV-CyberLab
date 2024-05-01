@@ -1,7 +1,10 @@
 using FluentResults;
 using ProxmoxApi.Domen.Entities;
+using VirtualLab.Application.Interfaces;
+using VirtualLab.Domain.Entities;
 using VirtualLab.Domain.Interfaces.Repositories;
 using Vostok.Logging.Abstractions;
+using Guid = VirtualLab.Domain.Entities.Guid;
 
 namespace VirtualLab.Application;
 
@@ -16,29 +19,29 @@ public class LabCreationService : ILabCreationService
         _log = log;
     }
 
-    public Task<Result> Change(Lab lab)
+    public Task<Result> Change(Guid guid)
     {
         // todo: разные сложные проверки, на то, что лабу можно создать т.д
 
         throw new NotImplementedException();
     }
 
-    public async Task<Result<Lab>> Get(Lab lab)
+    public async Task<Result<Guid>> Get(Guid guid)
     {
         // todo: разные сложные проверки, на то, что лабу можно создать т.д
         // проверки на idVm.  есть ли такая node.
 
-        var result = await labs.Get(lab.Id);
+        var result = await labs.Get(guid.Id);
         return result;
     }
 
-    public async Task<Result> Create(Lab lab)
+    public async Task<Result> Create(Guid guid)
     {
         // todo: разные сложные проверки, на то, что лабу можно создать т.д
         
 
-        var x = await labs.Insert(lab);
-        _log.Info($"lab {lab.Name} with id {lab.Id} created");
+        var x = await labs.Insert(guid);
+        _log.Info($"lab {guid.Name} with id {guid.Id} created");
         
         return x;
     }

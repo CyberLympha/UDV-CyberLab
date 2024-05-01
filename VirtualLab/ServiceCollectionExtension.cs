@@ -32,8 +32,8 @@ public static class ServiceCollectionExtension
         services.AddSingleton<INetworkService, Proxmox>();
         services.AddSingleton<IVmService, Proxmox>();
 
-        services.AddSingleton<ILabVmManagementService, LabVmManagementService>();
-        services.AddScoped<ILabConfigureGenerate, LabConfigureGenerate>();
+        services.AddSingleton<ILabVirtualMachineManager, LabVirtualMachineManager>();
+        services.AddScoped<ILabConfigure, LabConfigure>();
         services.AddSingleton(client);
     }
 }

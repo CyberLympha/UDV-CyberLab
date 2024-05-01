@@ -1590,19 +1590,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\А\\.nuget\\packages\\": {}
+    "C:\\Users\\VOISTINU\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\А\\RiderProjects\\UDV-CyberLab\\VirtualLab\\VirtualLab.csproj",
+      "projectUniqueName": "C:\\Users\\VOISTINU\\RiderProjects\\ProxmoxApi\\VirtualLab\\VirtualLab.csproj",
       "projectName": "VirtualLab",
-      "projectPath": "C:\\Users\\А\\RiderProjects\\UDV-CyberLab\\VirtualLab\\VirtualLab.csproj",
-      "packagesPath": "C:\\Users\\А\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\А\\RiderProjects\\UDV-CyberLab\\VirtualLab\\obj\\",
+      "projectPath": "C:\\Users\\VOISTINU\\RiderProjects\\ProxmoxApi\\VirtualLab\\VirtualLab.csproj",
+      "packagesPath": "C:\\Users\\VOISTINU\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\VOISTINU\\RiderProjects\\ProxmoxApi\\VirtualLab\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\А\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\VOISTINU\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -1686,7 +1686,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Users\\А\\.dotnet\\sdk\\8.0.203/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.201/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

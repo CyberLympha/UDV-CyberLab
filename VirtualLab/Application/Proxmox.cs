@@ -22,9 +22,9 @@ public class Proxmox : IVmService, INetworkService // кажется в итог
         _log = log;
     }
 
-    public async Task<Result> Clone(CloneRequest request, string node)
+    public async Task<Result> Clone(CloneVmConfig vmConfig, string node)
     {
-        var result = await _client.Nodes[node].Qemu[request.Template.Id].Clone.CloneVm(request.NewId);
+        var result = await _client.Nodes[node].Qemu[vmConfig.Template.Id].Clone.CloneVm(vmConfig.NewId);
 
 
         return result.Match(
@@ -33,8 +33,10 @@ public class Proxmox : IVmService, INetworkService // кажется в итог
             ApiResultError.GenerateTemplateCloneFailure);
     }
 
-    public Task<Result> GetAllNetworks(string node)
+    public async Task<Result> GetAllNetworksBridge(string node)
     {
+        var result = await _client.Nodes[node].Network.Index("bridge");
+
         throw new NotImplementedException();
     }
 

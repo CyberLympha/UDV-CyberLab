@@ -1,23 +1,26 @@
 using FluentResults;
 using ProxmoxApi.Domen.Entities;
+using VirtualLab.Application.Interfaces;
+using VirtualLab.Domain.Entities;
 using VirtualLab.Domain.Interfaces.Repositories;
 using VirtualLab.Domain.Value_Objects;
+using Guid = VirtualLab.Domain.Entities.Guid;
 
 namespace VirtualLab.Application;
 
-public class LabProviderService : ILabProvider
+public class UserLabProviderService : IUserLabProvider
 {
     private readonly ILabRepository _labs;
     private readonly IUserLabRepository _userLabs;
 
-    public LabProviderService(ILabRepository labs, IUserLabRepository userLabs)
+    public UserLabProviderService(ILabRepository labs, IUserLabRepository userLabs)
     {
         _labs = labs;
         _userLabs = userLabs;
     }
 
     //todo: сделать норм реализацию. здесь как минимум можно сделать один sql запрос, который будет решать половину логики. сейчас это кринж, и очень медленно. слишком медленно
-    public async Task<Result<IReadOnlyCollection<UserLabsInfo>>> GetAllByUser(User user)
+    public async Task<Result<IReadOnlyCollection<UserLabInfo>>> GetInfoAll(User user)
     {
         // кароче, это кринж.
         var userLabsResult = await _userLabs.GetAllByUserId(user.Id);
@@ -64,17 +67,22 @@ public class LabProviderService : ILabProvider
         return answer;
     }
 
-
-    private static List<UserLabsInfo> GetUseLabsInfos(Lab[] labs, UserLab[] userLabs)
+    public Task<Result<UserLabInfo>> GetInfo(System.Guid userId, System.Guid labId)
     {
-        var answer = new List<UserLabsInfo>();
+        throw new NotImplementedException();
+    }
+    
+
+    private static List<UserLabInfo> GetUseLabsInfos(Guid[] labs, UserLab[] userLabs)
+    {
+        var answer = new List<UserLabInfo>();
         foreach (var lab in labs)
         {
             foreach (var useLab in userLabs)
             {
                 if (lab.Id == useLab.LabId)
                 {
-                    answer.Add(UserLabsInfo.From(lab, useLab));
+                    answer.Add(UserLabInfo.From(lab, useLab));
                 }
             }
         }

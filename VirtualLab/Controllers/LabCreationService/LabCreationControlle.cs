@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ProxmoxApi.Domen.Entities;
 using VirtualLab.Application;
+using VirtualLab.Application.Interfaces;
 using VirtualLab.Controllers.LabCreationService.Dto;
 
 namespace VirtualLab.Controllers.LabCreationService;
@@ -18,16 +19,5 @@ public class LabCreationController : ControllerBase
         _labCreationService = labCreationService;
     }
 
-    [HttpPost()]
-    public async Task<ActionResult> Create([FromBody] LabCreateRequest request) 
-    {
-        var lab = Lab.From(request);
-        var result = await _labCreationService.Create(lab);
-        if (result.IsFailed)
-        {
-            return BadRequest();
-        }
-
-        return Ok();
-    }
+    
 }

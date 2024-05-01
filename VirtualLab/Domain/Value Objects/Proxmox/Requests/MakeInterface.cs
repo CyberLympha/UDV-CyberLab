@@ -5,4 +5,15 @@ public record CreateInterface
     public string IFace { get; set; }
     public string Node { get; set; }
     public string Type { get; set; }
+
+
+    public static CreateInterface Brige(string iFace, string node)
+    {
+        return new CreateInterface()
+        {
+            IFace = iFace,
+            Node = node,
+            Type = "bridge"
+        };
+    }
 }

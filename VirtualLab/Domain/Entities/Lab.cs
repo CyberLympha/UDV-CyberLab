@@ -1,34 +1,26 @@
+using ProxmoxApi.Domen;
 using VirtualLab.Controllers.LabCreationService.Dto;
 
-namespace ProxmoxApi.Domen.Entities;
+namespace VirtualLab.Domain.Entities;
 
 
 //todo 
-public class Lab : IEntity<Guid>
+public class Guid : IEntity<System.Guid>
 {
-    public Guid Id { get; set; }
+    public System.Guid Id { get; set; }
     public string Name { get; set; }
     public string Goal { get; set; }
     public string Manual { get; set; }
     
-    //todo по идей, было бы здорово засунуть это в другую сущность, но пока, так как mvp будет здесь.
-    public long Node { get; set; }
-    public long VmIdTemplate { get; set; } // здесь будет id template либо id Vm на первых этапах.
-    public string UserNameVm { get; set; }
-    public string PasswordVm { get; set; }
 
-    public static Lab From(LabCreateRequest request) // а что если это реализовывать на уровне контроллеера?
+    public static Guid From(LabCreateRequest request) // а что если это реализовывать на уровне контроллеера?
     {
-        return new Lab()
+        return new Guid()
         {
             Goal = request.Goal,
-            Id = Guid.NewGuid(),
+            Id = System.Guid.NewGuid(),
             Manual = request.Manual,
             Name = request.Name,
-            VmIdTemplate = 1,
-            PasswordVm = request.Password,
-            UserNameVm = request.UserName,
-            Node = request.Node
         };
     } 
 }

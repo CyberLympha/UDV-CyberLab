@@ -23,7 +23,7 @@ builder.Services.AddDbContext<FakeDbContext>();
 builder.Services.AddScoped<ILabCreationService, LabCreationService>();
 builder.Services.AddScoped<ILabRepository, LabRepository>();
 builder.Services.AddScoped<IUserLabRepository, UserLabsRepository>();
-builder.Services.AddScoped<ILabProvider, LabProviderService>();
+builder.Services.AddScoped<IUserLabProvider, UserLabProviderService>();
 //конец))
 
 

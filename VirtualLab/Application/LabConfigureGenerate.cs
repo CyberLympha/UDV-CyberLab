@@ -8,19 +8,21 @@ using Vostok.Logging.Abstractions;
 
 namespace VirtualLab.Application;
 
-public class LabConfigureGenerate : ILabConfigureGenerate
+public class LabConfigure : ILabConfigure
 {
     private readonly ILabRepository _labs;
     private readonly ILog _log;
 
-    public LabConfigureGenerate(ILabRepository labs, ILog log)
+    public LabConfigure(ILabRepository labs, ILog log)
     {
         _labs = labs;
         log.ForContext("LabConfigure");
         _log = log;
     }
 
-    public async Task<Result<LabCreateRequest>> GenerateLabConfig(Guid labId)
+    
+    //todo: псс, mongoDb норм идея, для хранием конфигов лаб)) по идей, могут быть доп данные.
+    public async Task<Result<LabConfig>> GetTemplateConfig(Guid labId)
     {
         var lab = await _labs.Get(labId);
         if (lab.IsFailed)
@@ -34,10 +36,10 @@ public class LabConfigureGenerate : ILabConfigureGenerate
             Bridge = "vmbr10",
             Model = "virtio"
         });
-        var labConfig = new LabCreateRequest()
+        var labConfig = new LabConfig()
         {
             Node = "pve",
-            ClonesRequest = new List<CloneRequest>()
+            CloneVmConfig = new List<CloneVmConfig>()
             {
                 new()
                 {
@@ -49,6 +51,7 @@ public class LabConfigureGenerate : ILabConfigureGenerate
                         Password = "test"
                     },
                     NewId = 500,
+                    Nets = nets
                 },
                 new()
                 {
@@ -60,12 +63,17 @@ public class LabConfigureGenerate : ILabConfigureGenerate
                         Password = "test"
                     },
                     NewId = 501,
+                    Nets = nets
                 }
-            },
-            Nets = nets
+            }
         };
 
         _log.Info($"configure created {labConfig}");
+        return labConfig;
+    }
+
+    public async Task<Result<LabConfig>> GenerateLabConfig(LabConfig labConfig)
+    {
         return labConfig;
     }
 }

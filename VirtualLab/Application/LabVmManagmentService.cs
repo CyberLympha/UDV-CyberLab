@@ -1,21 +1,23 @@
 using FluentResults;
 using VirtualLab.Application.Interfaces;
+using VirtualLab.Domain.Entities;
 using VirtualLab.Domain.Value_Objects;
 using VirtualLab.Domain.Value_Objects.Proxmox;
 using VirtualLab.Domain.Value_Objects.Proxmox.Requests;
 using Vostok.Logging.Abstractions;
+using Guid = System.Guid;
 
 namespace VirtualLab.Application;
 
 // название мне так же не очень нравятится. но суть в том, что это класс отвечает за создание лабы и предоставление её пользователю, кароче работает с proxomx и только.
 
-public class LabVmManagementService : ILabVmManagementService
+public class LabVirtualMachineManager : ILabVirtualMachineManager
 {
     private readonly IVmService _vm;
     private readonly INetworkService _networkDevice;
     private readonly ILog _log;
 
-    public LabVmManagementService(IVmService vm, INetworkService networkDevice, ILog log)
+    public LabVirtualMachineManager(IVmService vm, INetworkService networkDevice, ILog log)
     {
         _vm = vm;
         _networkDevice = networkDevice;
@@ -24,57 +26,58 @@ public class LabVmManagementService : ILabVmManagementService
     }
 
 
-    public async Task<Result<LabEntryPoint>> CreateLab(LabCreateRequest labCreateRequest)
+    public async Task<Result<IReadOnlyList<LabEntryPoint>>> CreateLab(LabConfig labConfig)
     {
-        var response = await CreateInterfaces(labCreateRequest);
+        var response = await CreateInterfaces(labConfig.GetAllNetsInterfaces(), labConfig.Node);
         if (response.IsFailed)
         {
-            _log.Error($"create interface occured with errors:{response.Reasons}"); //todo: сделать так везде.
+            _log.Error($"create interface occured with errors: {response.Reasons}"); //todo: сделать так везде.
             return response;
         }
 
-
-        response = await _networkDevice.Apply(labCreateRequest.Node);
+        response = await _networkDevice.Apply(labConfig.Node);
         if (response.IsFailed) return response;
 
         //todo: то есть до этого ты сделал метод, в котором foreach, а сейчас забил?
-        foreach (var cloneVmTemplate in labCreateRequest.ClonesRequest)
+        foreach (var cloneVmTemplate in labConfig.CloneVmConfig)
         {
-            response = await CreateVmByTemplate(cloneVmTemplate, labCreateRequest.Nets, labCreateRequest.Node);
+            response = await CreateVmByTemplate(cloneVmTemplate, labConfig.Node);
             if (response.IsFailed) return response;
         }
 
         //todo: максимально тупая реализация.
-        foreach (var template in labCreateRequest.ClonesRequest)
+
+        var entryPoints = new List<LabEntryPoint>();
+        foreach (var template in labConfig.CloneVmConfig)
         {
             if (!template.Template.WithVmbr0) continue;
 
-
-            var responseIp = await _vm.GetIp(labCreateRequest.Node, template.NewId);
-            if (responseIp.IsFailed) return response;
+            var GetIp = await _vm.GetIp(labConfig.Node, template.NewId);
+            if (GetIp.IsFailed) return response;
             // пока масксимально просто для первых тестов.
-            return new LabEntryPoint()
-            {
-                Ip = responseIp.Value.IpV4,
-                Name = template.Template.Name,
-                Password = template.Template.Password
-            };
+            entryPoints.Add(LabEntryPoint.From(
+                GetIp.Value.IpV4, 
+                template.Template.Name, 
+                template.Template.Password,
+                labConfig.LabId)
+            );
         }
 
+        if (entryPoints.Count == 0) return Result.Fail("а как то нету открытых портов");
+        
+        return entryPoints;
+    }
 
+    public Task<Result<IReadOnlyList<LabEntryPoint>>> GetEntryPoint(Guid labId)
+    {
         throw new NotImplementedException();
     }
 
-    private async Task<Result> CreateInterfaces(LabCreateRequest labCreateRequest)
+    private async Task<Result> CreateInterfaces(IEnumerable<Net> nets, string node)
     {
-        foreach (var net in labCreateRequest.Nets)
+        foreach (var net in nets)
         {
-            var response = await _networkDevice.CreateInterface(new CreateInterface
-            {
-                Node = labCreateRequest.Node,
-                Type = "bridge",
-                IFace = net.Bridge
-            });
+            var response = await _networkDevice.CreateInterface(CreateInterface.Brige(net.Bridge, node));
             if (response.IsFailed) return response;
         }
 
@@ -82,23 +85,23 @@ public class LabVmManagementService : ILabVmManagementService
     }
 
     // меня напрягает здесь node, как вообще будет работать node
-    private async Task<Result> CreateVmByTemplate(CloneRequest cloneRequest, NetCollection nets, string node)
+    private async Task<Result> CreateVmByTemplate(CloneVmConfig cloneVmConfig, string node)
     {
-        var response = await _vm.Clone(cloneRequest, node);
+        var response = await _vm.Clone(cloneVmConfig, node);
         if (response.IsFailed) return response;
         // todo: refactoring in future
         response = await _vm.UpdateDeviceInterface(new UpdateInterfaceForVm()
         {
             Node = node,
-            Qemu = cloneRequest.NewId,
-            Nets = nets
+            Qemu = cloneVmConfig.NewId,
+            Nets = cloneVmConfig.Nets
         });
         if (response.IsFailed) return response;
 
         response = await _vm.StartVm(new LaunchVm()
         {
             Node = node,
-            Qemu = cloneRequest.NewId
+            Qemu = cloneVmConfig.NewId
         });
         if (response.IsFailed) return response;
 
