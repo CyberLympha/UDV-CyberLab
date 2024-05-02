@@ -1,15 +1,16 @@
 using FluentResults;
+using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Entities;
 using VirtualLab.Domain.Interfaces.Repositories;
 using VirtualLab.Infrastructure.Repositories;
 
-namespace VirtualLab.Application.Interfaces;
+namespace VirtualLab.Application;
 
 public class LabEntryPointService : ILabEntryPointService
 {
-    private readonly LabEntryPointRepositoryRepository entryPoints;
+    private readonly ILabEntryPointRepository entryPoints;
 
-    public LabEntryPointService(LabEntryPointRepositoryRepository entryPoints)
+    public LabEntryPointService(ILabEntryPointRepository entryPoints)
     {
         this.entryPoints = entryPoints;
     }

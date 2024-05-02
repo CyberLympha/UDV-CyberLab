@@ -3,7 +3,6 @@ using FluentResults;
 using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Entities;
 using Vostok.Logging.Abstractions;
-using Guid = VirtualLab.Domain.Entities.Guid;
 using Result = FluentResults.Result;
 
 namespace VirtualLab.Application;
@@ -26,11 +25,11 @@ public class LabManager : ILabManager
         _log = log;
     }
 
-    public async Task<Result<IReadOnlyList<LabEntryPoint>>> StartNew(System.Guid labId)
+    public async Task<Result<IReadOnlyList<LabEntryPoint>>> StartNew(Guid labId)
     {
         var getUserLab = await _userLabProvider.GetInfo(System.Guid.NewGuid(), labId);
         if (getUserLab.IsFailed) return Result.Fail(getUserLab.Errors);
-
+        
         // if (getUserLab.Value.Status == ) проверка, что лаба еще не запущена.
         
         var getTemplateConfig = await _labConfigure.GetTemplateConfig(labId);
@@ -53,7 +52,7 @@ public class LabManager : ILabManager
         return Result.Ok(labCreateWithEntryPoints.Value);
     }
 
-    public Task<Result<string>> GetStatus(Guid guid)
+    public Task<Result<string>> GetStatus(Guid labId)
     {
         throw new NotImplementedException();
     }

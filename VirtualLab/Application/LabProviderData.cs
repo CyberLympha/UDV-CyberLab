@@ -4,7 +4,6 @@ using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Entities;
 using VirtualLab.Domain.Interfaces.Repositories;
 using VirtualLab.Domain.Value_Objects;
-using Guid = VirtualLab.Domain.Entities.Guid;
 
 namespace VirtualLab.Application;
 
@@ -73,7 +72,7 @@ public class UserLabProviderService : IUserLabProvider
     }
     
 
-    private static List<UserLabInfo> GetUseLabsInfos(Guid[] labs, UserLab[] userLabs)
+    private static List<UserLabInfo> GetUseLabsInfos(IEnumerable<Lab> labs, UserLab[] userLabs)
     {
         var answer = new List<UserLabInfo>();
         foreach (var lab in labs)

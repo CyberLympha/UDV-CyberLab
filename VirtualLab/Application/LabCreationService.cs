@@ -4,7 +4,6 @@ using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Entities;
 using VirtualLab.Domain.Interfaces.Repositories;
 using Vostok.Logging.Abstractions;
-using Guid = VirtualLab.Domain.Entities.Guid;
 
 namespace VirtualLab.Application;
 
@@ -19,29 +18,29 @@ public class LabCreationService : ILabCreationService
         _log = log;
     }
 
-    public Task<Result> Change(Guid guid)
+    public Task<Result> Change(Lab lab)
     {
         // todo: разные сложные проверки, на то, что лабу можно создать т.д
 
         throw new NotImplementedException();
     }
 
-    public async Task<Result<Guid>> Get(Guid guid)
+    public async Task<Result<Lab>> Get(Lab lab)
     {
         // todo: разные сложные проверки, на то, что лабу можно создать т.д
         // проверки на idVm.  есть ли такая node.
 
-        var result = await labs.Get(guid.Id);
+        var result = await labs.Get(lab.Id);
         return result;
     }
 
-    public async Task<Result> Create(Guid guid)
+    public async Task<Result> Create(Lab lab)
     {
         // todo: разные сложные проверки, на то, что лабу можно создать т.д
         
 
-        var x = await labs.Insert(guid);
-        _log.Info($"lab {guid.Name} with id {guid.Id} created");
+        var x = await labs.Insert(lab);
+        _log.Info($"lab {lab.Name} with id {lab.Id} created");
         
         return x;
     }

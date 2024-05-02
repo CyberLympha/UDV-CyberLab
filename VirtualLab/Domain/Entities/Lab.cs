@@ -5,20 +5,20 @@ namespace VirtualLab.Domain.Entities;
 
 
 //todo 
-public class Guid : IEntity<System.Guid>
+public class Lab : IEntity<Guid>
 {
-    public System.Guid Id { get; set; }
+    public Guid Id { get; set; }
     public string Name { get; set; }
     public string Goal { get; set; }
     public string Manual { get; set; }
     
 
-    public static Guid From(LabCreateRequest request) // а что если это реализовывать на уровне контроллеера?
+    public static Lab From(LabCreateRequest request) // а что если это реализовывать на уровне контроллеера?
     {
-        return new Guid()
+        return new Lab()
         {
             Goal = request.Goal,
-            Id = System.Guid.NewGuid(),
+            Id = Guid.NewGuid(),
             Manual = request.Manual,
             Name = request.Name,
         };

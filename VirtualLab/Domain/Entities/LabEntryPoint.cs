@@ -2,10 +2,10 @@ using ProxmoxApi.Domen;
 
 namespace VirtualLab.Domain.Entities;
 
-public class LabEntryPoint : IEntity<System.Guid>
+public class LabEntryPoint : IEntity<Guid>
 {
-    public System.Guid Id { get; set; }
-    public System.Guid UserLabId { get; set; }
+    public Guid Id { get; set; }
+    public Guid UserLabId { get; set; }
     public string Username { get; set; }
     public string Password { get; set; }
     public string Ip { get; set; }
