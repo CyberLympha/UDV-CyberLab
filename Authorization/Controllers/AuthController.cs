@@ -43,15 +43,6 @@ namespace Authorization.Controllers
             if (!result.Succeeded)
                 return BadRequest(result);
 
-            if (!await _roleManager.RoleExistsAsync(UserRole.Teacher))
-            {
-                await _roleManager.CreateAsync(new IdentityRole(UserRole.Teacher));
-            }
-            if (!await _roleManager.RoleExistsAsync(UserRole.Student))
-            {
-                await _roleManager.CreateAsync(new IdentityRole(UserRole.Student));
-            }
-
             if (userDto.Role == UserRole.Teacher)
                 await _userManager.AddToRoleAsync(user, UserRole.Teacher);
             else if (userDto.Role == UserRole.Student)

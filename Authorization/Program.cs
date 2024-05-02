@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Authorization.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +25,6 @@ builder.Services.AddCors(options =>
 });
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -78,5 +78,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+await RolesConfig.CreateRoles(app.Services);
+await RolesConfig.CreateAdmin(app.Services);
 
 app.Run();

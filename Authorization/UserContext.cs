@@ -20,7 +20,8 @@ namespace Authorization
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Host=localhost; Port=5432; Database=auth; User ID=postgres; Password=12345");
+            //optionsBuilder.UseNpgsql("Host=localhost; Port=5432; Database=auth; User ID=postgres; Password=12345");
+            optionsBuilder.UseInMemoryDatabase("AuthFakeContext");
         }
 
         public DbSet<RefreshToken> RefreshTokens { get; set; }
