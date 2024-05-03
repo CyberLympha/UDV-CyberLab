@@ -14,16 +14,13 @@ namespace Authorization.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
         public AuthController(
-            UserManager<User> userManager, 
-            SignInManager<User> signInManager, 
+            UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
             _roleManager = roleManager;
         }
 
@@ -72,7 +69,6 @@ namespace Authorization.Controllers
                 .Append("access_token", 
                 new JwtSecurityTokenHandler().WriteToken(accessToken), 
                 new CookieOptions { HttpOnly = true, Expires = accessToken.ValidTo, Secure = true });
-            var refreshToken = CreateRefreshToken();
             
             return Ok();
         }
@@ -104,20 +100,6 @@ namespace Authorization.Controllers
                 audience: AuthOptions.AUDIENCE,
                 expires: DateTime.Now.AddMinutes(AuthOptions.EXPIRES_MINUTES),
                 claims: userClaims,
-                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-            );
-
-            return token;
-        }
-
-        private JwtSecurityToken CreateRefreshToken()
-        {
-            var authSigningKey = AuthOptions.GetSymmetricSecurityKey();
-
-            var token = new JwtSecurityToken(
-                issuer: AuthOptions.ISSUER,
-                audience: AuthOptions.AUDIENCE,
-                expires: DateTime.Now.AddDays(15),
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );
 
