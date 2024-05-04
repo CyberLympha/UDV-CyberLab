@@ -1,6 +1,4 @@
-using HostingEnvironmentExtensions = Microsoft.AspNetCore.Hosting.HostingEnvironmentExtensions;
-
-namespace ProxmoxApi.Domen.Entities;
+namespace VirtualLab.Domain.Entities;
 
 public class StatusesLab : IEntity<Guid>
 {

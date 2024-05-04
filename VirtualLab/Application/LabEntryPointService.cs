@@ -15,7 +15,7 @@ public class LabEntryPointService : ILabEntryPointService
         this.entryPoints = entryPoints;
     }
 
-    public Task<Result> InsertAll(IReadOnlyList<LabEntryPoint> labEntryPoints)
+    public Task<Result> InsertAll(IReadOnlyList<Credential> labEntryPoints)
     {
         throw new NotImplementedException();
     }

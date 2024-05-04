@@ -3,7 +3,7 @@ using Guid = System.Guid;
 
 namespace VirtualLab.Domain.Interfaces.Repositories;
 
-public interface ILabEntryPointRepository : IRepositoryBase<LabEntryPoint, Guid>
+public interface ILabEntryPointRepository : IRepositoryBase<Credential, Guid>
 {
     
 }

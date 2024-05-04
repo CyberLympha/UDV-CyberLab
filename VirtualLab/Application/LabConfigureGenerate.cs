@@ -3,7 +3,9 @@ using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Interfaces.Repositories;
 using VirtualLab.Domain.Value_Objects;
 using VirtualLab.Domain.Value_Objects.Proxmox;
-using VirtualLab.Domain.Value_Objects.Proxmox.Requests;
+using VirtualLab.Domain.ValueObjects.Proxmox;
+using VirtualLab.Domain.ValueObjects.Proxmox.Config;
+using VirtualLab.Domain.ValueObjects.Proxmox.Requests;
 using Vostok.Logging.Abstractions;
 
 namespace VirtualLab.Application;

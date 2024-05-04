@@ -1,5 +1,4 @@
 using FluentResults;
-using ProxmoxApi.Domen.Entities;
 using VirtualLab.Domain.Entities;
 
 namespace VirtualLab.Domain.Interfaces.Repositories;

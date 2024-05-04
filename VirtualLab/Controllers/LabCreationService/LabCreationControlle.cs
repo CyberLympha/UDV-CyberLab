@@ -1,6 +1,5 @@
 
 using Microsoft.AspNetCore.Mvc;
-using ProxmoxApi.Domen.Entities;
 using VirtualLab.Application;
 using VirtualLab.Application.Interfaces;
 using VirtualLab.Controllers.LabCreationService.Dto;

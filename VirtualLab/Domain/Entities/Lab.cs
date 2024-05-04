@@ -1,4 +1,3 @@
-using ProxmoxApi.Domen;
 using VirtualLab.Controllers.LabCreationService.Dto;
 
 namespace VirtualLab.Domain.Entities;

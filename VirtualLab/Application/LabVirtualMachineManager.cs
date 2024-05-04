@@ -3,7 +3,9 @@ using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Entities;
 using VirtualLab.Domain.Value_Objects;
 using VirtualLab.Domain.Value_Objects.Proxmox;
-using VirtualLab.Domain.Value_Objects.Proxmox.Requests;
+using VirtualLab.Domain.ValueObjects.Proxmox;
+using VirtualLab.Domain.ValueObjects.Proxmox.Config;
+using VirtualLab.Domain.ValueObjects.Proxmox.Requests;
 using Vostok.Logging.Abstractions;
 using Guid = System.Guid;
 
@@ -26,7 +28,7 @@ public class LabVirtualMachineManager : ILabVirtualMachineManager
     }
 
 
-    public async Task<Result<IReadOnlyList<LabEntryPoint>>> CreateLab(LabConfig labConfig)
+    public async Task<Result<IReadOnlyList<Credential>>> CreateLab(LabConfig labConfig)
     {
         var response = await CreateInterfaces(labConfig.GetAllNetsInterfaces(), labConfig.Node);
         if (response.IsFailed)
@@ -47,7 +49,20 @@ public class LabVirtualMachineManager : ILabVirtualMachineManager
 
         //todo: максимально тупая реализация.
 
-        var entryPoints = new List<LabEntryPoint>();
+        /*var virtualMachineInfos = new List<VirtualMachineInfo>();
+        foreach (var cloneVmConfig in labConfig.CloneVmConfig)
+        {
+            virtualMachineInfos.Add(new VirtualMachineInfo()
+            {
+                ProxmoxVmId = cloneVmConfig.NewId,
+                Password = cloneVmConfig.Template.Password,
+                Username = cloneVmConfig.Template.Name,
+                WithVmbr0 = cloneVmConfig.Template.WithVmbr0
+            });
+        }
+        */
+        
+        var credentials = new List<Credential>();
         foreach (var template in labConfig.CloneVmConfig)
         {
             if (!template.Template.WithVmbr0) continue;
@@ -55,7 +70,7 @@ public class LabVirtualMachineManager : ILabVirtualMachineManager
             var GetIp = await _vm.GetIp(labConfig.Node, template.NewId);
             if (GetIp.IsFailed) return response;
             // пока масксимально просто для первых тестов.
-            entryPoints.Add(LabEntryPoint.From(
+            credentials.Add(Credential.From(
                 GetIp.Value.IpV4, 
                 template.Template.Name, 
                 template.Template.Password,
@@ -63,12 +78,12 @@ public class LabVirtualMachineManager : ILabVirtualMachineManager
             );
         }
 
-        if (entryPoints.Count == 0) return Result.Fail("а как то нету открытых портов");
+        if (credentials.Count == 0) return Result.Fail("а как то нету открытых портов");
         
-        return entryPoints;
+        return credentials;
     }
 
-    public Task<Result<IReadOnlyList<LabEntryPoint>>> GetEntryPoint(Guid labId)
+    public Task<Result<IReadOnlyList<Credential>>> GetCredentials(Guid labId)
     {
         throw new NotImplementedException();
     }

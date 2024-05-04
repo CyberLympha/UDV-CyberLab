@@ -5,5 +5,5 @@ namespace VirtualLab.Application.Interfaces;
 
 public interface ILabEntryPointService
 {
-    public Task<Result> InsertAll(IReadOnlyList<LabEntryPoint> labEntryPoints);
+    public Task<Result> InsertAll(IReadOnlyList<Credential> labEntryPoints);
 }

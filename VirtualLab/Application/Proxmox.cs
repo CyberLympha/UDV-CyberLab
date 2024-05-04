@@ -3,7 +3,7 @@ using FluentResults;
 using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Value_Objects;
 using VirtualLab.Domain.Value_Objects.Proxmox;
-using VirtualLab.Domain.Value_Objects.Proxmox.Requests;
+using VirtualLab.Domain.ValueObjects.Proxmox.Requests;
 using VirtualLab.Infrastructure;
 using VirtualLab.Infrastructure.Extensions;
 using Vostok.Logging.Abstractions;

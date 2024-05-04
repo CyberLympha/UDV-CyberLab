@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using ProxmoxApi;
-using ProxmoxApi.Domen.Entities;
 using VirtualLab.Application;
 using VirtualLab.Application.Interfaces;
 using VirtualLab.Controllers.LabCreationService.Dto;
@@ -41,9 +40,6 @@ public class LabsController : ControllerBase
     [HttpGet] // ограничение на роли
     public async Task<ActionResult<IReadOnlyCollection<UserLabInfo>>> Get()
     {
-        var list = new List<int>();
-        var d = list[55];
-        
         var user = new User();
         var labs = await _userLabProvider.GetInfoAll(user);
         
@@ -51,11 +47,9 @@ public class LabsController : ControllerBase
             v => Ok(v),
             e => NotFound(e));
     }
-
-
-    // todo: метод всё более жирный; нужно придумать еще один класс, который будет логично это в себе инкапсулировать.
+    
     [HttpGet("{labId:guid}/start")] //todo: очень важно реализовать проверку, а есть ли эта лаба у юзера. сейчас лаба создаётся по LabId, а не по userLabId, что даёт возможность создавать бесконечно лаб. для одного пользователя))
-    public async Task<ActionResult<IReadOnlyList<LabEntryPoint>>> Start(System.Guid labId)
+    public async Task<ActionResult<IReadOnlyList<Credential>>> Start(Guid labId)
     {
         var createLab = await _labManager.StartNew(labId);
             

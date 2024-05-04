@@ -1,6 +1,7 @@
-using VirtualLab.Domain.Value_Objects.Proxmox.Requests;
+using VirtualLab.Domain.Value_Objects.Proxmox;
+using VirtualLab.Domain.ValueObjects.Proxmox.Requests;
 
-namespace VirtualLab.Domain.Value_Objects.Proxmox;
+namespace VirtualLab.Domain.ValueObjects.Proxmox.Config;
 
 
 // здесь хранится конфиг именно для одной node. потенциальной лабе может быть задействована не одна node
@@ -8,7 +9,7 @@ public record LabConfig // он record здесь мало смысла.
 {
     public Guid LabId { get; set; }
     public string Node { get; init; } 
-    public List<CloneVmConfig> CloneVmConfig { get;  init; }
+    public List<CloneVmConfig> CloneVmConfig { get;  init; } //todo: ваще не нравится это название
 
 
     

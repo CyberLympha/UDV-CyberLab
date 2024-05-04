@@ -1,6 +1,5 @@
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
-using ProxmoxApi.Domen.Entities;
 using VirtualLab.Domain.Entities;
 using VirtualLab.Domain.Interfaces;
 using VirtualLab.Domain.Interfaces.Repositories;

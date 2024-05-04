@@ -1,15 +1,12 @@
-using ProxmoxApi.Domen;
-using ProxmoxApi.Domen.Entities;
-
 namespace VirtualLab.Domain.Entities;
 
 //todo
 public class UserLab : IEntity<Guid>
 {
-    public System.Guid Id { get; set; }
-    public System.Guid UserId { get; set; }
-    public System.Guid LabId { get; set; }
-    public System.Guid StatusId { get; set; } // нужна таблица с statusId
+    public Guid Id { get; set; }
+    public Guid UserId { get; set; }
+    public Guid LabId { get; set; }
+    public Guid StatusId { get; set; } // нужна таблица с statusId
     public int Rate { get; set; } // 
     // и другие данные, которые отображаются для пользователя.
 

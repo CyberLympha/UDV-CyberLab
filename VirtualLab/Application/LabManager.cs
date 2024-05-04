@@ -25,9 +25,9 @@ public class LabManager : ILabManager
         _log = log;
     }
 
-    public async Task<Result<IReadOnlyList<LabEntryPoint>>> StartNew(Guid labId)
+    public async Task<Result<IReadOnlyList<Credential>>> StartNew(Guid labId)
     {
-        var getUserLab = await _userLabProvider.GetInfo(System.Guid.NewGuid(), labId);
+        var getUserLab = await _userLabProvider.GetInfo(Guid.NewGuid(), labId);
         if (getUserLab.IsFailed) return Result.Fail(getUserLab.Errors);
         
         // if (getUserLab.Value.Status == ) проверка, что лаба еще не запущена.

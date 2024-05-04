@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using ProxmoxApi.Domen.Entities;
 using VirtualLab.Domain.Entities;
 
 namespace VirtualLab.Infrastructure.DataBase;

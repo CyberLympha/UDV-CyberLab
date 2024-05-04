@@ -1,7 +1,7 @@
 using FluentResults;
 using VirtualLab.Domain.Value_Objects;
 using VirtualLab.Domain.Value_Objects.Proxmox;
-using VirtualLab.Domain.Value_Objects.Proxmox.Requests;
+using VirtualLab.Domain.ValueObjects.Proxmox.Requests;
 
 namespace VirtualLab.Application.Interfaces;
 
