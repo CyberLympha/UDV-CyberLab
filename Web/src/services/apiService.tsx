@@ -25,13 +25,12 @@ export class ApiService {
         return this.httpClient.get<Test>(`/tests/${testId}`)
     }
 
-    public postTest(request: Test) {
-        return this.httpClient.post<Test, {
-            id: string,
+    public postTest(request: {name: string, description: string, questions: string[]}) {
+        return this.httpClient.post<{
             name: string,
             description: string,
             questions: string[]
-        }>('/tests', request)
+        }, void>('/tests', request)
     }
 
     public getQuestions() {
