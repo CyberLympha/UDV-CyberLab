@@ -28,7 +28,7 @@ public class LabVirtualMachineManager : ILabVirtualMachineManager
     }
 
 
-    public async Task<Result<IReadOnlyList<Credential>>> CreateLab(LabConfig labConfig)
+    public async Task<Result<IReadOnlyList<VirtualMachineInfo>>> CreateLab(LabConfig labConfig)
     {
         var response = await CreateInterfaces(labConfig.GetAllNetsInterfaces(), labConfig.Node);
         if (response.IsFailed)
@@ -49,45 +49,47 @@ public class LabVirtualMachineManager : ILabVirtualMachineManager
 
         //todo: максимально тупая реализация.
 
-        /*var virtualMachineInfos = new List<VirtualMachineInfo>();
+        var virtualMachineInfos = new List<VirtualMachineInfo>();
+        
         foreach (var cloneVmConfig in labConfig.CloneVmConfig)
         {
-            virtualMachineInfos.Add(new VirtualMachineInfo()
+            if (!cloneVmConfig.Template.WithVmbr0)
             {
-                ProxmoxVmId = cloneVmConfig.NewId,
-                Password = cloneVmConfig.Template.Password,
-                Username = cloneVmConfig.Template.Name,
-                WithVmbr0 = cloneVmConfig.Template.WithVmbr0
-            });
+                virtualMachineInfos.Add(new VirtualMachineInfo()
+                {
+                    ProxmoxVmId = cloneVmConfig.NewId,
+                    Password = cloneVmConfig.Template.Password,
+                    Username = cloneVmConfig.Template.Name,
+                    Node = labConfig.Node
+                });
+            }
+            else
+            {
+                var getIp = await _vm.GetIp(labConfig.Node, cloneVmConfig.NewId);
+                if (getIp.IsFailed) return response;
+                
+                virtualMachineInfos.Add(new VirtualMachineInfo()
+                {
+                    ProxmoxVmId = cloneVmConfig.NewId,
+                    Password = cloneVmConfig.Template.Password,
+                    Username = cloneVmConfig.Template.Name,
+                    Node = labConfig.Node,
+                    Ip = getIp.Value.IpV4
+                });
+            }
+            
         }
-        */
-        
-        var credentials = new List<Credential>();
-        foreach (var template in labConfig.CloneVmConfig)
-        {
-            if (!template.Template.WithVmbr0) continue;
 
-            var GetIp = await _vm.GetIp(labConfig.Node, template.NewId);
-            if (GetIp.IsFailed) return response;
-            // пока масксимально просто для первых тестов.
-            credentials.Add(Credential.From(
-                GetIp.Value.IpV4, 
-                template.Template.Name, 
-                template.Template.Password,
-                labConfig.LabId)
-            );
-        }
-
-        if (credentials.Count == 0) return Result.Fail("а как то нету открытых портов");
+        return virtualMachineInfos;
         
-        return credentials;
+        
     }
-
-    public Task<Result<IReadOnlyList<Credential>>> GetCredentials(Guid labId)
+    
+    public Task<Result> RemoveLab()
     {
         throw new NotImplementedException();
     }
-
+    
     private async Task<Result> CreateInterfaces(IEnumerable<Net> nets, string node)
     {
         foreach (var net in nets)
@@ -113,7 +115,7 @@ public class LabVirtualMachineManager : ILabVirtualMachineManager
         });
         if (response.IsFailed) return response;
 
-        response = await _vm.StartVm(new LaunchVm()
+        response = await _vm.StartVm(new LaunchVm() // а запускать мне кажется, точно должны не здесь.
         {
             Node = node,
             Qemu = cloneVmConfig.NewId

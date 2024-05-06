@@ -10,6 +10,7 @@ namespace VirtualLab.Application.Interfaces;
 
 public interface ILabVirtualMachineManager
 {
-    public Task<Result<IReadOnlyList<Credential>>> CreateLab(LabConfig labConfig);
-    public Task<Result<IReadOnlyList<Credential>>> GetCredentials(Guid labId); //todo: по id лабы достаём все возможные credendial.
+    public Task<Result<IReadOnlyList<VirtualMachineInfo>>> CreateLab(LabConfig labConfig); //todo: здесь мы возвращаем list VirtualMachineInfo
+
+    public Task<Result> RemoveLab();
 }

@@ -29,7 +29,6 @@ builder.Services.AddScoped<IUserLabProvider, UserLabProviderService>();
 // самый важный класс
 
 builder.Services.AddScoped<ILabConfigure, LabConfigure>();
-builder.Services.AddScoped<ILabEntryPointService, LabEntryPointService>();
 builder.Services.AddScoped<ILabEntryPointRepository, LabEntryPointRepository>();
 builder.Services.AddScoped<ILabManager, LabManager>();
 builder.Services.AddPveClient();

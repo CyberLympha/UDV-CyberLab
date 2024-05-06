@@ -65,7 +65,7 @@ public class UserLabProviderService : IUserLabProvider
         return answer;
     }
 
-    public Task<Result<UserLabInfo>> GetInfo(System.Guid userId, System.Guid labId)
+    public Task<Result<UserLabInfo>> GetUserLab(System.Guid userId, System.Guid labId)
     {
         throw new NotImplementedException();
     }

@@ -1,6 +1,6 @@
+using System.Collections.ObjectModel;
 using Microsoft.AspNetCore.Mvc;
 using ProxmoxApi;
-using VirtualLab.Application;
 using VirtualLab.Application.Interfaces;
 using VirtualLab.Controllers.LabCreationService.Dto;
 using VirtualLab.Domain.Entities;
@@ -49,7 +49,7 @@ public class LabsController : ControllerBase
     }
     
     [HttpGet("{labId:guid}/start")] //todo: очень важно реализовать проверку, а есть ли эта лаба у юзера. сейчас лаба создаётся по LabId, а не по userLabId, что даёт возможность создавать бесконечно лаб. для одного пользователя))
-    public async Task<ActionResult<IReadOnlyList<Credential>>> Start(Guid labId)
+    public async Task<ActionResult<ReadOnlyCollection<Credential>>> Start(Guid labId)
     {
         var createLab = await _labManager.StartNew(labId);
             
