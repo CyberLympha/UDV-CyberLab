@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WebApi.Models;
 using WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
+using WebApi.Model.LabReservationModels;
+using WebApi.Model.LabReservationModels.Requests;
 
 namespace WebApi.Controllers
 {

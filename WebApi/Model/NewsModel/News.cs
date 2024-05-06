@@ -3,7 +3,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
-namespace WebApi.Models;
+namespace WebApi.Model.NewsModel;
 
 public class News
 {

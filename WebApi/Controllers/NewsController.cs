@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using WebApi.Models;
+using WebApi.Model.NewsModel;
+using WebApi.Model.NewsModel.Requests;
 using WebApi.Services;
 
 namespace WebApi.Controllers
@@ -22,7 +23,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost(Name = "CreateNews")]
-        public async Task<ActionResult> CreateNews(CreateNewItem news)
+        public async Task<ActionResult> CreateNews(NewsCreateRequest news)
         {
             try
             {
