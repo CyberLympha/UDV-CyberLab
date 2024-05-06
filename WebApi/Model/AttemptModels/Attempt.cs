@@ -1,10 +1,11 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using WebApi.Model.Repositories;
 
 
 namespace WebApi.Model.AttemptModels;
 
-public class Attempt
+public class Attempt : IIdentifiable
 {
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; }

@@ -1,22 +1,28 @@
 ﻿using MongoDB.Driver;
 using WebApi.Model.AttemptModels;
 using WebApi.Model.Exceptions;
+using WebApi.Model.Repositories;
 
 namespace WebApi.Services;
 
 public class AttemptService
 {
     private readonly AnswerVerifyService _answerVerifyService;
-    private readonly IMongoCollection<Attempt> _attemptCollection;
+    private readonly IRepository<Attempt> _attemptRepository;
     private readonly TestsService _testsService;
     private readonly QuestionsService _questionsService;
 
-    public AttemptService(IMongoCollection<Attempt> attemptCollection, TestsService testsService, AnswerVerifyService answerVerifyService, QuestionsService questionsService)
+    public AttemptService(
+        TestsService testsService, 
+        AnswerVerifyService answerVerifyService, 
+        QuestionsService questionsService, 
+        IRepository<Attempt> attemptRepository
+        )
     {
-        _attemptCollection = attemptCollection;
         _testsService = testsService;
         _answerVerifyService = answerVerifyService;
         _questionsService = questionsService;
+        _attemptRepository = attemptRepository;
     }
 
     public async Task<string> Start(NewAttemptRequest newAttemptRequest)
@@ -29,42 +35,41 @@ public class AttemptService
             StartTime = DateTime.Now,
             Results = new Dictionary<string, string>()
         };
-        await _attemptCollection.InsertOneAsync(attempt);
-        return attempt.Id;
+        return (await _attemptRepository.Create(attempt)).Id;
     }
 
     public async Task GiveTheAnswer(GiveOrChangeTheAnswerAction request)
     {
-        var attempt = (await _attemptCollection.FindAsync(x => x.Id == request.AttemptId)).First();
+        var attempt = await _attemptRepository.ReadById(request.AttemptId);
         EnsureAllowed(attempt);
         attempt.Results.Add(request.QuestionId, request.Answer);
-        await _attemptCollection.FindOneAndReplaceAsync(x => x.Id == request.AttemptId, attempt);
+        await _attemptRepository.Update(attempt);
     }
     
     public async Task ChangeTheAnswer(GiveOrChangeTheAnswerAction request)
     {
-        var attempt = (await _attemptCollection.FindAsync(x => x.Id == request.AttemptId)).First();
+        var attempt = await _attemptRepository.ReadById(request.AttemptId);
         EnsureAllowed(attempt);
         attempt.Results[request.QuestionId] = request.Answer;
-        await _attemptCollection.FindOneAndReplaceAsync(x => x.Id == request.AttemptId, attempt);
+        await _attemptRepository.Update(attempt);
     }
 
     public async Task End(string id)
     {
-        var attempt = (await _attemptCollection.FindAsync(x => x.Id == id)).First();
+        var attempt = await _attemptRepository.ReadById(id);
         attempt.Status = AttemptStatus.Ended;
         attempt.EndTime = DateTime.Now;
-        await _attemptCollection.FindOneAndReplaceAsync(x => x.Id == id, attempt);
+        await _attemptRepository.Update(attempt);
     }
 
     public async Task<Attempt> Get(string attemptId)
     {
-        return (await _attemptCollection.FindAsync(x => x.Id == attemptId)).First();
+        return await _attemptRepository.ReadById(attemptId);
     }
     
     public async Task<AttemptResult> GetResult(string attemptId)
     {
-        var attempt = (await _attemptCollection.FindAsync(x => x.Id == attemptId)).First();
+        var attempt = await _attemptRepository.ReadById(attemptId);;
         var test = (await _testsService.GetById(attempt.TestId));
         var result = new AttemptResult()
         {

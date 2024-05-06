@@ -1,32 +1,24 @@
-﻿using MongoDB.Driver;
+﻿using WebApi.Model.Repositories;
 using WebApi.Model.TestModels;
 
 namespace WebApi.Services;
 
 public class TestsService
 {
-    private readonly IMongoCollection<Test> _testsCollection;
+    private readonly IRepository<Test> _repository;
 
-    public TestsService(IMongoCollection<Test> testsCollection)
+    public TestsService(IRepository<Test> repository)
     {
-        _testsCollection = testsCollection;
+        _repository = repository;
     }
 
-    public Task<List<Test>> Get
-    {
-        get { return _testsCollection.Find(_ => true).ToListAsync(); }
-    }
+    public Task<IEnumerable<Test>> Get => _repository.ReadAll();
 
-    public Task<Test> GetById(string id)
-    {
-        return _testsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
-    }
+    public Task<Test> GetById(string id) => _repository.ReadById(id);
 
     public async Task<string> Create(Test test)
     {
-        await _testsCollection.InsertOneAsync(test);
-        return test.Id;
+        var newTest = await _repository.Create(test);
+        return newTest.Id;
     }
-    
-    
 }

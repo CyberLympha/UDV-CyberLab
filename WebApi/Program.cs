@@ -9,6 +9,8 @@ using WebApi.Model.LabModels;
 using WebApi.Model.LabReservationModels;
 using WebApi.Model.NewsModel;
 using WebApi.Model.QuestionModels;
+using WebApi.Model.Repositories;
+using WebApi.Model.Repositories.MongoDbRepositories;
 using WebApi.Model.TestModels;
 using WebApi.Model.VirtualMachineModels;
 using WebApi.Services;
@@ -54,6 +56,11 @@ builder.Services.AddSingleton<AnswerVerifyService>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<LabsService>();
 builder.Services.AddSingleton<LabReservationsService>();
+builder.Services.AddSingleton<QuestionValidationService>();
+
+builder.Services.AddSingleton<IRepository<Test>, MongoRepository<Test>>();
+builder.Services.AddSingleton<IRepository<Question>, MongoRepository<Question>>();
+builder.Services.AddSingleton<IRepository<Attempt>, MongoRepository<Attempt>>();
 
 builder.Services.AddCors(p => p.AddPolicy("AllowAll",
     b => { b.WithOrigins("http://10.40.229.60:3000","http://localhost:5173").AllowAnyMethod().AllowAnyHeader().AllowCredentials(); }));

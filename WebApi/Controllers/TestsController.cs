@@ -25,7 +25,7 @@ public class TestsController : ControllerBase
     // [Authorize(Roles = "Admin,User")]
     public async Task<ActionResult<List<Test>>> Get()
     { 
-        return await _testsService.Get;
+        return (await _testsService.Get).ToList();
     }
     
     [HttpGet("{id}")]
