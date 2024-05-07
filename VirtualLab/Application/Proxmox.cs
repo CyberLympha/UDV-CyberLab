@@ -5,6 +5,7 @@ using VirtualLab.Domain.Value_Objects;
 using VirtualLab.Domain.Value_Objects.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox.Requests;
 using VirtualLab.Infrastructure;
+using VirtualLab.Infrastructure.ApiResult;
 using VirtualLab.Infrastructure.Extensions;
 using Vostok.Logging.Abstractions;
 using Result = FluentResults.Result;
@@ -29,8 +30,8 @@ public class Proxmox : IVmService, INetworkService // кажется в итог
 
         return result.Match(
             Result.Ok,
-            ApiResultError.GenerateTemplateCloneFailure,
-            ApiResultError.GenerateTemplateCloneFailure);
+            ApiResultError.WithProxmox.CreateCloneFailure,
+            ApiResultError.WithProxmox.CreateCloneFailure);
     }
 
     public async Task<Result> GetAllNetworksBridge(string node)
@@ -46,8 +47,8 @@ public class Proxmox : IVmService, INetworkService // кажется в итог
 
         return result.Match(
             Result.Ok,
-            reasonPhrases => ApiResultError.NetworkCreateError(reasonPhrases, request.Node),
-            errors => ApiResultError.NetworkCreateError(errors, request.Node)
+            reasonPhrases => ApiResultError.WithProxmox.NetworkCreateError(reasonPhrases, request.Node),
+            errors => ApiResultError.WithProxmox.NetworkCreateError(errors, request.Node)
         );
     }
 
@@ -57,8 +58,8 @@ public class Proxmox : IVmService, INetworkService // кажется в итог
 
         return result.Match(
             Result.Ok,
-            reasonPhrases => ApiResultError.NetworkApplyError(reasonPhrases, node),
-            errors => ApiResultError.NetworkApplyError(errors, node)
+            reasonPhrases => ApiResultError.WithProxmox.NetworkApplyError(reasonPhrases, node),
+            errors => ApiResultError.WithProxmox.NetworkApplyError(errors, node)
         );
     }
 
@@ -70,8 +71,8 @@ public class Proxmox : IVmService, INetworkService // кажется в итог
 
         return result.Match(
             Result.Ok,
-            reasonPhrases => ApiResultError.ChangeIntefaceFailure(reasonPhrases, request),
-            errors => ApiResultError.ChangeIntefaceFailure(errors, request)
+            reasonPhrases => ApiResultError.WithProxmox.ChangeIntefaceFailure(reasonPhrases, request),
+            errors => ApiResultError.WithProxmox.ChangeIntefaceFailure(errors, request)
         );
     }
 
@@ -81,8 +82,8 @@ public class Proxmox : IVmService, INetworkService // кажется в итог
 
         return result.Match(
             Result.Ok, // todo возможно, что данные в какой node ошибка прописываеется в ответе от proxmox.
-            reasonPhrases => ApiResultError.VmStartFailure(reasonPhrases, request),
-            errors => ApiResultError.VmStartFailure(errors, request)
+            reasonPhrases => ApiResultError.WithProxmox.VmStartFailure(reasonPhrases, request),
+            errors => ApiResultError.WithProxmox.VmStartFailure(errors, request)
         );
     }
 

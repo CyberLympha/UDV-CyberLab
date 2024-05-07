@@ -1,9 +1,7 @@
 using FluentResults;
 using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Interfaces.Repositories;
-using VirtualLab.Domain.Value_Objects;
 using VirtualLab.Domain.Value_Objects.Proxmox;
-using VirtualLab.Domain.ValueObjects.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox.Config;
 using VirtualLab.Domain.ValueObjects.Proxmox.Requests;
 using Vostok.Logging.Abstractions;
@@ -21,10 +19,20 @@ public class LabConfigure : ILabConfigure
         log.ForContext("LabConfigure");
         _log = log;
     }
-
     
     //todo: псс, mongoDb норм идея, для хранием конфигов лаб)) по идей, могут быть доп данные.
-    public async Task<Result<LabConfig>> GetTemplateConfig(Guid labId)
+    public async Task<Result<LabConfig>> GetConfigByLab(Guid labId)
+    {
+        var getTemplateConfig = await GetTemplateConfig(labId);
+        if (getTemplateConfig.IsFailed) return Result.Fail(getTemplateConfig.Errors);
+
+        var getConfigCurLab = await GenerateLabConfig(getTemplateConfig.Value);
+        if (getConfigCurLab.IsFailed) return Result.Fail(getConfigCurLab.Errors);
+
+        return getConfigCurLab;
+    }
+
+    private async Task<Result<LabConfig>> GetTemplateConfig(Guid labId)
     {
         var lab = await _labs.Get(labId);
         if (lab.IsFailed)
@@ -74,7 +82,7 @@ public class LabConfigure : ILabConfigure
         return labConfig;
     }
 
-    public async Task<Result<LabConfig>> GenerateLabConfig(LabConfig labConfig)
+    private async Task<Result<LabConfig>> GenerateLabConfig(LabConfig labConfig)
     {
         return labConfig;
     }

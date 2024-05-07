@@ -65,11 +65,21 @@ public class UserLabProviderService : IUserLabProvider
         return answer;
     }
 
-    public Task<Result<UserLabInfo>> GetUserLab(System.Guid userId, System.Guid labId)
+    public async Task<Result<UserLabInfo>> GetUserLab(Guid userId, Guid labId)
     {
+        return Result.Ok(new UserLabInfo()
+        {
+            Goal = "Afd",
+            Id = labId,
+            Name = "dfas",
+            Manual = "Dfasdf",
+            Rate = 234,
+            Status = Guid.NewGuid(),
+        });
+        
         throw new NotImplementedException();
     }
-    
+
 
     private static List<UserLabInfo> GetUseLabsInfos(IEnumerable<Lab> labs, UserLab[] userLabs)
     {
