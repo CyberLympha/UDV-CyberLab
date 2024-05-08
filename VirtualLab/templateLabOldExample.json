@@ -1,0 +1,39 @@
+{
+    "node": "pve",
+    "сloneVmConfig": [
+        {
+            "template": {
+                "withVmbr0": true,
+                "id": 104,
+                "name": "test",
+                "password": "test"
+            },
+            "newId": 500,
+            "nets": {
+                "0": {
+                    "bridge": "vmbrX",
+                    "model": "virtion" 
+                }
+            }
+
+        },
+        {
+            "template": {
+                "withVmbr0": true,
+                "id": 105,
+                "name": "test",
+                "password": "test"
+            },
+            "newId": 501,
+            "nets": {
+                "0": {
+                    "bridge": "vmbrX",
+                    "model": "virtion"
+                }
+            }
+        }
+    ]
+}
+
+// главное отличия templateСonfig от configa в том, что вместо определённого bridge
+//
