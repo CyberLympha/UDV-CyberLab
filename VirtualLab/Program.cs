@@ -1,4 +1,5 @@
 using System.Threading.RateLimiting;
+using Authorization;
 using ProxmoxApi;
 using VirtualLab.Application;
 using VirtualLab.Application.Interfaces;
@@ -36,6 +37,7 @@ builder.Services.AddScoped<IVirtualMachineService, VirtualMachineService>();
 builder.Services.AddScoped<IVirtualMachineRepository, VirtualMachineRepository>();
 builder.Services.AddScoped<ICredentialRepository, CredentialRepository>();
 
+builder.Services.AddConfigureAuthentication();
 builder.Services.AddPveClient();
 
 var app = builder.Build();

@@ -11,6 +11,7 @@
     <ItemGroup>
         <PackageReference Include="Corsinvest.ProxmoxVE.Api" Version="8.1.6" />
         <PackageReference Include="FluentResults" Version="3.15.2" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.3" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.28" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.28" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
