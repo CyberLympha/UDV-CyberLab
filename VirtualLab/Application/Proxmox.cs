@@ -96,13 +96,13 @@ public class Proxmox : IVmService, INetworkService // кажется в итог
 
         // todo: декомпозиция. эта часть кода явно должн быть как минум в методе, а можно и в расширений, хотяя.
         // todo: и вообще не здесь
-        var interfaces = result.Response;
+        var interfaces = result.Response["data"]["result"];
         
-        foreach (var @interface in interfaces)
+        foreach (var @interface in interfaces) 
         {
-            if (@interface["name"] == "vmbr0")
+            if (@interface["name"] == "eth0") // нужна искать vmbr0 по ip по номеру сети. 
             {
-                var ip = @interface["ip-addresses"]["ip-address"] as string;
+                var ip = @interface["ip-addresses"][0]["ip-address"] as string;
                 return new Ip() { IpV4 = ip };
             }
         }
