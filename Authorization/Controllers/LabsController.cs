@@ -1,6 +1,5 @@
 ﻿using Authorization.Dto;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Authorization.Controllers

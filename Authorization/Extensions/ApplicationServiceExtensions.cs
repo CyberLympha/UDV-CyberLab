@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
-namespace Authorization
+namespace Authorization.Extensions
 {
     public static class ApplicationServiceExtensions
     {
