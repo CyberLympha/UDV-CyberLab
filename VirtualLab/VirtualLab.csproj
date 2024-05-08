@@ -20,9 +20,6 @@
         <PackageReference Include="Vostok.Logging.Console" Version="1.0.11-pre000022" />
         <PackageReference Include="Vostok.Logging.Formatting" Version="1.0.15-pre000041" />
         <PackageReference Include="Vostok.Logging.Microsoft" Version="2.0.16-pre000026" />
-
-    
-      <Folder Include="Controllers\LabDistributionController\Dto\" />
     
 
     </ItemGroup>

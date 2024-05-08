@@ -6,7 +6,6 @@ using VirtualLab.Domain.ValueObjects.Proxmox.Requests;
 namespace VirtualLab.Application.Interfaces;
 
 
-//todo: подумать над всей этой реализацией
 public interface IVmService
 {
     // 1

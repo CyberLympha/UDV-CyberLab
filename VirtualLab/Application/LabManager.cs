@@ -26,14 +26,15 @@ public class LabManager : ILabManager
         _virtualMachineService = virtualMachineService;
     }
 
-    public async Task<Result<ReadOnlyCollection<Credential>>> StartNew(Guid labId) //todo: пользователя нет в аргументах)
+    public async Task<Result<ReadOnlyCollection<Credential>>> StartNew(Guid labId, Guid userId)
     {
-        var getUserLab = await _userLabProvider.GetUserLab(Guid.NewGuid(), labId);
+        var getUserLab = await _userLabProvider.GetUserLab(userId, labId);
         if (getUserLab.IsFailed)
         {
             _log.Error($"Not find lab with {labId} for user with id {Guid.NewGuid()}"); // так бы везде))
             return Result.Fail(getUserLab.Errors);
         }
+        
         // if (getUserLab.Value.Status == ) проверка, что лаба еще не запущена.
 
         var config = await _labConfigure.GetConfigByLab(labId);

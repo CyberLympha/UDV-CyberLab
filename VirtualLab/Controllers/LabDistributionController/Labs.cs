@@ -48,10 +48,11 @@ public class LabsController : ControllerBase
             e => NotFound(e));
     }
     
-    [HttpGet("{labId:guid}/start")] //todo: очень важно реализовать проверку, а есть ли эта лаба у юзера. сейчас лаба создаётся по LabId, а не по userLabId, что даёт возможность создавать бесконечно лаб. для одного пользователя))
+    [HttpGet("{labId:guid}/start")] 
     public async Task<ActionResult<ReadOnlyCollection<Credential>>> Start(Guid labId)
     {
-        var createLab = await _labManager.StartNew(labId);
+
+        var createLab = await _labManager.StartNew(labId, Guid.NewGuid());
             
         return createLab.Match(
             s => Ok(s),

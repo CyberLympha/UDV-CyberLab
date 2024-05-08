@@ -7,7 +7,6 @@ using VirtualLab.Domain.Interfaces.Repositories;
 using VirtualLab.Infrastructure;
 using VirtualLab.Infrastructure.DataBase;
 using VirtualLab.Infrastructure.Repositories;
-using VirtualLab.Infrastructure.Repository;
 using VirtualLab.MiddleWare;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -100,9 +100,9 @@ public class Proxmox : IVmService, INetworkService // кажется в итог
         
         foreach (var @interface in interfaces)
         {
-            if (interfaces["name"] == "vmbr0")
+            if (@interface["name"] == "vmbr0")
             {
-                var ip = interfaces["ip-addresses"]["ip-address"] as string;
+                var ip = @interface["ip-addresses"]["ip-address"] as string;
                 return new Ip() { IpV4 = ip };
             }
         }

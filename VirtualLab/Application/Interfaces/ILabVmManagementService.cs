@@ -10,7 +10,7 @@ namespace VirtualLab.Application.Interfaces;
 
 public interface ILabVirtualMachineManager
 {
-    public Task<Result<IReadOnlyList<VirtualMachineInfo>>> CreateLab(LabConfig labConfig); //todo: здесь мы возвращаем list VirtualMachineInfo
+    public Task<Result<IReadOnlyList<VirtualMachineInfo>>> CreateLab(LabConfig labConfig);
 
     public Task<Result> RemoveLab();
 }

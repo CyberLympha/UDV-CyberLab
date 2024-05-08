@@ -1,6 +1,6 @@
 namespace VirtualLab.Domain.Entities;
 
-//todo
+//todo дописать сущность
 public class UserLab : IEntity<Guid>
 {
     public Guid Id { get; set; }

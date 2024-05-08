@@ -3,7 +3,7 @@ using VirtualLab.Controllers.LabCreationService.Dto;
 namespace VirtualLab.Domain.Entities;
 
 
-//todo 
+//todo написать нормально сущность
 public class Lab : IEntity<Guid>
 {
     public Guid Id { get; set; }
