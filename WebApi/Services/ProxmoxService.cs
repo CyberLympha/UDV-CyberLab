@@ -439,4 +439,23 @@ public class ProxmoxService
 
         throw new Exception(idResult.ReasonPhrase);
     }
+
+    /// <summary>
+    /// Reads the content of a file from the virtual machine asynchronously.
+    /// </summary>
+    /// <param name="vmId">The identifier of the virtual machine.</param>
+    /// <param name="filePath">The path to the file to be read.</param>
+    /// <returns>The content of the file as a string if the operation is successful.</returns>
+    /// <exception cref="Exception">Thrown when the file reading operation fails.</exception>
+    public async Task<string> ReadFileAsync(string vmId, string filePath)
+    {
+        var fileContentResult = await proxmoxClient.Nodes[nodeName].Qemu[vmId].Agent.FileRead.FileRead(filePath);
+        
+        if (fileContentResult.IsSuccessStatusCode)
+        {
+            return fileContentResult.Response.data.ToString();
+        }
+
+        throw new Exception(fileContentResult.ReasonPhrase);
+    }
 }
