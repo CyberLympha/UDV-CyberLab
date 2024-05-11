@@ -40,7 +40,8 @@ public class LabWorkController : ControllerBase
                 VmId = creationRequest.VmId,
                 Description = creationRequest.Description,
                 Title = creationRequest.Title,
-                ShortDescription = creationRequest.ShortDescription
+                ShortDescription = creationRequest.ShortDescription,
+                InstructionId = creationRequest.InstructionId
             };
             await labWorkService.CreateAsync(labWork);
             return StatusCode(201);
@@ -100,7 +101,8 @@ public class LabWorkController : ControllerBase
                 VmId = updateRequest.VmId,
                 Description = updateRequest.Description,
                 Title = updateRequest.Title,
-                ShortDescription = updateRequest.ShortDescription
+                ShortDescription = updateRequest.ShortDescription,
+                InstructionId = updateRequest.InstructionId
             };
             await labWorkService.UpdateAsync(labWork);
             return Ok();

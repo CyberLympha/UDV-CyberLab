@@ -24,6 +24,12 @@ public record LabWork
     public required string VmId { get; set; }
     
     /// <summary>
+    /// The id of the lab work instruction
+    /// </summary>
+    [Required]
+    public required string InstructionId { get; set; }
+    
+    /// <summary>
     /// Gets or sets the title of the laboratory work.
     /// </summary>
     [Required]
