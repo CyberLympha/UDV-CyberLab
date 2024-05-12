@@ -23,4 +23,10 @@ public record LabWorkInstruction
     /// </summary>
     [Required]
     public required Dictionary<string, string> Steps { get; set; }
+    
+    /// <summary>
+    /// The list of file paths for logs related to this instruction.
+    /// </summary>
+    [Required]
+    public required List<string> LogFilePaths { get; set; } = null!;
 }
