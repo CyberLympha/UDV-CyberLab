@@ -25,8 +25,9 @@ public record LabWorkInstruction
     public required Dictionary<string, string> Steps { get; set; }
     
     /// <summary>
-    /// The list of file paths for logs related to this instruction.
+    /// The dictionary containing file paths of logs associated with different types.
+    /// Key: type of logs, Value: file path.
     /// </summary>
     [Required]
-    public required List<string> LogFilePaths { get; set; } = null!;
+    public required Dictionary<LogsType, string> LogFilePaths { get; set; } = null!;
 }
