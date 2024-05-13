@@ -1,6 +1,5 @@
-﻿using MongoDB.Bson;
-using MongoDB.Driver;
-using WebApi.Models;
+﻿using MongoDB.Driver;
+using WebApi.Models.LabWorks;
 
 namespace WebApi.Services;
 
