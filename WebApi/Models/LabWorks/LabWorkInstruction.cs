@@ -3,7 +3,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using WebApi.Models.Logs;
 
-namespace WebApi.Models;
+namespace WebApi.Models.LabWorks;
 
 /// <summary>
 /// Represents a set of instructions for a laboratory work.
