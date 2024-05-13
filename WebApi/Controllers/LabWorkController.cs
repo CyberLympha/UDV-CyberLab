@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using WebApi.Models;
+using WebApi.Models.LabWorks;
 using WebApi.Services;
 
 namespace WebApi.Controllers;
