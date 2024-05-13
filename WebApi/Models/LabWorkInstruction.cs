@@ -1,6 +1,7 @@
 ﻿using Microsoft.Build.Framework;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using WebApi.Models.Logs;
 
 namespace WebApi.Models;
 
@@ -29,5 +30,5 @@ public record LabWorkInstruction
     /// Key: type of logs, Value: file path.
     /// </summary>
     [Required]
-    public required Dictionary<LogsType, string> LogFilePaths { get; set; } = null!;
+    public required Dictionary<LogsType, string> LogFilePaths { get; set; }
 }
