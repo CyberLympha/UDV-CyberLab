@@ -7,7 +7,8 @@ namespace VirtualLab.Application.Interfaces;
 
 public interface ILabConfigure
 {
-    public Task<Result<LabConfig>> GetConfigByLab(Guid labId);
-    
-    
+    public Task<Result<StandCreateConfig>> GetConfigByLab(Guid labId);
+
+
+    Task<Result<StandRemoveConfig>> GetConfigByUserLab(Guid userLabId);
 }

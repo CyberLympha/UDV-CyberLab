@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+using FluentResults;
 using VirtualLab.Domain.Entities;
 using VirtualLab.Domain.Interfaces;
 using VirtualLab.Domain.Interfaces.Repositories;
@@ -9,5 +11,10 @@ public class VirtualMachineRepository : RepositoryBase<VirtualMachine, Guid>,IVi
 {
     public VirtualMachineRepository(FakeDbContext dbContext) : base(dbContext)
     {
+    }
+
+    public Task<Result<ImmutableArray<VirtualMachine>>> GetAllByUserLab(Guid userLab)
+    {
+        throw new NotImplementedException();
     }
 }

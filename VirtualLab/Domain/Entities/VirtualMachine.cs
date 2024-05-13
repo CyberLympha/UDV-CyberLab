@@ -3,7 +3,7 @@ namespace VirtualLab.Domain.Entities;
 public class VirtualMachine
 {
     public Guid Id { get; set; }
-    public int ProxmoxId { get; set; }
+    public int ProxmoxVmId { get; set; }
     public Guid UserLabId { get; set; }
     public string Node { get; set; }
 
@@ -11,7 +11,7 @@ public class VirtualMachine
         => new()
         {
             Id = Guid.NewGuid(),
-            ProxmoxId = proxmoxVmId,
+            ProxmoxVmId = proxmoxVmId,
             Node = node,
             UserLabId = userLabId
         };

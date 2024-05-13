@@ -8,5 +8,6 @@ namespace VirtualLab.Application.Interfaces;
 public interface ILabManager
 {
     public Task<Result<ReadOnlyCollection<Credential>>> StartNew(Guid labId, Guid userId);
-    public Task<Result<string>> GetStatus(Guid labId);
+    public Task<Result<string>> GetStatus(Guid labId); // вместе string норм ответы
+    Task<Result<string>> End(Guid labId, Guid newGuid);
 }

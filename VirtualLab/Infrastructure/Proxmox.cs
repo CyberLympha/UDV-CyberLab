@@ -1,8 +1,11 @@
+using System.Text.Json;
 using Corsinvest.ProxmoxVE.Api;
 using FluentResults;
 using VirtualLab.Application.Interfaces;
+using VirtualLab.Domain.Interfaces.Proxmox;
 using VirtualLab.Domain.Value_Objects;
 using VirtualLab.Domain.Value_Objects.Proxmox;
+using VirtualLab.Domain.ValueObjects.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox.Requests;
 using VirtualLab.Infrastructure;
 using VirtualLab.Infrastructure.ApiResult;
@@ -12,7 +15,7 @@ using Result = FluentResults.Result;
 
 namespace VirtualLab.Application;
 
-public class Proxmox : IVmService, INetworkService // кажется в итоге это будет два отдельных класса)
+public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итоге это будет два отдельных класса)
 {
     private readonly PveClient _client;
     private ILog _log;
@@ -34,12 +37,22 @@ public class Proxmox : IVmService, INetworkService // кажется в итог
             ApiResultError.WithProxmox.CreateCloneFailure);
     }
 
-    public async Task<Result> GetAllNetworksBridge(string node)
+    public async Task<Result> GetAllNetworksBridgeByVm(string node)
     {
         var result = await _client.Nodes[node].Network.Index("bridge");
 
         throw new NotImplementedException();
     }
+
+    public async Task<Result<NetCollection>> GetAllNetworksBridgeByVm(int vmId, string node)
+    {
+        var result = await _client.Nodes[node].Qemu[vmId].Config.VmConfig();
+
+        var listNet = result.Response["data"]["config"]["net"];
+
+        throw new NotImplementedException();
+    }
+    
 
     public async Task<Result> CreateInterface(CreateInterface request)
     {
@@ -100,10 +113,13 @@ public class Proxmox : IVmService, INetworkService // кажется в итог
         
         foreach (var @interface in interfaces) 
         {
-            if (@interface["name"] == "eth0") // нужна искать vmbr0 по ip по номеру сети. 
+            foreach (var ipAddress in @interface["ip-addresses"])
             {
-                var ip = @interface["ip-addresses"][0]["ip-address"] as string;
-                return new Ip() { IpV4 = ip };
+                var ip = ipAddress["ip-address"] as string;
+                if (ip != null && ip.StartsWith(ProxmoxData.NetworkIdGlobalNetwork))
+                {
+                    return new Ip() { IpV4 = ip };
+                }
             }
         }
         //todo: доделать

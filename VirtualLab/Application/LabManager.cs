@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using FluentResults;
 using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Entities;
+using VirtualLab.Infrastructure.Extensions;
 using Vostok.Logging.Abstractions;
 using Result = FluentResults.Result;
 
@@ -11,17 +12,17 @@ public class LabManager : ILabManager
 {
     private readonly IUserLabProvider _userLabProvider;
     private readonly ILabConfigure _labConfigure;
-    private readonly ILabVirtualMachineManager _labVirtualMachineManager;
+    private readonly IStandManager _standManager;
     private readonly IVirtualMachineService _virtualMachineService;
     private readonly ILog _log;
 
     public LabManager(IUserLabProvider userLabProvider, ILabConfigure labConfigure,
-        ILabVirtualMachineManager labVirtualMachineManager, ILog log,
+        IStandManager standManager, ILog log,
         IVirtualMachineService virtualMachineService)
     {
         _userLabProvider = userLabProvider;
         _labConfigure = labConfigure;
-        _labVirtualMachineManager = labVirtualMachineManager;
+        _standManager = standManager;
         _log = log;
         _virtualMachineService = virtualMachineService;
     }
@@ -31,16 +32,16 @@ public class LabManager : ILabManager
         var getUserLab = await _userLabProvider.GetUserLab(userId, labId);
         if (getUserLab.IsFailed)
         {
-            _log.Error($"Not find lab with {labId} for user with id {Guid.NewGuid()}"); // так бы везде))
+            _log.Error($"Not find lab with {labId} for user with id {userId}"); // так бы везде))
             return Result.Fail(getUserLab.Errors);
         }
-        
+
         // if (getUserLab.Value.Status == ) проверка, что лаба еще не запущена.
 
         var config = await _labConfigure.GetConfigByLab(labId);
         if (config.IsFailed) return Result.Fail(config.Errors);
 
-        var labCreatedWithVm = await _labVirtualMachineManager.CreateLab(config.Value);
+        var labCreatedWithVm = await _standManager.CreateStand(config.Value);
         if (labCreatedWithVm.IsFailed) return Result.Fail(labCreatedWithVm.Errors);
 
         // у этого foreach как-то много ответственности)))
@@ -50,23 +51,44 @@ public class LabManager : ILabManager
             var vm = VirtualMachine.From(virtualMachineInfo.Node, virtualMachineInfo.ProxmoxVmId, getUserLab.Value.Id);
             await _virtualMachineService.AddVm(vm);
             if (string.IsNullOrEmpty(virtualMachineInfo.Ip)) continue;
-            
+
             var credential = Credential.From(
-                virtualMachineInfo.Ip, 
+                virtualMachineInfo.Ip,
                 virtualMachineInfo.Username,
-                virtualMachineInfo.Password, 
+                virtualMachineInfo.Password,
                 vm.Id
-                );
-            await _virtualMachineService.AddCredential(credential); // по сути, можно разделить на два интерфейса ICre и I Vm. а нужно ли 
-            
+            );
+            await _virtualMachineService
+                .AddCredential(credential); // по сути, можно разделить на два интерфейса ICre и I Vm. а нужно ли 
+
             result.Add(credential);
         }
 
         return Result.Ok(result.AsReadOnly());
     }
-    
+
     public Task<Result<string>> GetStatus(Guid labId)
     {
+        throw new NotImplementedException();
+    }
+
+    public async Task<Result<string>> End(Guid labId, Guid userId)
+    {
+        var getUserLab = await _userLabProvider.GetUserLab(userId, labId);
+        if (getUserLab.IsFailed)
+        {
+            _log.Error($"Not find lab with {labId} for user with id {userId}"); // так бы везде))
+            return Result.Fail(getUserLab.Errors);
+        }
+        // if (getUserLab.Value.Status == ) проверка, что лаба УЖЕ ЗАПУЩЕНА
+
+        var userLabConfig = await _labConfigure.GetConfigByUserLab(getUserLab.Value.Id);
+        if (!userLabConfig.TryGetValue(out var config))
+        {
+            return Result.Fail($"error {getUserLab.Errors}");
+        }
+
+        await _standManager.RemoveStand(config);
         throw new NotImplementedException();
     }
 }

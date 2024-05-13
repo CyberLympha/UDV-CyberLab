@@ -1,3 +1,5 @@
+using VirtualLab.Domain.ValueObjects.Proxmox;
+
 namespace VirtualLab.Domain.Value_Objects.Proxmox;
 
 public record UpdateInterfaceForVm

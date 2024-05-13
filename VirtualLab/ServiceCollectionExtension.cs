@@ -1,6 +1,7 @@
 using Corsinvest.ProxmoxVE.Api;
 using VirtualLab.Application;
 using VirtualLab.Application.Interfaces;
+using VirtualLab.Domain.Interfaces.Proxmox;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Console;
 using Vostok.Logging.Microsoft;
@@ -29,10 +30,10 @@ public static class ServiceCollectionExtension
         //todo: в будущем реализовать класс, который будет брать из переменных окружения токен.
         client.ApiToken = "root@pam!devil=43cd358d-e00e-401b-9178-1a5c69e9685f";
 
-        services.AddSingleton<INetworkService, Proxmox>();
-        services.AddSingleton<IVmService, Proxmox>();
+        services.AddSingleton<IProxmoxNetwork, Proxmox>();
+        services.AddSingleton<IProxmoxVm, Proxmox>();
 
-        services.AddSingleton<ILabVirtualMachineManager, LabVirtualMachineManager>();
+        services.AddSingleton<IStandManager, StandManager>();
         services.AddScoped<ILabConfigure, LabConfigure>();
         services.AddSingleton(client);
     }

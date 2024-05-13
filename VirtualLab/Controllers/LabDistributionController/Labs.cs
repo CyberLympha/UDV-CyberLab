@@ -51,11 +51,22 @@ public class LabsController : ControllerBase
     [HttpGet("{labId:guid}/start")] 
     public async Task<ActionResult<ReadOnlyCollection<Credential>>> Start(Guid labId)
     {
-
         var createLab = await _labManager.StartNew(labId, Guid.NewGuid());
             
         return createLab.Match(
             s => Ok(s),
             e => BadRequest(e));
     }
+
+    [HttpGet("{labId:guid}/end")]
+    public async Task<ActionResult<string>> End(Guid labId)
+    {
+        var removeLab = await _labManager.End(labId, Guid.NewGuid());
+        
+        return removeLab.Match(
+            data => Ok(data),
+            e => BadRequest(e));
+    }
+    
+    
 }

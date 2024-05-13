@@ -1,24 +1,25 @@
 using System.Collections;
+using VirtualLab.Domain.Value_Objects.Proxmox;
 
-namespace VirtualLab.Domain.Value_Objects.Proxmox;
+namespace VirtualLab.Domain.ValueObjects.Proxmox;
 
 public class NetCollection : IEnumerable<Net>
 {
     private readonly Dictionary<int, Net> _nets = new();
-    private int Count => _nets.Count + 1; // никита блуа, это сложная логика))) потому что 0 это vmbr0
+    private int Tail => _nets.Count; // такое название.
     public IReadOnlyDictionary<int, string> Value => _nets.ToDictionary(x => x.Key, x => x.Value.GetFull);
 
     public void Add(NetSettings netSettings)
     {
         var net = new Net(netSettings.Model, netSettings.Bridge);
 
-        _nets.Add(Count, net);
+        _nets.Add(Tail, net);
     }
 
 
-    public IEnumerator<Net> GetEnumerator() 
+    public IEnumerator<Net> GetEnumerator()
     {
-        for (var i = 1; i < _nets.Count + 1; i++) // 0 это vmbr0 //todo: это очень неприятный костыль сейчас.
+        for (var i = 0; i < _nets.Count; i++)
         {
             yield return _nets[i];
         }

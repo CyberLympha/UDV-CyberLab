@@ -3,7 +3,7 @@ namespace VirtualLab.Domain.Entities;
 public class Credential : IEntity<Guid>
 {
     public Guid Id { get; set; }
-    public Guid VmId { get; set; } // todo: потом нужно заменить на vm_id.
+    public Guid VmId { get; set; } 
     public string Username { get; set; }
     public string Password { get; set; }
     public string Ip { get; set; }

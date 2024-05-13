@@ -1,9 +1,12 @@
 using FluentResults;
 using VirtualLab.Application.Interfaces;
+using VirtualLab.Domain.Interfaces.Proxmox;
 using VirtualLab.Domain.Interfaces.Repositories;
 using VirtualLab.Domain.Value_Objects.Proxmox;
+using VirtualLab.Domain.ValueObjects.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox.Config;
 using VirtualLab.Domain.ValueObjects.Proxmox.Requests;
+using VirtualLab.Infrastructure.Extensions;
 using Vostok.Logging.Abstractions;
 
 namespace VirtualLab.Application;
@@ -12,16 +15,25 @@ public class LabConfigure : ILabConfigure
 {
     private readonly ILabRepository _labs;
     private readonly ILog _log;
+    private readonly ICredentialRepository _credentials;
+    private readonly IVirtualMachineRepository _virtualMachines;
+    private readonly IProxmoxNetwork _proxmoxNetwork;
 
-    public LabConfigure(ILabRepository labs, ILog log)
+    public LabConfigure(ILabRepository labs,
+        ILog log,
+        ICredentialRepository credentials,
+        IVirtualMachineRepository virtualMachines, IProxmoxNetwork proxmoxNetwork)
     {
         _labs = labs;
         log.ForContext("LabConfigure");
         _log = log;
+        _credentials = credentials;
+        _virtualMachines = virtualMachines;
+        _proxmoxNetwork = proxmoxNetwork;
     }
 
-    //todo: псс, mongoDb норм идея, для хранием конфигов лаб)) по идей, могут быть доп данные.
-    public async Task<Result<LabConfig>> GetConfigByLab(Guid labId)
+
+    public async Task<Result<StandCreateConfig>> GetConfigByLab(Guid labId)
     {
         var getTemplateConfig = await GetTemplateConfig(labId);
         if (getTemplateConfig.IsFailed) return Result.Fail(getTemplateConfig.Errors);
@@ -32,7 +44,37 @@ public class LabConfigure : ILabConfigure
         return getConfigCurLab;
     }
 
-    private async Task<Result<LabConfig>> GetTemplateConfig(Guid labId)
+    public async Task<Result<StandRemoveConfig>> GetConfigByUserLab(Guid userLabId)
+    {
+        var resultVms = await _virtualMachines.GetAllByUserLab(userLabId);
+        if (!resultVms.TryGetValue(out var virtualMachines))
+        {
+            return Result.Fail($"ошибка: {resultVms.Errors}");
+        }
+
+
+        var userLabConfig = new StandRemoveConfig();
+        foreach (var virtualMachine in virtualMachines)
+        {
+            var resultNets = await _proxmoxNetwork.
+                GetAllNetworksBridgeByVm(virtualMachine.ProxmoxVmId, virtualMachine.Node);
+            if (!resultNets.TryGetValue(out var nets))
+            {
+                return Result.Fail($"error: {resultNets.Errors}");
+            }
+            
+            userLabConfig.VmsData.Add(new VmData
+            {
+                ProxmoxId = virtualMachine.ProxmoxVmId,
+                Nets = nets
+            });
+        }
+
+        return userLabConfig;
+    }
+
+    //todo: псс, mongoDb норм идея, для хранием конфигов лаб)) по идей, могут быть доп данные.
+    private async Task<Result<StandCreateConfig>> GetTemplateConfig(Guid labId)
     {
         var lab = await _labs.Get(labId);
         if (lab.IsFailed)
@@ -56,14 +98,19 @@ public class LabConfigure : ILabConfigure
             Model = "virtio"
         };
 
+        var vmbr0 = new NetSettings()
+        {
+            Bridge = "vmbr0",
+            Model = "virio"
+        };
 
         var nets1005vm = new NetCollection { net2005 };
         var nets1006Vm = new NetCollection { net2006 };
         var nets1007Vm = new NetCollection() { net2007 };
-        var router = new NetCollection() { net2005, net2006, net2007};
+        var router = new NetCollection() { net2005, net2006, net2007 };
 
 
-        var labConfig = new LabConfig()
+        var labConfig = new StandCreateConfig()
         {
             Node = "test",
             CloneVmConfig = new List<CloneVmConfig>()
@@ -104,11 +151,11 @@ public class LabConfigure : ILabConfigure
                     NewId = 2007,
                     Nets = nets1007Vm
                 },
-                new ()
+                new()
                 {
                     Template = new Template()
                     {
-                        WithVmbr0 = true,// по сути не нужно, ибо мы может на прямую смотреть если ли vmbr0
+                        WithVmbr0 = true, // по сути не нужно, ибо мы может на прямую смотреть если ли vmbr0
                         Id = 1008,
                         Password = "pass",
                         Name = "name"
@@ -123,8 +170,8 @@ public class LabConfigure : ILabConfigure
         return labConfig;
     }
 
-    private async Task<Result<LabConfig>> GenerateLabConfig(LabConfig labConfig)
+    private async Task<Result<StandCreateConfig>> GenerateLabConfig(StandCreateConfig standCreateConfig)
     {
-        return labConfig;
+        return standCreateConfig;
     }
 }

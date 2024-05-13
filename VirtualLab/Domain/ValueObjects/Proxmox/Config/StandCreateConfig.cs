@@ -5,7 +5,7 @@ namespace VirtualLab.Domain.ValueObjects.Proxmox.Config;
 
 
 // здесь хранится конфиг именно для одной node. потенциальной лабе может быть задействована не одна node
-public record LabConfig // он record здесь мало смысла.
+public record StandCreateConfig // он record здесь мало смысла.
 {
     public Guid LabId { get; set; }
     public string Node { get; init; } 

@@ -1,6 +1,7 @@
 using FluentResults;
 using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Entities;
+using VirtualLab.Domain.Interfaces.Proxmox;
 using VirtualLab.Domain.Value_Objects;
 using VirtualLab.Domain.Value_Objects.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox;
@@ -13,37 +14,37 @@ namespace VirtualLab.Application;
 
 // название мне так же не очень нравятится. но суть в том, что это класс отвечает за создание лабы и предоставление её пользователю, кароче работает с proxomx и только.
 
-public class LabVirtualMachineManager : ILabVirtualMachineManager
+public class StandManager : IStandManager
 {
-    private readonly IVmService _vm;
-    private readonly INetworkService _networkDevice;
+    private readonly IProxmoxVm _proxmoxVm;
+    private readonly IProxmoxNetwork _proxmoxNetworkDevice;
     private readonly ILog _log;
 
-    public LabVirtualMachineManager(IVmService vm, INetworkService networkDevice, ILog log)
+    public StandManager(IProxmoxVm proxmoxVm, IProxmoxNetwork proxmoxNetworkDevice, ILog log)
     {
-        _vm = vm;
-        _networkDevice = networkDevice;
+        _proxmoxVm = proxmoxVm;
+        _proxmoxNetworkDevice = proxmoxNetworkDevice;
         log.ForContext("LabVmManagment");
         _log = log;
     }
 
 
-    public async Task<Result<IReadOnlyList<VirtualMachineInfo>>> CreateLab(LabConfig labConfig)
+    public async Task<Result<IReadOnlyList<VirtualMachineInfo>>> CreateStand(StandCreateConfig standCreateConfig)
     {
-        var response = await CreateInterfaces(labConfig.GetAllNetsInterfaces(), labConfig.Node);
+        var response = await CreateInterfaces(standCreateConfig.GetAllNetsInterfaces(), standCreateConfig.Node);
         if (response.IsFailed)
         {
             _log.Error($"create interface occured with errors: {response.Reasons}"); //todo: сделать так везде.
             return response;
         }
 
-        response = await _networkDevice.Apply(labConfig.Node);
+        response = await _proxmoxNetworkDevice.Apply(standCreateConfig.Node);
         if (response.IsFailed) return response;
 
         //todo: то есть до этого ты сделал метод, в котором foreach, а сейчас забил?
-        foreach (var cloneVmTemplate in labConfig.CloneVmConfig)
+        foreach (var cloneVmTemplate in standCreateConfig.CloneVmConfig)
         {
-            response = await CreateVmByTemplate(cloneVmTemplate, labConfig.Node);
+            response = await CreateVmByTemplate(cloneVmTemplate, standCreateConfig.Node);
             if (response.IsFailed) return response;
         }
 
@@ -51,7 +52,7 @@ public class LabVirtualMachineManager : ILabVirtualMachineManager
 
         var virtualMachineInfos = new List<VirtualMachineInfo>();
         
-        foreach (var cloneVmConfig in labConfig.CloneVmConfig)
+        foreach (var cloneVmConfig in standCreateConfig.CloneVmConfig)
         {
             if (!cloneVmConfig.Template.WithVmbr0)
             {
@@ -60,12 +61,12 @@ public class LabVirtualMachineManager : ILabVirtualMachineManager
                     ProxmoxVmId = cloneVmConfig.NewId,
                     Password = cloneVmConfig.Template.Password,
                     Username = cloneVmConfig.Template.Name,
-                    Node = labConfig.Node
+                    Node = standCreateConfig.Node
                 });
             }
             else
             {
-                var getIp = await _vm.GetIp(labConfig.Node, cloneVmConfig.NewId);
+                var getIp = await _proxmoxVm.GetIp(standCreateConfig.Node, cloneVmConfig.NewId);
                 if (getIp.IsFailed) return response;
                 
                 virtualMachineInfos.Add(new VirtualMachineInfo()
@@ -73,7 +74,7 @@ public class LabVirtualMachineManager : ILabVirtualMachineManager
                     ProxmoxVmId = cloneVmConfig.NewId,
                     Password = cloneVmConfig.Template.Password,
                     Username = cloneVmConfig.Template.Name,
-                    Node = labConfig.Node,
+                    Node = standCreateConfig.Node,
                     Ip = getIp.Value.IpV4
                 });
             }
@@ -84,17 +85,18 @@ public class LabVirtualMachineManager : ILabVirtualMachineManager
         
         
     }
-    
-    public Task<Result> RemoveLab()
+
+    public Task<Result> RemoveStand(StandRemoveConfig standRemoveConfig)
     {
-        throw new NotImplementedException();
+        
     }
-    
+
+  
     private async Task<Result> CreateInterfaces(IEnumerable<Net> nets, string node)
     {
-        foreach (var net in nets)
+        foreach (var net in nets.Where(x => x.Bridge != "vmbr0"))
         {
-            var response = await _networkDevice.CreateInterface(CreateInterface.Brige(net.Bridge, node));
+            var response = await _proxmoxNetworkDevice.CreateInterface(CreateInterface.Brige(net.Bridge, node));
             if (response.IsFailed) return response;
         }
 
@@ -104,10 +106,10 @@ public class LabVirtualMachineManager : ILabVirtualMachineManager
     // меня напрягает здесь node, как вообще будет работать node
     private async Task<Result> CreateVmByTemplate(CloneVmConfig cloneVmConfig, string node)
     {
-        var response = await _vm.Clone(cloneVmConfig, node);
+        var response = await _proxmoxVm.Clone(cloneVmConfig, node);
         if (response.IsFailed) return response;
         // todo: refactoring in future
-        response = await _vm.UpdateDeviceInterface(new UpdateInterfaceForVm()
+        response = await _proxmoxVm.UpdateDeviceInterface(new UpdateInterfaceForVm()
         {
             Node = node,
             Qemu = cloneVmConfig.NewId,
@@ -115,7 +117,7 @@ public class LabVirtualMachineManager : ILabVirtualMachineManager
         });
         if (response.IsFailed) return response;
 
-        response = await _vm.StartVm(new LaunchVm() // а запускать мне кажется, точно должны не здесь.
+        response = await _proxmoxVm.StartVm(new LaunchVm() // а запускать мне кажется, точно должны не здесь.
         {
             Node = node,
             Qemu = cloneVmConfig.NewId

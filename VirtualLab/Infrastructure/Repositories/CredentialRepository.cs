@@ -10,4 +10,9 @@ public class CredentialRepository : RepositoryBase<Credential,Guid> , ICredentia
     public CredentialRepository(FakeDbContext dbContext) : base(dbContext)
     {
     }
+
+    public string GetAllByUserLab(Guid userLabId)
+    {
+        throw new NotImplementedException();
+    }
 }

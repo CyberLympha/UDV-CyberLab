@@ -1,12 +1,11 @@
 using FluentResults;
-using VirtualLab.Domain.Value_Objects;
 using VirtualLab.Domain.Value_Objects.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox.Requests;
 
-namespace VirtualLab.Application.Interfaces;
+namespace VirtualLab.Domain.Interfaces.Proxmox;
 
 
-public interface IVmService
+public interface IProxmoxVm
 {
     // 1
     public Task<Result> Clone(CloneVmConfig vmConfig, string node);
