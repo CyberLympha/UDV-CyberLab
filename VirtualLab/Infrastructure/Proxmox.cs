@@ -116,18 +116,15 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
 
         // todo: декомпозиция. эта часть кода явно должн быть как минум в методе, а можно и в расширений, хотяя.
         // todo: и вообще не здесь
-        var data = JsonConvert.SerializeObject(result.Response);
-        var interfaces = (JArray)data["data"]["result"];
+        var data = result.Response;
+        var interfaces = data.data.result;
         
-        _log.Debug($"{interfaces["data"]}");
-        _log.Debug($"{interfaces["result"]}");
         foreach (var @interface in interfaces) 
         {
-            var ipAddresses = (JArray)@interface["ip-addresses"];
-            foreach (var ipAddress in @interface["ip-addresses"])
+            var ipAddresses = @interface["ip-addresses"];
+            foreach (var ipAddress in ipAddresses)
             {
-                
-                var ip = ipAddress["ip-address"]?.ToString();
+                var ip = ipAddress["ip-address"] as string;
                 _log.Debug($"{ip}");
                 if (!string.IsNullOrEmpty(ip) && ip.StartsWith(ProxmoxData.NetworkIdGlobalNetwork))
                 {
