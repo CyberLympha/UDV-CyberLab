@@ -82,87 +82,63 @@ public class LabConfigure : ILabConfigure
             return Result.Fail(lab.Errors);
         }
 
-        var net2005 = new NetSettings()
+        var net24 = new NetSettings()
         {
-            Bridge = "vmbr2005",
+            Bridge = "vmbr24",
             Model = "virtio"
         };
-        var net2006 = new NetSettings()
-        {
-            Bridge = "vmbr2006",
-            Model = "virtio"
-        };
-        var net2007 = new NetSettings()
-        {
-            Bridge = "vmbr2007",
-            Model = "virtio"
-        };
-
+        
         var vmbr0 = new NetSettings()
         {
             Bridge = "vmbr0",
-            Model = "virio"
+            Model = "virtio"
         };
 
-        var nets1005vm = new NetCollection { net2005 };
-        var nets1006Vm = new NetCollection { net2006 };
-        var nets1007Vm = new NetCollection() { net2007 };
-        var router = new NetCollection() { net2005, net2006, net2007 };
-
-
+        var nets1300vm = new NetCollection { net24, vmbr0 };
+        var nets1301Vm = new NetCollection { net24 };
+        var nets1302Vm = new NetCollection() { net24 };
+        
         var labConfig = new StandCreateConfig()
         {
-            Node = "test",
+            Node = "pve",
             CloneVmConfig = new List<CloneVmConfig>()
             {
                 new()
                 {
                     Template = new Template() //kali
                     {
-                        WithVmbr0 = false,
-                        Id = 1005,
+                        WithVmbr0 = true,
+                        Id = 300,
                         Name = "test",
                         Password = "test"
                     },
-                    NewId = 2005,
-                    Nets = nets1005vm
+                    NewId = 1300,
+                    Nets = nets1300vm
+                },
+                /*new()
+                {
+                    Template = new Template() // win
+                    {
+                        WithVmbr0 = false,
+                        Id = 301,
+                        Name = "test",
+                        Password = "test"
+                    },
+                    NewId = 1301,
+                    Nets = nets1301Vm
                 },
                 new()
                 {
                     Template = new Template() // win
                     {
                         WithVmbr0 = false,
-                        Id = 1006,
-                        Name = "test",
-                        Password = "test"
-                    },
-                    NewId = 2006,
-                    Nets = nets1006Vm
-                },
-                new()
-                {
-                    Template = new Template() // win
-                    {
-                        WithVmbr0 = false,
-                        Id = 1007,
+                        Id = 302,
                         Password = "test",
-                        Name = "win"
+                        Name = "test"
                     },
-                    NewId = 2007,
-                    Nets = nets1007Vm
-                },
-                new()
-                {
-                    Template = new Template()
-                    {
-                        WithVmbr0 = true, // по сути не нужно, ибо мы может на прямую смотреть если ли vmbr0
-                        Id = 1008,
-                        Password = "pass",
-                        Name = "name"
-                    },
-                    NewId = 2008,
-                    Nets = router
-                }
+                    NewId = 1302,
+                    Nets = nets1302Vm
+                }*/
             }
         };
 

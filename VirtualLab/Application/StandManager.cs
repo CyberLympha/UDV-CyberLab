@@ -8,7 +8,6 @@ using VirtualLab.Domain.ValueObjects.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox.Config;
 using VirtualLab.Domain.ValueObjects.Proxmox.Requests;
 using Vostok.Logging.Abstractions;
-using Guid = System.Guid;
 
 namespace VirtualLab.Application;
 
@@ -67,7 +66,7 @@ public class StandManager : IStandManager
             else
             {
                 var getIp = await _proxmoxVm.GetIp(standCreateConfig.Node, cloneVmConfig.NewId);
-                if (getIp.IsFailed) return response;
+                if (getIp.IsFailed) return Result.Fail($"not found ip because: {getIp}");
                 
                 virtualMachineInfos.Add(new VirtualMachineInfo()
                 {
@@ -88,16 +87,16 @@ public class StandManager : IStandManager
 
     public Task<Result> RemoveStand(StandRemoveConfig standRemoveConfig)
     {
-        
+        throw new NotImplementedException();
     }
 
   
     private async Task<Result> CreateInterfaces(IEnumerable<Net> nets, string node)
     {
-        foreach (var net in nets.Where(x => x.Bridge != "vmbr0"))
+        foreach (var net in nets.Where(x => x.Bridge != "vmbr0")) // чёт крижово выглядит.
         {
             var response = await _proxmoxNetworkDevice.CreateInterface(CreateInterface.Brige(net.Bridge, node));
-            if (response.IsFailed) return response;
+            if (response.IsFailed) return Result.Fail($"net: {net} occured with error: {response}");
         }
 
         return Result.Ok();

@@ -1,6 +1,9 @@
+using System.Net.NetworkInformation;
 using System.Text.Json;
 using Corsinvest.ProxmoxVE.Api;
 using FluentResults;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Interfaces.Proxmox;
 using VirtualLab.Domain.Value_Objects;
@@ -53,7 +56,6 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
         throw new NotImplementedException();
     }
     
-
     public async Task<Result> CreateInterface(CreateInterface request)
     {
         var result = await _client.Nodes[request.Node].Network.CreateNetwork(request.IFace, request.Type, autostart: true);
@@ -63,6 +65,11 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
             reasonPhrases => ApiResultError.WithProxmox.NetworkCreateError(reasonPhrases, request.Node),
             errors => ApiResultError.WithProxmox.NetworkCreateError(errors, request.Node)
         );
+    }
+
+    public Task<Result> RemoveInterface()
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<Result> Apply(string node)
@@ -104,20 +111,27 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
     public async Task<Result<Ip>> GetIp(string node, int qemu)
     {
         var result = await _client.Nodes[node].Qemu[qemu].Agent.NetworkGetInterfaces.NetworkGetInterfaces();
-
+        
         if (!result.IsSuccessStatusCode) return Result.Fail(result.ReasonPhrase);
 
         // todo: декомпозиция. эта часть кода явно должн быть как минум в методе, а можно и в расширений, хотяя.
         // todo: и вообще не здесь
-        var interfaces = result.Response["data"]["result"];
+        var data = JsonConvert.SerializeObject(result.Response);
+        var interfaces = (JArray)data["data"]["result"];
         
+        _log.Debug($"{interfaces["data"]}");
+        _log.Debug($"{interfaces["result"]}");
         foreach (var @interface in interfaces) 
         {
+            var ipAddresses = (JArray)@interface["ip-addresses"];
             foreach (var ipAddress in @interface["ip-addresses"])
             {
-                var ip = ipAddress["ip-address"] as string;
-                if (ip != null && ip.StartsWith(ProxmoxData.NetworkIdGlobalNetwork))
+                
+                var ip = ipAddress["ip-address"]?.ToString();
+                _log.Debug($"{ip}");
+                if (!string.IsNullOrEmpty(ip) && ip.StartsWith(ProxmoxData.NetworkIdGlobalNetwork))
                 {
+                    _log.Info($"ip {ip} from {node} & {qemu}");
                     return new Ip() { IpV4 = ip };
                 }
             }

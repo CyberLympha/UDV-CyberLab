@@ -1,3 +1,5 @@
+using VirtualLab.Domain.Value_Objects.Proxmox;
+
 namespace VirtualLab.Domain.ValueObjects.Proxmox;
 
 public class VmData

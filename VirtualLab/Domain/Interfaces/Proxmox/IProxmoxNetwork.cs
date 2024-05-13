@@ -1,6 +1,7 @@
 using FluentResults;
 using Microsoft.VisualBasic;
 using VirtualLab.Domain.Value_Objects;
+using VirtualLab.Domain.Value_Objects.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox;
 
 namespace VirtualLab.Domain.Interfaces.Proxmox;

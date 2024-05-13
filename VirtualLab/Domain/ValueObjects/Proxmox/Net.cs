@@ -12,9 +12,12 @@ public class Net
         Parameters.Add("model", model);
         Parameters.Add("bridge", bridge);
     }
-    
-    
-    
+
+    public override string ToString()
+    {
+        return $"{Bridge}, {Parameters}";
+    }
+
     public string this[string index] => Parameters[index];
     public string GetFull => string.Join(",", Parameters.Select(x => $"{x.Key}={x.Value}"));
     public string Bridge => Parameters["bridge"];
