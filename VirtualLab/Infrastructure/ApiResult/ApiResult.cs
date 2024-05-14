@@ -6,6 +6,7 @@ public class ApiResultError
     
     public static WithProxmox WithProxmox => new WithProxmox();
     public static WithDataBase WithDataBase => new WithDataBase();
+
 }
 
 

@@ -7,6 +7,7 @@ using VirtualLab.Domain.Value_Objects.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox.Config;
 using VirtualLab.Domain.ValueObjects.Proxmox.Requests;
+using VirtualLab.Infrastructure.Extensions;
 using Vostok.Logging.Abstractions;
 
 namespace VirtualLab.Application;
@@ -50,7 +51,7 @@ public class StandManager : IStandManager
         //todo: максимально тупая реализация.
 
         var virtualMachineInfos = new List<VirtualMachineInfo>();
-        
+
         foreach (var cloneVmConfig in standCreateConfig.CloneVmConfig)
         {
             if (!cloneVmConfig.Template.WithVmbr0)
@@ -67,7 +68,7 @@ public class StandManager : IStandManager
             {
                 var getIp = await _proxmoxVm.GetIp(standCreateConfig.Node, cloneVmConfig.NewId);
                 if (getIp.IsFailed) return Result.Fail($"not found ip because: {getIp}");
-                
+
                 virtualMachineInfos.Add(new VirtualMachineInfo()
                 {
                     ProxmoxVmId = cloneVmConfig.NewId,
@@ -77,20 +78,52 @@ public class StandManager : IStandManager
                     Ip = getIp.Value.IpV4
                 });
             }
-            
         }
 
         return virtualMachineInfos;
-        
-        
     }
 
-    public Task<Result> RemoveStand(StandRemoveConfig standRemoveConfig)
+    public async Task<Result> RemoveStand(StandRemoveConfig standRemoveConfig)
     {
+        foreach (var vmData in standRemoveConfig.VmsData.AsReadOnly())
+        {
+            var vmStopped = await _proxmoxVm.StopVm(vmData.Node, vmData.ProxmoxId);
+            if (vmStopped.IsFailed) return vmStopped;
+
+            var getStatus = await _proxmoxVm.GetStatus(vmData.Node, vmData.ProxmoxId);
+            if (getStatus.TryGetValue(out var curVmStatus))
+            {
+                return Result.Fail(getStatus.Errors);
+            }
+
+            while (curVmStatus == ProxmoxVmStatus.Run)
+            {
+                Thread.Sleep(1000);
+                getStatus = await _proxmoxVm.GetStatus(vmData.Node, vmData.ProxmoxId);
+                if (getStatus.TryGetValue(out curVmStatus))
+                {
+                    return Result.Fail(getStatus.Errors);
+                }
+            }
+            
+            // remove vm.
+        }
+
+
+        foreach (var vmData in standRemoveConfig.VmsData.AsReadOnly())
+        {
+            foreach (var net in vmData.Nets)
+            {
+                var iFaceDeleted = await _proxmoxNetworkDevice.RemoveInterface(vmData.Node, net);
+                if (iFaceDeleted.IsFailed) return iFaceDeleted;
+            }
+        }
+
+
         throw new NotImplementedException();
     }
 
-  
+
     private async Task<Result> CreateInterfaces(IEnumerable<Net> nets, string node)
     {
         foreach (var net in nets.Where(x => x.Bridge != "vmbr0")) // чёт крижово выглядит.

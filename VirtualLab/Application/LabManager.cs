@@ -88,6 +88,7 @@ public class LabManager : ILabManager
             return Result.Fail($"error {getUserLab.Errors}");
         }
 
+        
         await _standManager.RemoveStand(config);
         throw new NotImplementedException();
     }

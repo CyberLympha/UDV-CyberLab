@@ -55,10 +55,11 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
 
         throw new NotImplementedException();
     }
-    
+
     public async Task<Result> CreateInterface(CreateInterface request)
     {
-        var result = await _client.Nodes[request.Node].Network.CreateNetwork(request.IFace, request.Type, autostart: true);
+        var result = await _client.Nodes[request.Node].Network
+            .CreateNetwork(request.IFace, request.Type, autostart: true);
 
         return result.Match(
             Result.Ok,
@@ -67,9 +68,16 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
         );
     }
 
-    public Task<Result> RemoveInterface()
+
+    public async Task<Result> RemoveInterface(string node, Net net)
     {
-        throw new NotImplementedException();
+        var result = await _client.Nodes[node].Network[net.Bridge].DeleteNetwork();
+
+        return result.Match(
+            Result.Ok,
+            responseError => ApiResultError.WithProxmox.NetworkDeleteFailure(responseError, node),
+            erros => ApiResultError.WithProxmox.NetworkDeleteFailure(erros, node)
+        );
     }
 
     public async Task<Result> Apply(string node)
@@ -96,6 +104,11 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
         );
     }
 
+    public Task<Result<ProxmoxVmStatus>> GetStatus(string node, int qemu)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<Result> StartVm(LaunchVm request)
     {
         var result = await _client.Nodes[request.Node].Qemu[request.Qemu].Status.Start.VmStart();
@@ -107,19 +120,29 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
         );
     }
 
+    public async Task<Result> StopVm(string node, int qemu)
+    {
+        var result = await _client.Nodes[node].Qemu[qemu].Status.Stop.VmStop();
+
+        return result.Match(
+            Result.Ok,
+            rp => ApiResultError.WithProxmox.VmStopFailure(rp, node, qemu),
+             errors => ApiResultError.WithProxmox.VmStopFailure(errors, node,qemu));
+    }
+
 
     public async Task<Result<Ip>> GetIp(string node, int qemu)
     {
         var result = await _client.Nodes[node].Qemu[qemu].Agent.NetworkGetInterfaces.NetworkGetInterfaces();
-        
+
         if (!result.IsSuccessStatusCode) return Result.Fail(result.ReasonPhrase);
 
         // todo: декомпозиция. эта часть кода явно должн быть как минум в методе, а можно и в расширений, хотяя.
         // todo: и вообще не здесь
         var data = result.Response;
         var interfaces = data.data.result;
-        
-        foreach (var @interface in interfaces) 
+
+        foreach (var @interface in interfaces)
         {
             var ipAddresses = @interface["ip-addresses"];
             foreach (var ipAddress in ipAddresses)

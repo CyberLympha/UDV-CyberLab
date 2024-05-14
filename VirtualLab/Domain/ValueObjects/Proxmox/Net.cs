@@ -1,16 +1,19 @@
 namespace VirtualLab.Domain.Value_Objects.Proxmox;
 
-// todo: сделать лучше
+// todo: сделать лучше: потецинально, мы будет не только bridge делать поэтому Type есть.
 public class Net
 {
     private Dictionary<string, string> Parameters { get; set; } = new();
-
+    public string Type { get; }
+    
+    
     
     // todo: пока что максимально простая реализация, потом допилить.
     public Net(string model, string bridge)
     {
         Parameters.Add("model", model);
         Parameters.Add("bridge", bridge);
+        Type = "bridge";
     }
 
     public override string ToString()
