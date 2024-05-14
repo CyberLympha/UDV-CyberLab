@@ -149,4 +149,16 @@ export class ApiService {
     public getWebsocketUrl(userId: string, protocol: string) {
         return this.httpClient.get<string>(`/virtual-desktop/websocket-url/${userId}/${protocol}`)
     }
+
+    public getInstructionStepAmount(instructionId: string) {
+        return this.httpClient.get<string>(`/lab-work-instruction/get-amount/${instructionId}`)
+    }
+
+    public getInstructionStepHint(instructionId: string, number: string) {
+        return this.httpClient.get<string>(`/lab-work-instruction/get-hint/${instructionId}/${number}`)
+    }
+    
+    public checkIfAnswerCorrect(userId: string, labId: string, number: string) {
+        return this.httpClient.get<string>(`/lab-work-instruction/check-answer/${userId}/${labId}/${number}`)
+    }
 }
