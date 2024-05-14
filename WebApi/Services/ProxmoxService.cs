@@ -450,12 +450,35 @@ public class ProxmoxService
     public async Task<string> ReadFileAsync(string vmId, string filePath)
     {
         var fileContentResult = await proxmoxClient.Nodes[nodeName].Qemu[vmId].Agent.FileRead.FileRead(filePath);
-        
+
         if (fileContentResult.IsSuccessStatusCode)
         {
-            return fileContentResult.Response.data.ToString();
+            return fileContentResult.Response.data.content;
         }
 
         throw new Exception(fileContentResult.ReasonPhrase);
+    }
+
+    /// <summary>
+    /// Clears the content of a file on a virtual machine.
+    /// </summary>
+    /// <param name="vmId">The ID of the virtual machine.</param>
+    /// <param name="filePath">The path to the file to clear.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    public async Task ClearFileContent(string vmId, string filePath)
+    {
+        await proxmoxClient.Nodes[nodeName].Qemu[vmId].Agent.Exec.Exec(new[] { "cp", "/dev/null", filePath });
+    }
+
+    /// <summary>
+    /// Clears the content of multiple files on a virtual machine.
+    /// </summary>
+    /// <param name="vmId">The ID of the virtual machine.</param>
+    /// <param name="filePaths">A list of paths to the files to clear.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    public async Task ClearFilesContent(string vmId, List<string> filePaths)
+    {
+        foreach (var filePath in filePaths)
+            await ClearFileContent(vmId, filePath);
     }
 }
