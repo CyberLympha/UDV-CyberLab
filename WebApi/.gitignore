@@ -80,3 +80,7 @@ README.md
 
 # Docker
 Dockerfile
+
+# Exceptions
+!/Models/Logs/
+!/Services/Logs/
