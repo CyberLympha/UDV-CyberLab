@@ -7,7 +7,7 @@ namespace Authorization
     {
         public const string ISSUER = "TestAuthServer";
         public const string AUDIENCE = "TestAuthClient";
-        public const int EXPIRES_MINUTES = 10;
+        public const int EXPIRES_MINUTES = 120;
         const string KEY = "mysupersecret_secretsecretsecretkey!123";
         public static SymmetricSecurityKey GetSymmetricSecurityKey() =>
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(KEY));
