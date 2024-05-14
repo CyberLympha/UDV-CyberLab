@@ -150,8 +150,12 @@ export class ApiService {
         return this.httpClient.get<string>(`/virtual-desktop/websocket-url/${userId}/${protocol}`)
     }
 
+    public getStepInstruction(instructionId: string, number: string) {
+        return this.httpClient.get<string>(`/lab-work-instruction/get/${instructionId}/${number}`)
+    }
+
     public getInstructionStepAmount(instructionId: string) {
-        return this.httpClient.get<string>(`/lab-work-instruction/get-amount/${instructionId}`)
+        return this.httpClient.get<int>(`/lab-work-instruction/get-amount/${instructionId}`)
     }
 
     public getInstructionStepHint(instructionId: string, number: string) {
@@ -159,6 +163,6 @@ export class ApiService {
     }
     
     public checkIfAnswerCorrect(userId: string, labId: string, number: string) {
-        return this.httpClient.get<string>(`/lab-work-instruction/check-answer/${userId}/${labId}/${number}`)
+        return this.httpClient.get<bool>(`/lab-work-instruction/check-answer/${userId}/${labId}/${number}`)
     }
 }
