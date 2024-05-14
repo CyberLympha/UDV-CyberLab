@@ -94,6 +94,29 @@ public class LabWorkInstructionController : ControllerBase
     }
     
     /// <summary>
+    /// Retrieves the number of steps in a lab work instruction.
+    /// </summary>
+    /// <param name="instructionId">The ID of the lab work instruction.</param>
+    /// <returns>The number of steps in the instruction.</returns>
+    /// <response code="200">Returns the number of steps in the instruction.</response>
+    /// <response code="500">If an error occurs during the operation.</response>
+    [HttpGet("get-amount/{instructionId}", Name = nameof(GetStepsAmount))]
+    [Produces("application/json", "application/xml")]
+    [ProducesResponseType(typeof(int), 200)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult<int>> GetStepsAmount([FromRoute] string instructionId)
+    {
+        try
+        {
+            return await labWorkInstructionService.GetStepsAmountAsync(instructionId);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
+    
+    /// <summary>
     /// Checks the user's answer for a lab work task.
     /// </summary>
     /// <remarks>

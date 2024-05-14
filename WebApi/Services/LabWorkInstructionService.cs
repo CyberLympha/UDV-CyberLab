@@ -115,6 +115,19 @@ public class LabWorkInstructionService
     }
     
     /// <summary>
+    /// Retrieves the number of steps in a lab work instruction asynchronously.
+    /// </summary>
+    /// <param name="instructionId">The ID of the lab work instruction.</param>
+    /// <returns>The number of steps in the instruction.</returns>
+    /// <exception cref="Exception">Thrown when an error occurs during the operation.</exception>
+    public async Task<int> GetStepsAmountAsync(string instructionId)
+    {
+        var instruction = await GetAsync(instructionId);
+        
+        return instruction.Steps.Count;
+    }
+    
+    /// <summary>
     /// Checks the user's answer for a lab work task asynchronously.
     /// </summary>
     /// <param name="userId">The ID of the user.</param>
