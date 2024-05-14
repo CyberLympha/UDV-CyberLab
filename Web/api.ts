@@ -109,6 +109,7 @@ export interface LabWork {
   /** @minLength 1 */
   id: string;
   vmId: string;
+  instructionId: string;
   title?: string;
   shortDescription?: string;
   description?: string;
