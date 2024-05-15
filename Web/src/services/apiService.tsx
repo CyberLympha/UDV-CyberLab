@@ -155,7 +155,7 @@ export class ApiService {
     }
 
     public getInstructionStepAmount(instructionId: string) {
-        return this.httpClient.get<int>(`/lab-work-instruction/get-amount/${instructionId}`)
+        return this.httpClient.get<number>(`/lab-work-instruction/get-amount/${instructionId}`)
     }
 
     public getInstructionStepHint(instructionId: string, number: string) {
@@ -163,6 +163,6 @@ export class ApiService {
     }
     
     public checkIfAnswerCorrect(userId: string, labId: string, number: string) {
-        return this.httpClient.get<bool>(`/lab-work-instruction/check-answer/${userId}/${labId}/${number}`)
+        return this.httpClient.get<boolean>(`/lab-work-instruction/check-answer/${userId}/${labId}/${number}`)
     }
 }
