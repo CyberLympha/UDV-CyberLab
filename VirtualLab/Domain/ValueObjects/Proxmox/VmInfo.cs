@@ -1,8 +1,6 @@
-using VirtualLab.Domain.Value_Objects.Proxmox;
-
 namespace VirtualLab.Domain.ValueObjects.Proxmox;
 
-public class VmData
+public class VmInfo
 {
     public int ProxmoxId { get; set; } 
     public string Node { get; set; }

@@ -12,19 +12,19 @@ public class LabManager : ILabManager
 {
     private readonly IUserLabProvider _userLabProvider;
     private readonly ILabConfigure _labConfigure;
-    private readonly IStandManager _standManager;
-    private readonly IVirtualMachineService _virtualMachineService;
+    private readonly IStandManager _stands;
+    private readonly IVirtualMachineDataHandler _virtualMachineDataHandler;
     private readonly ILog _log;
 
     public LabManager(IUserLabProvider userLabProvider, ILabConfigure labConfigure,
-        IStandManager standManager, ILog log,
-        IVirtualMachineService virtualMachineService)
+        IStandManager stands, ILog log,
+        IVirtualMachineDataHandler virtualMachineDataHandler)
     {
         _userLabProvider = userLabProvider;
         _labConfigure = labConfigure;
-        _standManager = standManager;
+        _stands = stands;
         _log = log;
-        _virtualMachineService = virtualMachineService;
+        _virtualMachineDataHandler = virtualMachineDataHandler;
     }
 
     public async Task<Result<ReadOnlyCollection<Credential>>> StartNew(Guid labId, Guid userId)
@@ -41,7 +41,7 @@ public class LabManager : ILabManager
         var config = await _labConfigure.GetConfigByLab(labId);
         if (config.IsFailed) return Result.Fail(config.Errors);
 
-        var labCreatedWithVm = await _standManager.CreateStand(config.Value);
+        var labCreatedWithVm = await _stands.Create(config.Value);
         if (labCreatedWithVm.IsFailed) return Result.Fail(labCreatedWithVm.Errors);
 
         // у этого foreach как-то много ответственности)))
@@ -49,7 +49,7 @@ public class LabManager : ILabManager
         foreach (var virtualMachineInfo in labCreatedWithVm.Value)
         {
             var vm = VirtualMachine.From(virtualMachineInfo.Node, virtualMachineInfo.ProxmoxVmId, getUserLab.Value.Id);
-            await _virtualMachineService.AddVm(vm);
+            await _virtualMachineDataHandler.AddVm(vm);
             if (string.IsNullOrEmpty(virtualMachineInfo.Ip)) continue;
 
             var credential = Credential.From(
@@ -58,38 +58,33 @@ public class LabManager : ILabManager
                 virtualMachineInfo.Password,
                 vm.Id
             );
-            await _virtualMachineService
+            await _virtualMachineDataHandler
                 .AddCredential(credential); // по сути, можно разделить на два интерфейса ICre и I Vm. а нужно ли 
 
             result.Add(credential);
         }
 
-        return Result.Ok(result.AsReadOnly());
+        return result.AsReadOnly();
     }
 
-    public Task<Result<string>> GetStatus(Guid labId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<Result<string>> End(Guid labId, Guid userId)
+    public async Task<Result> End(Guid labId, Guid userId)
     {
         var getUserLab = await _userLabProvider.GetUserLab(userId, labId);
-        if (getUserLab.IsFailed)
+        if (!(await _userLabProvider.GetUserLab(userId, labId)).TryGetValue(out var userLabInfo))
         {
             _log.Error($"Not find lab with {labId} for user with id {userId}"); // так бы везде))
             return Result.Fail(getUserLab.Errors);
         }
         // if (getUserLab.Value.Status == ) проверка, что лаба УЖЕ ЗАПУЩЕНА
 
-        var userLabConfig = await _labConfigure.GetConfigByUserLab(getUserLab.Value.Id);
+        var userLabConfig = await _labConfigure.GetConfigByUserLab(userLabInfo.Id);
         if (!userLabConfig.TryGetValue(out var config))
         {
             return Result.Fail($"error {getUserLab.Errors}");
         }
 
-        
-        await _standManager.RemoveStand(config);
-        throw new NotImplementedException();
+        await _stands.Delete(config);
+
+        return await _virtualMachineDataHandler.DeleteAllByUserLabId(userLabInfo.Id);
     }
 }

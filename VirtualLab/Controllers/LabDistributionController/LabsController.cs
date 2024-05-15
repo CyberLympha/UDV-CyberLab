@@ -59,13 +59,11 @@ public class LabsController : ControllerBase
     }
 
     [HttpGet("{labId:guid}/end")]
-    public async Task<ActionResult<string>> End(Guid labId)
+    public async Task<ActionResult> End(Guid labId)
     {
         var removeLab = await _labManager.End(labId, Guid.NewGuid());
         
-        return removeLab.Match(
-            data => Ok(data),
-            e => BadRequest(e));
+        return removeLab.Match(Ok, BadRequest);
     }
     
     

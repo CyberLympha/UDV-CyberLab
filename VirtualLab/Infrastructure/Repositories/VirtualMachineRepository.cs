@@ -1,20 +1,37 @@
 using System.Collections.Immutable;
 using FluentResults;
+using Microsoft.EntityFrameworkCore;
 using VirtualLab.Domain.Entities;
-using VirtualLab.Domain.Interfaces;
 using VirtualLab.Domain.Interfaces.Repositories;
 using VirtualLab.Infrastructure.DataBase;
 
 namespace VirtualLab.Infrastructure.Repositories;
 
-public class VirtualMachineRepository : RepositoryBase<VirtualMachine, Guid>,IVirtualMachineRepository
+public class VirtualMachineRepository : RepositoryBase<VirtualMachine, Guid>, IVirtualMachineRepository
 {
+    private DbContext _db;
+
     public VirtualMachineRepository(FakeDbContext dbContext) : base(dbContext)
     {
+        _db = dbContext;
     }
 
-    public Task<Result<ImmutableArray<VirtualMachine>>> GetAllByUserLab(Guid userLab)
+    public async Task<Result<ImmutableArray<VirtualMachine>>> GetAllByUserLab(Guid userLabId)
     {
-        throw new NotImplementedException();
+        return (await _db.Set<VirtualMachine>()
+                .Where(x => x.UserLabId == userLabId)
+                .ToArrayAsync())
+            .ToImmutableArray();
+    }
+
+    public async Task<Result> DeleteByUserLabId(Guid userLabId)
+    {
+        var result = _db.Set<VirtualMachine>()
+            .Where(x => x.UserLabId == userLabId)
+            .Select(machine => _db.Set<VirtualMachine>().Remove(machine));
+
+        await _db.SaveChangesAsync();
+
+        return Result.Ok();
     }
 }

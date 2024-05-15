@@ -29,7 +29,7 @@ public class StandManager : IStandManager
     }
 
 
-    public async Task<Result<IReadOnlyList<VirtualMachineInfo>>> CreateStand(StandCreateConfig standCreateConfig)
+    public async Task<Result<IReadOnlyList<VirtualMachineInfo>>> Create(StandCreateConfig standCreateConfig)
     {
         var response = await CreateInterfaces(standCreateConfig.GetAllNetsInterfaces(), standCreateConfig.Node);
         if (response.IsFailed)
@@ -83,32 +83,11 @@ public class StandManager : IStandManager
         return virtualMachineInfos;
     }
 
-    public async Task<Result> RemoveStand(StandRemoveConfig standRemoveConfig)
+    public async Task<Result> Delete(StandRemoveConfig standRemoveConfig)
     {
-        foreach (var vmData in standRemoveConfig.VmsData.AsReadOnly())
-        {
-            var vmStopped = await _proxmoxVm.StopVm(vmData.Node, vmData.ProxmoxId);
-            if (vmStopped.IsFailed) return vmStopped;
-
-            var getStatus = await _proxmoxVm.GetStatus(vmData.Node, vmData.ProxmoxId);
-            if (getStatus.TryGetValue(out var curVmStatus))
-            {
-                return Result.Fail(getStatus.Errors);
-            }
-
-            while (curVmStatus == ProxmoxVmStatus.Run)
-            {
-                Thread.Sleep(1000);
-                getStatus = await _proxmoxVm.GetStatus(vmData.Node, vmData.ProxmoxId);
-                if (getStatus.TryGetValue(out curVmStatus))
-                {
-                    return Result.Fail(getStatus.Errors);
-                }
-            }
-            
-            // remove vm.
-        }
-
+        var vmsDeleted = await DeleteVms(standRemoveConfig.VmsData.AsReadOnly());
+        if (vmsDeleted.IsFailed) return vmsDeleted;
+        
 
         foreach (var vmData in standRemoveConfig.VmsData.AsReadOnly())
         {
@@ -119,8 +98,37 @@ public class StandManager : IStandManager
             }
         }
 
+        return Result.Ok();
+    }
 
-        throw new NotImplementedException();
+    private async Task<Result> DeleteVms(IReadOnlyCollection<VmInfo> vmsInfo)
+    {
+        foreach (var vmInfo in vmsInfo)
+        {
+            var vmStopped = await _proxmoxVm.StopVm(vmInfo.Node, vmInfo.ProxmoxId);
+            if (vmStopped.IsFailed) return vmStopped;
+
+            var getStatus = await _proxmoxVm.GetStatus(vmInfo.Node, vmInfo.ProxmoxId);
+            if (!getStatus.TryGetValue(out var curVmStatus))
+            {
+                return Result.Fail(getStatus.Errors);
+            }
+
+            while (curVmStatus == ProxmoxVmStatus.Run)
+            {
+                Thread.Sleep(1000);
+                getStatus = await _proxmoxVm.GetStatus(vmInfo.Node, vmInfo.ProxmoxId);
+                if (getStatus.TryGetValue(out curVmStatus))
+                {
+                    return Result.Fail(getStatus.Errors);
+                }
+            }
+
+            var vmDeleted = await _proxmoxVm.Delete(vmInfo.Node, vmInfo.ProxmoxId);
+            if (vmDeleted.IsFailed) return vmDeleted;
+        }
+
+        return Result.Ok();
     }
 
 
@@ -128,7 +136,7 @@ public class StandManager : IStandManager
     {
         foreach (var net in nets.Where(x => x.Bridge != "vmbr0")) // чёт крижово выглядит.
         {
-            var response = await _proxmoxNetworkDevice.CreateInterface(CreateInterface.Brige(net.Bridge, node));
+            var response = await _proxmoxNetworkDevice.CreateInterface(node, net);
             if (response.IsFailed) return Result.Fail($"net: {net} occured with error: {response}");
         }
 

@@ -32,7 +32,7 @@ builder.Services.AddScoped<IUserLabProvider, UserLabProviderService>();
 builder.Services.AddScoped<ILabConfigure, LabConfigure>();
 builder.Services.AddScoped<ILabEntryPointRepository, LabEntryPointRepository>();
 builder.Services.AddScoped<ILabManager, LabManager>();
-builder.Services.AddScoped<IVirtualMachineService, VirtualMachineService>();
+builder.Services.AddScoped<IVirtualMachineDataHandler, VirtualMachineDataHandler>();
 builder.Services.AddScoped<IVirtualMachineRepository, VirtualMachineRepository>();
 builder.Services.AddScoped<ICredentialRepository, CredentialRepository>();
 

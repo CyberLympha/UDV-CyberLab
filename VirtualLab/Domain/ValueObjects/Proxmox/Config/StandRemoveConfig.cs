@@ -2,5 +2,5 @@ namespace VirtualLab.Domain.ValueObjects.Proxmox.Config;
 
 public class StandRemoveConfig
 {
-    public List<VmData> VmsData { get; set; }
+    public List<VmInfo> VmsData { get; set; }
 }

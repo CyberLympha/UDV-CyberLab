@@ -1,19 +1,21 @@
+using System.Collections.Immutable;
+using System.Data;
 using FluentResults;
 using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Entities;
 using VirtualLab.Domain.Interfaces.Repositories;
-using VirtualLab.Infrastructure;
 using VirtualLab.Infrastructure.ApiResult;
 using VirtualLab.Infrastructure.Extensions;
 
 namespace VirtualLab.Application;
 
-public class VirtualMachineService : IVirtualMachineService
+public class VirtualMachineDataHandler : IVirtualMachineDataHandler
 {
     private readonly IVirtualMachineRepository _vms;
     private readonly ICredentialRepository _credentials;
 
-    public VirtualMachineService(IVirtualMachineRepository vms, ICredentialRepository credentials)
+    public VirtualMachineDataHandler(IVirtualMachineRepository vms,
+        ICredentialRepository credentials)
     {
         _vms = vms;
         _credentials = credentials;
@@ -45,8 +47,23 @@ public class VirtualMachineService : IVirtualMachineService
         return Result.Ok();
     }
 
-    public Task<Result> GetAllByLabId(UserLab lab)
+    public async Task<Result<ImmutableArray<VirtualMachine>>> GetAllByUserLabId(Guid userLabId)
     {
-        throw new NotImplementedException();
+        // todo: если где-то как здесь пусто. значит нету никаких проверок и нужно их добавить. например, а есть ли ваще такая лаба?
+        
+        var getVms = await _vms.GetAllByUserLab(userLabId);
+        if (!getVms.TryGetValue(out var vms)) return getVms;
+
+
+        return vms;
     }
+
+
+    public async Task<Result> DeleteAllByUserLabId(Guid userLabId)
+    {
+                // todo: если где-то как здесь пусто. значит нету никаких проверок и нужно их добавить. например, а есть ли ваще такая лаба?
+
+        return await _vms.DeleteByUserLabId(userLabId);
+    }
+
 }

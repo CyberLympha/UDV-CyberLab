@@ -11,7 +11,7 @@ public interface IProxmoxNetwork
     // потенциально 2
     public Task<Result<NetCollection>> GetAllNetworksBridgeByVm(int vmId, string node); // GET /api2/json/nodes/{node}/network
     // либо 2 либо 3
-    public Task<Result> CreateInterface(CreateInterface request); // мы здесь создаём новый интерфейс
+    public Task<Result> CreateInterface(string node, Net net); // мы здесь создаём новый интерфейс
 
     public Task<Result> RemoveInterface(string node, Net net);
     // 3 либо 4 

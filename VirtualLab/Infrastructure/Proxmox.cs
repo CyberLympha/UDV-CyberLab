@@ -52,19 +52,18 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
         var result = await _client.Nodes[node].Qemu[vmId].Config.VmConfig();
 
         var listNet = result.Response["data"]["config"]["net"];
-
         throw new NotImplementedException();
     }
 
-    public async Task<Result> CreateInterface(CreateInterface request)
+    public async Task<Result> CreateInterface(string node , Net net)
     {
-        var result = await _client.Nodes[request.Node].Network
-            .CreateNetwork(request.IFace, request.Type, autostart: true);
+        var result = await _client.Nodes[node].Network
+            .CreateNetwork(net.Bridge, net.Type, autostart: true);
 
         return result.Match(
             Result.Ok,
-            reasonPhrases => ApiResultError.WithProxmox.NetworkCreateError(reasonPhrases, request.Node),
-            errors => ApiResultError.WithProxmox.NetworkCreateError(errors, request.Node)
+            reasonPhrases => ApiResultError.WithProxmox.Network.Create(reasonPhrases, node, net.Bridge),
+            errors => ApiResultError.WithProxmox.Network.Create(errors, node, net.Bridge)
         );
     }
 
@@ -86,8 +85,8 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
 
         return result.Match(
             Result.Ok,
-            reasonPhrases => ApiResultError.WithProxmox.NetworkApplyError(reasonPhrases, node),
-            errors => ApiResultError.WithProxmox.NetworkApplyError(errors, node)
+            reasonPhrases => ApiResultError.WithProxmox.Network.Apply(reasonPhrases, node),
+            errors => ApiResultError.WithProxmox.Network.Apply(errors, node)
         );
     }
 
@@ -104,9 +103,15 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
         );
     }
 
-    public Task<Result<ProxmoxVmStatus>> GetStatus(string node, int qemu)
+    public async Task<Result<ProxmoxVmStatus>> GetStatus(string node, int qemu)
     {
+        var result = await _client.Nodes[node].Qemu[qemu].Status.Current.VmStatus();
+
         throw new NotImplementedException();
+        return result.Match(
+            Result.Ok,
+            responseError => ApiResultError.WithProxmox.VmGetStatusFailure(responseError, node, qemu),
+        errors => ApiResultError.WithProxmox.VmGetStatusFailure(errors, node, qemu));
     }
 
     public async Task<Result> StartVm(LaunchVm request)
@@ -118,6 +123,11 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
             reasonPhrases => ApiResultError.WithProxmox.VmStartFailure(reasonPhrases, request),
             errors => ApiResultError.WithProxmox.VmStartFailure(errors, request)
         );
+    }
+
+    public Task<Result> Delete(string node, int qemu)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<Result> StopVm(string node, int qemu)

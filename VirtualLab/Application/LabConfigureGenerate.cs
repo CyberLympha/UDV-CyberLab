@@ -15,19 +15,17 @@ public class LabConfigure : ILabConfigure
 {
     private readonly ILabRepository _labs;
     private readonly ILog _log;
-    private readonly ICredentialRepository _credentials;
-    private readonly IVirtualMachineRepository _virtualMachines;
+    private readonly IVirtualMachineDataHandler _virtualMachines;
     private readonly IProxmoxNetwork _proxmoxNetwork;
 
     public LabConfigure(ILabRepository labs,
         ILog log,
-        ICredentialRepository credentials,
-        IVirtualMachineRepository virtualMachines, IProxmoxNetwork proxmoxNetwork)
+        IVirtualMachineDataHandler virtualMachines,
+        IProxmoxNetwork proxmoxNetwork)
     {
         _labs = labs;
         log.ForContext("LabConfigure");
         _log = log;
-        _credentials = credentials;
         _virtualMachines = virtualMachines;
         _proxmoxNetwork = proxmoxNetwork;
     }
@@ -46,7 +44,7 @@ public class LabConfigure : ILabConfigure
 
     public async Task<Result<StandRemoveConfig>> GetConfigByUserLab(Guid userLabId)
     {
-        var resultVms = await _virtualMachines.GetAllByUserLab(userLabId);
+        var resultVms = await _virtualMachines.GetAllByUserLabId(userLabId);
         if (!resultVms.TryGetValue(out var virtualMachines))
         {
             return Result.Fail($"ошибка: {resultVms.Errors}");
@@ -63,7 +61,7 @@ public class LabConfigure : ILabConfigure
                 return Result.Fail($"error: {resultNets.Errors}");
             }
             
-            userLabConfig.VmsData.Add(new VmData
+            userLabConfig.VmsData.Add(new VmInfo
             {
                 ProxmoxId = virtualMachine.ProxmoxVmId,
                 Nets = nets

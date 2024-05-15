@@ -13,6 +13,13 @@ public static class ActionResultExtensions
         return result.IsSuccess ? onSuccess(result.Value) : onFailure(result.Reasons);
     }
 
+    public static ActionResult Match(
+        this Result result,
+        Func<ActionResult> onSuccess,
+        Func<List<IReason>, ActionResult> onFailure)
+    {
+        return result.IsSuccess ? onSuccess() : onFailure(result.Reasons);
+    }
     /*public static ActionResult<Result> IsSucceed(this Result result)
     {
         return result.IsSucceed() ? new OkResult() : Bad

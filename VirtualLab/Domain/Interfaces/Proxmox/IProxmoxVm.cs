@@ -20,6 +20,8 @@ public interface IProxmoxVm
     // 5 запуск машни
     public Task<Result> StartVm(LaunchVm request);
 
+    public Task<Result> Delete(string node, int qemu);
+
     public Task<Result> StopVm(string node, int qemu);
     public Task<Result<Ip>> GetIp(string node, int qemu); // получим ли мы только ip, пока хз
 }
