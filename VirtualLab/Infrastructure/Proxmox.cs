@@ -152,18 +152,30 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
         var data = result.Response;
         var interfaces = data.data.result;
 
-        foreach (var @interface in interfaces)
+        foreach (var iFace in interfaces)
         {
-            var ipAddresses = @interface["ip-addresses"];
-            foreach (var ipAddress in ipAddresses)
+            foreach (var ipAddresses in iFace)
             {
-                var ip = ipAddress["ip-address"] as string;
-                _log.Debug($"{ip}");
-                if (!string.IsNullOrEmpty(ip) && ip.StartsWith(ProxmoxData.NetworkIdGlobalNetwork))
+                var ipAddressPair = ipAddresses is KeyValuePair<string, object> ? (KeyValuePair<string, object>)ipAddresses : default; 
+                if (ipAddressPair.Key != "ip-addresses") continue;
+                var ipAddress = ipAddressPair.Value as List<dynamic>;
+                foreach (var ipsD in ipAddress)
                 {
-                    _log.Info($"ip {ip} from {node} & {qemu}");
-                    return new Ip() { IpV4 = ip };
+                    foreach (var ipD in ipsD)
+                    {
+                        var ipPair = ipD is KeyValuePair<string, object> ? (KeyValuePair<string, object>)ipD : default;
+                        if (ipPair.Key != "ip-address") continue;
+
+                        var ip = ipPair.Value as string;
+                        if (!string.IsNullOrEmpty(ip) && ip.StartsWith(ProxmoxData.NetworkIdGlobalNetwork))
+                        {
+                            return new Ip() { IpV4 = ipPair.Value as string };
+                        }
+                    }
+                   
+                    
                 }
+              
             }
         }
         //todo: доделать
