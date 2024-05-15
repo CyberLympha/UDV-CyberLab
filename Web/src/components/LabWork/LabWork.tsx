@@ -8,6 +8,7 @@ import {userStore} from "../../stores";
 import {AiOutlinePlus} from "react-icons/all";
 import style from "./LabWork.module.scss"
 import {useToast} from "@chakra-ui/react";
+import {Instruction} from "./Instruction/Instruction";
 
 export function LabWorkPage() {
     const [labStarted, setLabStarted] = useState<boolean>(false);
@@ -119,7 +120,7 @@ export function LabWorkPage() {
             return;
         }
         toast({
-            title: 'Вы успешно закрнчили выполнение лабораторной работы',
+            title: 'Вы успешно закончили выполнение лабораторной работы',
             status: "success",
             duration: 5000,
             isClosable: true,
@@ -130,29 +131,45 @@ export function LabWorkPage() {
         setIsLoading(false);
     }
 
-    return <div className={style.container}>
-        <div className={style.title}>{labWork?.title}</div>
-        <div className={style.description}>{labWork?.description}</div>
-        <div style={{flexShrink: 0}}>
-            <Button rightIcon={<AiOutlinePlus size={"20px"}/>} isLoading={isLoading}
-             onClick={()=>startLabWork(userStore.user?.id, labWorkId)}>Начать выполение</Button>
-             </div>
+    return (
+        <div className={style.labWorkContainer}>
+            <div className={style.virtualDesktopContainer}>
+                <div className={style.title}>{labWork?.title}</div>
+                <div className={style.description}>{labWork?.description}</div>
 
-             {labStarted && (
+                {!labStarted &&(
+                    <div style={{flexShrink: 0}}>
+                    <Button rightIcon={<AiOutlinePlus size={"20px"}/>} isLoading={isLoading}
+                    onClick={()=>startLabWork(userStore.user?.id, labWorkId)}>Начать выполнение</Button>
+                </div>
+                )}
+                
+                {labStarted && (
+                    <div className={style.contentContainer}>
+                        <div className={style.instruction}>
+                            <Instruction labWork={labWork!} stopLabWork={stopLabWork}/>
+                        </div>
+
+                        <div className={style.virtualDesktop}>
+                            <iframe
+                                src="/libs/noVNC/vnc_lite.html"
+                                style={{ width: "100%", height: "100%", border: "1px solid #ccc"}}
+                            ></iframe>
+                        </div>
+                    </div>
+                )}
+
+                {labStarted && (
                     <Button
                         isLoading={isLoading}
                         onClick={() => stopLabWork(userStore.user?.id)}
-                        disabled={!stopButtonActive}
-                    >
+                        disabled={!stopButtonActive}> 
                         Завершить выполнение
                     </Button>
-                )}
-                
-             {labStarted && (
-            <iframe
-                src="/libs/noVNC/vnc_lite.html"
-                style={{ width: "100%", height: "500px", border: "1px solid #ccc", marginTop: "20px" }}
-            ></iframe>
-        )}
-    </div>
+                    )
+                }
+
+            </div>
+        </div>
+    );
 }
