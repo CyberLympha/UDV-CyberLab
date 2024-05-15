@@ -56,10 +56,10 @@ public class VirtualDesktopService
         {
             if (!await CreateVmForUser(userId, labWorkId))
                 return false;
-            
+
             user = await userService.GetAsyncById(userId);
         }
-        
+
         var vm = await vmService.GetByIdAsync(user.VmId);
         if (vm.LabWorkId != labWorkId)
         {
@@ -69,7 +69,7 @@ public class VirtualDesktopService
             user = await userService.GetAsyncById(userId);
             vm = await vmService.GetByIdAsync(user.VmId);
         }
-        
+
         var vmId = vm.VmId.ToString();
         if (!await StartWebsocketProxy(vmId)) return false;
         if (await proxmoxService.StartMachine(vmId))
@@ -111,10 +111,10 @@ public class VirtualDesktopService
         var user = await userService.GetAsyncById(userId);
         var vm = await vmService.GetByIdAsync(user.VmId);
         var prefix = protocol == "https:" ? "wss" : "ws";
-        
+
         return $"{prefix}://{BuildWebsocketProxyHostAddress(vm.VmId.ToString())}/{websocketProxySettings.Path}";
     }
-    
+
     private async Task<bool> StartWebsocketProxy(string vmId)
     {
         if (!await proxmoxService.IsVncExists(vmId))
@@ -125,10 +125,11 @@ public class VirtualDesktopService
             $"{BuildWebsocketProxyHostAddress(vmId)}",
             $"{proxmoxService.HostAddress}:{websocketProxySettings.ProxmoxVncStartingPort + int.Parse(vmId)}");
     }
-    
+
     private string BuildWebsocketProxyHostAddress(string vmId)
     {
-        return $"{websocketProxySettings.WebsocketHost}:{int.Parse(vmId)}";
+        return
+            $"{websocketProxySettings.WebsocketHost}:{websocketProxySettings.ProxmoxVncStartingPort + int.Parse(vmId)}";
     }
 
     private bool StopWebsocketProxy(string vmId)
