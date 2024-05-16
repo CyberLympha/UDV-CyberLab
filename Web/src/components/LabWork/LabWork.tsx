@@ -1,13 +1,13 @@
-import {useParams} from "react-router-dom";
+import {useParams, useNavigate, useLocation} from "react-router-dom";
 import React, { useState, useEffect } from "react";
 
+import {useToast} from "@chakra-ui/react";
+import {AiOutlinePlus} from "react-icons/all";
 import {apiService} from "../../services";
 import {LabWork} from "../../../api";
 import {Button} from "../Button/Button";
 import {userStore} from "../../stores";
-import {AiOutlinePlus} from "react-icons/all";
 import style from "./LabWork.module.scss"
-import {useToast} from "@chakra-ui/react";
 import {Instruction} from "./Instruction/Instruction";
 
 export function LabWorkPage() {
@@ -19,6 +19,18 @@ export function LabWorkPage() {
     const [error, setError] = useState<string | null>(null); 
     const [stopButtonActive, setStopButtonActive] = useState<boolean>(false);
     const toast = useToast();
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    window.onbeforeunload = function (e) {
+        e = e || window.event;
+    
+        if (e) {
+            e.returnValue = 'Sure?';
+        }
+
+        return 'Sure?';
+    };
 
     useEffect(() => {
         if (labWorkId) {
@@ -46,6 +58,31 @@ export function LabWorkPage() {
     useEffect(() => {
         setStopButtonActive(labStarted);
     }, [labStarted]);
+
+    useEffect(() => {
+        if (!labStarted) return;
+
+        const handleRouteChange = (e: Event) => {
+            if (labStarted) {
+                e.preventDefault();
+                if (window.confirm("Вы точно хотите покинуть страницу не завершив лабораторную работу? Лабораторная работа будет завершена автоматически.")) {
+                    stopLabWork(userStore.user?.id).then(() => {
+                        navigate(location.pathname);
+                    });
+                }
+            }
+        };
+
+        window.addEventListener("beforeunload", handleRouteChange, {capture: true});
+        window.addEventListener("popstate", handleRouteChange, {capture: true});
+        window.addEventListener("unload", handleRouteChange, {capture: true});
+
+        return () => {
+            window.removeEventListener("beforeunload", handleRouteChange, {capture: true});
+            window.removeEventListener("popstate", handleRouteChange, {capture: true});
+            window.removeEventListener("unload", handleRouteChange, {capture: true});
+        };
+    }, [labStarted, navigate, location]);
 
     if (loading) {
         return <div>Loading...</div>;
@@ -148,27 +185,22 @@ export function LabWorkPage() {
                     <div className={style.contentContainer}>
                         <div className={style.instruction}>
                             <Instruction labWork={labWork!} stopLabWork={stopLabWork}/>
+                            {labStarted && (
+                                <Button
+                                    isLoading={isLoading}
+                                    onClick={() => stopLabWork(userStore.user?.id)}
+                                    disabled={!stopButtonActive}> 
+                                    Завершить выполнение
+                                </Button>
+                                )
+                            }
                         </div>
 
                         <div className={style.virtualDesktop}>
-                            <iframe
-                                src="/libs/noVNC/vnc_lite.html"
-                                style={{ width: "100%", height: "100%", border: "1px solid #ccc"}}
-                            ></iframe>
+                            <iframe className={style.virtualDesktopScreen} src="/libs/noVNC/vnc_my.html"></iframe>
                         </div>
                     </div>
                 )}
-
-                {labStarted && (
-                    <Button
-                        isLoading={isLoading}
-                        onClick={() => stopLabWork(userStore.user?.id)}
-                        disabled={!stopButtonActive}> 
-                        Завершить выполнение
-                    </Button>
-                    )
-                }
-
             </div>
         </div>
     );
