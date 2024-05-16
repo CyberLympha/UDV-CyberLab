@@ -149,7 +149,7 @@ public class LabWorkInstructionService
         var userLogs = await logsReader.ReadLogs(instruction.LogFilePaths, vmId);
         var userLabResult = await userLabResultsService.GetAsync(userId, labWorkId);
         
-        if (userLabResult.IsFinished || userLabResult.CurrentStep > stepIntNumber)
+        if (userLabResult.IsFinished || userLabResult.CurrentStep >= stepIntNumber)
         {
             await proxmoxService.ClearFilesContent(vmId, instruction.LogFilePaths.Values.ToList());
             return true;

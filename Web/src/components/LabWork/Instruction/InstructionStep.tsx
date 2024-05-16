@@ -1,4 +1,3 @@
-// InstructionStep.tsx
 import React, { useState, useEffect } from "react";
 import { LabWork } from "../../../../api";
 import {apiService} from "../../../services";
