@@ -15,14 +15,6 @@ namespace Authorization.Extensions
             })
             .AddJwtBearer(options =>
             {
-                options.Events = new JwtBearerEvents
-                {
-                    OnMessageReceived = context =>
-                    {
-                        context.Token = context.Request.Cookies["access_token"];
-                        return Task.CompletedTask;
-                    }
-                };
                 options.SaveToken = true;
                 options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new TokenValidationParameters()

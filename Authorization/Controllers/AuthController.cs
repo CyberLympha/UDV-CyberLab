@@ -40,10 +40,7 @@ namespace Authorization.Controllers
             if (!result.Succeeded)
                 return BadRequest(result);
 
-            if (userDto.Role == UserRole.Teacher)
-                await _userManager.AddToRoleAsync(user, UserRole.Teacher);
-            else if (userDto.Role == UserRole.Student)
-                await _userManager.AddToRoleAsync(user, UserRole.Student);
+            await _userManager.AddToRoleAsync(user, UserRole.Student);
             
             return Ok(result);
         }
@@ -65,30 +62,26 @@ namespace Authorization.Controllers
                 claims.Add(new Claim(ClaimTypes.Role, userRole));
 
             var accessToken = CreateAccessToken(claims);
-            HttpContext.Response.Cookies
-                .Append("access_token", 
-                new JwtSecurityTokenHandler().WriteToken(accessToken), 
-                new CookieOptions { HttpOnly = true, Expires = accessToken.ValidTo, Secure = true });
             
-            return Ok();
+            return Ok(new { accessToken = new JwtSecurityTokenHandler().WriteToken(accessToken) });
         }
 
         [HttpGet("logout")]
+        [Authorize]
         public IActionResult Logout()
         {
-            var token = HttpContext.Request.Cookies["access_token"];
-            if (token != null)
-            {
-                HttpContext.Response.Cookies
-                    .Delete("access_token", 
-                    new CookieOptions { 
-                        HttpOnly = true, 
-                        Expires = new JwtSecurityTokenHandler().ReadToken(token).ValidTo, 
-                        Secure = true 
-                    });
-                return Ok();
-            }
-            return BadRequest();
+            return Ok();
+        }
+
+        [HttpGet("hello")]
+        [Authorize]
+        public async Task<IActionResult> Hello()
+        {
+            var id = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+                return BadRequest();
+            return Ok(new { firstName = user.FirstName, secondName = user.SecondName });
         }
 
         private JwtSecurityToken CreateAccessToken(List<Claim> userClaims)
