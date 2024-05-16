@@ -11,7 +11,7 @@ public class VirtualMachineRepository : RepositoryBase<VirtualMachine, Guid>, IV
 {
     private DbContext _db;
 
-    public VirtualMachineRepository(FakeDbContext dbContext) : base(dbContext)
+    public VirtualMachineRepository(LabDbContext dbContext) : base(dbContext)
     {
         _db = dbContext;
     }

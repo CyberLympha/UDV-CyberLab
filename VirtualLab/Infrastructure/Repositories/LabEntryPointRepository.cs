@@ -7,7 +7,7 @@ namespace VirtualLab.Infrastructure.Repositories;
 
 public class LabEntryPointRepository : RepositoryBase<Credential, Guid>,ILabEntryPointRepository
 {
-    public LabEntryPointRepository(FakeDbContext dbContext) : base(dbContext)
+    public LabEntryPointRepository(LabDbContext dbContext) : base(dbContext)
     {
     }
 }

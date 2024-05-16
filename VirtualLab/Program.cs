@@ -1,6 +1,7 @@
 using System.Threading.RateLimiting;
 using Authorization;
 using ProxmoxApi;
+using VirtualLab;
 using VirtualLab.Application;
 using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Interfaces.Repositories;
@@ -20,7 +21,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // все зависимости связанные с бд
-builder.Services.AddDbContext<FakeDbContext>();
+builder.Services.AddDbContext<LabDbContext>();
 
 builder.Services.AddScoped<ILabCreationService, LabCreationService>();
 builder.Services.AddScoped<ILabRepository, LabRepository>();
@@ -39,15 +40,17 @@ builder.Services.AddScoped<ICredentialRepository, CredentialRepository>();
 builder.Services.AddConfigureAuthentication();
 builder.Services.AddPveClient();
 
+
 var app = builder.Build();
 app.UseMiddleware<ExceptionHandlerMiddleware>();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseUserLabStatuses();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

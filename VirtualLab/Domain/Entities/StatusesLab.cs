@@ -1,7 +1,9 @@
+using VirtualLab.Domain.Entities.Enums;
+
 namespace VirtualLab.Domain.Entities;
 
-public class StatusesLab : IEntity<Guid>
+public class StatusUserLab : IEntity<Guid>
 {
     public Guid Id { get; set; }
-    public string Name { get; set; }
+    public Enums.StatusUserLabEnum Name { get; set; }
 }

@@ -70,7 +70,7 @@ public class LabManager : ILabManager
     public async Task<Result> End(Guid labId, Guid userId)
     {
         var getUserLab = await _userLabProvider.GetUserLab(userId, labId);
-        if (!(await _userLabProvider.GetUserLab(userId, labId)).TryGetValue(out var userLabInfo))
+        if (getUserLab.TryGetValue(out var userLabInfo))
         {
             _log.Error($"Not find lab with {labId} for user with id {userId}"); // так бы везде))
             return Result.Fail(getUserLab.Errors);

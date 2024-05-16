@@ -172,13 +172,11 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
                             return new Ip() { IpV4 = ipPair.Value as string };
                         }
                     }
-                   
-                    
                 }
               
             }
         }
-        //todo: доделать
+        
 
         return Result.Fail("не нашлось");
     }

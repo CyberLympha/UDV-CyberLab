@@ -7,7 +7,7 @@ namespace VirtualLab.Infrastructure.Repositories;
 
 public class CredentialRepository : RepositoryBase<Credential,Guid> , ICredentialRepository
 {
-    public CredentialRepository(FakeDbContext dbContext) : base(dbContext)
+    public CredentialRepository(LabDbContext dbContext) : base(dbContext)
     {
     }
 

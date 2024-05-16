@@ -9,7 +9,7 @@ namespace VirtualLab.Infrastructure.Repositories;
 
 public class UserLabsRepository : RepositoryBase<UserLab, Guid> ,IUserLabRepository 
 {
-    public UserLabsRepository(FakeDbContext dbContext) : base(dbContext)
+    public UserLabsRepository(LabDbContext dbContext) : base(dbContext)
     {
     }
 
