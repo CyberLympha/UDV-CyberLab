@@ -1,9 +1,9 @@
-using HostingEnvironmentExtensions = Microsoft.AspNetCore.Hosting.HostingEnvironmentExtensions;
+using VirtualLab.Domain.Entities.Enums;
 
-namespace ProxmoxApi.Domen.Entities;
+namespace VirtualLab.Domain.Entities;
 
-public class StatusesLab : IEntity<Guid>
+public class StatusUserLab : IEntity<Guid>
 {
     public Guid Id { get; set; }
-    public string Name { get; set; }
+    public Enums.StatusUserLabEnum Name { get; set; }
 }

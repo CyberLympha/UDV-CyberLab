@@ -1,4 +1,4 @@
-namespace ProxmoxApi.Domen;
+namespace VirtualLab.Domain.Entities;
 
 public interface IEntity<T>
 {

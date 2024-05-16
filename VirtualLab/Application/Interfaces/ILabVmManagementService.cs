@@ -1,11 +1,16 @@
 using FluentResults;
+using VirtualLab.Domain.Entities;
 using VirtualLab.Domain.Value_Objects;
 using VirtualLab.Domain.Value_Objects.Proxmox;
+using VirtualLab.Domain.ValueObjects.Proxmox;
+using VirtualLab.Domain.ValueObjects.Proxmox.Config;
+using Guid = System.Guid;
 
 namespace VirtualLab.Application.Interfaces;
 
-public interface ILabVmManagementService
+public interface IStandManager
 {
-    public Task<Result<LabEntryPoint>> CreateLab(LabCreateRequest labCreateRequest);
-    
+    public Task<Result<IReadOnlyList<VirtualMachineInfo>>> Create(StandCreateConfig standCreateConfig);
+
+    public Task<Result> Delete(StandRemoveConfig standRemoveConfig);
 }

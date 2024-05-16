@@ -1,5 +1,6 @@
 using FluentResults;
 using VirtualLab.Infrastructure;
+using VirtualLab.Infrastructure.ApiResult;
 
 namespace ProxmoxApi;
 

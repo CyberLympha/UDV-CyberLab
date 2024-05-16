@@ -1,12 +1,14 @@
 using FluentResults;
-using ProxmoxApi.Domen.Entities;
-using VirtualLab.Domain.Interfaces.Repositories;
 using VirtualLab.Domain.Value_Objects.Proxmox;
+using VirtualLab.Domain.ValueObjects.Proxmox;
+using VirtualLab.Domain.ValueObjects.Proxmox.Config;
 
 namespace VirtualLab.Application.Interfaces;
 
-public interface ILabConfigureGenerate
+public interface ILabConfigure
 {
-   
-    public Task<Result<LabCreateRequest>> GenerateLabConfig(Guid labId);
+    public Task<Result<StandCreateConfig>> GetConfigByLab(Guid labId);
+
+
+    Task<Result<StandRemoveConfig>> GetConfigByUserLab(Guid userLabId);
 }

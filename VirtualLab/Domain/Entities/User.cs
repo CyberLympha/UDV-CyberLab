@@ -1,4 +1,4 @@
-namespace ProxmoxApi.Domen.Entities;
+namespace VirtualLab.Domain.Entities;
 
 public class User : IEntity<Guid>
 {

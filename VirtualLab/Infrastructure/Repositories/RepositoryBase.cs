@@ -3,9 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using ProxmoxApi;
 using VirtualLab.Domain.Interfaces.Repositories;
 
-namespace VirtualLab.Domain.Interfaces;
+namespace VirtualLab.Infrastructure.Repositories;
 
-//todo try catch будет ловится в middleWare 
 public abstract class RepositoryBase<TEntity, TId> : IRepositoryBase<TEntity, TId> where TEntity : class
 {
     protected DbContext _dbContext;

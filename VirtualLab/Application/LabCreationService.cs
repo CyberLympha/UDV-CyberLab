@@ -1,5 +1,6 @@
 using FluentResults;
-using ProxmoxApi.Domen.Entities;
+using VirtualLab.Application.Interfaces;
+using VirtualLab.Domain.Entities;
 using VirtualLab.Domain.Interfaces.Repositories;
 using Vostok.Logging.Abstractions;
 
