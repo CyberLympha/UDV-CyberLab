@@ -158,7 +158,7 @@ public class LabWorkInstructionService
         if (!CheckAnswer(correctAnswers, userLogs)) return false;
         
         await proxmoxService.ClearFilesContent(vmId, instruction.LogFilePaths.Values.ToList());
-        await userLabResultsService.UpdateStepNumberAsync(userId, labWorkId, stepNumber);
+        await userLabResultsService.UpdateStepNumberAsync(userId, labWorkId, stepIntNumber, instruction.Steps.Count);
         
         return true;
 

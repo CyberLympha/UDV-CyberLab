@@ -45,9 +45,10 @@ public class UserLabResultsService
     /// <param name="userId">The ID of the user.</param>
     /// <param name="labWorkId">The ID of the lab work.</param>
     /// <param name="number">The step number to update.</param>
+    /// <param name="stepsAmount">The amount of steps in the instruction</param>
     /// <exception cref="Exception">Thrown when an error occurs during the operation.</exception>
-    public async Task UpdateStepNumberAsync(string userId, string labWorkId, string number)
-    {
+    public async Task UpdateStepNumberAsync(string userId, string labWorkId, int number, int stepsAmount)
+    {   
         await GetAsync(userId, labWorkId);
         try
         {
@@ -57,7 +58,9 @@ public class UserLabResultsService
                 filterBuilder.Eq(result => result.LabWorkId, labWorkId)
             );
             var update = Builders<UserLabResult>.Update
-                .Set("CurrentStep", number);
+                .Set("CurrentStep", number.ToString());
+            if (stepsAmount == number)
+                update.Set("IsFinished", true);
             
             await userLabResults.UpdateOneAsync(filter, update);
         }
