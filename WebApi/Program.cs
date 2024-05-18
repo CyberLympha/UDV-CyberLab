@@ -42,9 +42,7 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<LabsService>();
 builder.Services.AddSingleton<LabReservationsService>();
 builder.Services.AddSingleton<LabWorkService>();
-builder.Services.AddSingleton<WebsocketProxyService, WebsocketProxyService>(x => new WebsocketProxyService(
-        builder.Configuration["WebsockifyConfiguration:NodeJsExePath"],
-        builder.Configuration["WebsockifyConfiguration:WebsockifyScriptPath"]));
+builder.Services.AddSingleton<WebsocketProxyService, WebsocketProxyService>();
 builder.Services.AddSingleton<VirtualDesktopService, VirtualDesktopService>();
 builder.Services.AddSingleton<WebsocketProxySettings, WebsocketProxySettings>(x => new WebsocketProxySettings()
     {
