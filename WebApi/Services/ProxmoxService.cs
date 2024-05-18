@@ -428,6 +428,11 @@ public class ProxmoxService
         return currentVncPort == vmId;
     }
 
+    /// <summary>
+    /// Retrieves the next available ID from the Proxmox cluster asynchronously.
+    /// </summary>
+    /// <returns>The next available ID as a string.</returns>
+    /// <exception cref="Exception">Thrown when the request to Proxmox fails.</exception>
     public async Task<string> GetNextAvailableId()
     {
         var idResult = await proxmoxClient.Cluster.Nextid.Nextid();
