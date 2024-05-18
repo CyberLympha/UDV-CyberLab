@@ -96,8 +96,9 @@ public class VirtualDesktopService
         var user = await userService.GetAsyncById(userId);
         var vm = await vmService.GetByIdAsync(user.VmId);
         var vmId = vm.VmId.ToString();
-        var hasStoppedVm = await proxmoxService.StopMachine(vmId);
-        return StopWebsocketProxy(vmId) && hasStoppedVm;
+        StopWebsocketProxy(vmId);
+        
+        return await proxmoxService.StopMachine(vmId);
     }
 
     /// <summary>
@@ -121,21 +122,32 @@ public class VirtualDesktopService
             if (!await proxmoxService.AddVncParameter(vmId))
                 return false;
 
-        return websocketProxyService.Start(
-            $"{BuildWebsocketProxyHostAddress(vmId)}",
-            $"{proxmoxService.HostAddress}:{websocketProxySettings.ProxmoxVncStartingPort + int.Parse(vmId)}");
+        websocketProxyService.WebSocketTcpProxyStopped += OnWebSocketTcpProxyStop;
+        websocketProxyService.Start(BuildWebsocketProxyPort(vmId),
+            proxmoxService.HostAddress, BuildWebsocketProxyPort(vmId));
+
+        return true;
     }
 
     private string BuildWebsocketProxyHostAddress(string vmId)
     {
         return
-            $"{websocketProxySettings.WebsocketHost}:{websocketProxySettings.ProxmoxVncStartingPort + int.Parse(vmId)}";
+            $"{websocketProxySettings.WebsocketHost}:{BuildWebsocketProxyPort(vmId)}";
     }
 
-    private bool StopWebsocketProxy(string vmId)
+    private int BuildWebsocketProxyPort(string vmId)
     {
-        return websocketProxyService.Stop(
-            $"{proxmoxService.HostAddress}:{websocketProxySettings.ProxmoxVncStartingPort + int.Parse(vmId)}");
+        return websocketProxySettings.ProxmoxVncStartingPort + int.Parse(vmId);
+    }
+
+    private int GetVmIdFromWebsocketProxyPort(int webSocketPort)
+    {
+        return webSocketPort - websocketProxySettings.ProxmoxVncStartingPort;
+    }
+
+    private void StopWebsocketProxy(string vmId)
+    {
+        websocketProxyService.Stop(BuildWebsocketProxyPort(vmId));
     }
 
     private async Task<bool> CreateVmForUser(string userId, string labWorkId)
@@ -164,5 +176,10 @@ public class VirtualDesktopService
         await userService.UpdateAsync(user);
 
         return true;
+    }
+    
+    private async void OnWebSocketTcpProxyStop(object? sender, int webSocketPort)
+    {
+        await proxmoxService.StopMachine(GetVmIdFromWebsocketProxyPort(webSocketPort).ToString());
     }
 }
