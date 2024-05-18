@@ -1,59 +1,65 @@
-﻿using WebApi.Models.WebsocketProxies;
+﻿using System.Collections.Concurrent;
+using WebApi.Models.WebsocketProxies;
 
 namespace WebApi.Services;
 
 /// <summary>
-/// Manages storage and lifecycle of WebSocket proxy instances.
+/// Service for managing WebSocket TCP proxies.
 /// </summary>
 public class WebsocketProxyService
 {
-    private readonly Dictionary<string, WebsocketProxy> websocketProxies;
-    private readonly string nodeExePath;
-    private readonly string scriptPath;
-    
+    private readonly ConcurrentDictionary<int, WebSocketTcpProxy> proxies;
+
     /// <summary>
-    /// Initializes a new instance of the <see cref="WebsocketProxyService"/> class.
+    /// Event raised when a WebSocket TCP proxy is stopped.
     /// </summary>
-    /// <param name="nodeExePath">The path to the Node.js executable.</param>
-    /// <param name="scriptPath">The path to the Node.js script that implements the WebSocket proxy.</param>
-    public WebsocketProxyService(string nodeExePath, string scriptPath)
+    public event EventHandler<int> WebSocketTcpProxyStopped;
+
+    /// <summary>
+    /// Initializes a new instance of the WebsocketProxyService class.
+    /// </summary>
+    public WebsocketProxyService()
     {
-        this.nodeExePath = nodeExePath;
-        this.scriptPath = scriptPath;
-        websocketProxies = new Dictionary<string, WebsocketProxy>();
+        proxies = new ConcurrentDictionary<int, WebSocketTcpProxy>();
     }
 
     /// <summary>
-    /// Starts a WebSocket proxy with the specified source and target addresses.
+    /// Starts a WebSocket TCP proxy.
     /// </summary>
-    /// <param name="source">The source address for the WebSocket proxy.</param>
-    /// <param name="target">The target address to which WebSocket messages will be forwarded.</param>
-    /// <returns>True if the WebSocket proxy was successfully started or is already running for the specified target; otherwise, false.</returns>
-    public bool Start(string source, string target)
+    /// <param name="webSocketPort">The port number for the WebSocket server.</param>
+    /// <param name="tcpHost">The hostname of the TCP server.</param>
+    /// <param name="tcpPort">The port number of the TCP server.</param>
+    public void Start(int webSocketPort, string tcpHost, int tcpPort)
     {
-        if (websocketProxies.ContainsKey(target))
-            return true;
-        
-        var proxy = new WebsocketProxy(source, target);
-        if (!proxy.Start(nodeExePath, scriptPath))
-            return false;
-        websocketProxies.Add(target, proxy);
-        
-        return true;
+        if (proxies.ContainsKey(webSocketPort))
+            return;
+
+        var proxy = new WebSocketTcpProxy(webSocketPort, tcpHost, tcpPort);
+        proxy.ClientDisconnected += OnClientDisconnected;
+        proxy.ExceptionExit += OnClientDisconnected;
+
+        var cts = new CancellationTokenSource();
+        proxy.Start(cts);
+        proxies.TryAdd(webSocketPort, proxy);
     }
 
     /// <summary>
-    /// Stops the WebSocket proxy associated with the specified target address.
+    /// Stops a WebSocket TCP proxy.
     /// </summary>
-    /// <param name="target">The target address of the WebSocket proxy to stop.</param>
-    /// <returns>True if the WebSocket proxy was successfully stopped or if no proxy exists for the specified target; otherwise, false.</returns>   
-    public bool Stop(string target)
+    /// <param name="webSocketPort">The port number of the WebSocket server.</param>
+    public void Stop(int webSocketPort)
     {
-        if (!websocketProxies.TryGetValue(target, out var proxy)) return false;
-        if (!proxy.Stop())
-            return false;
-        websocketProxies.Remove(target);   
-        
-        return true;
+        if (!proxies.TryRemove(webSocketPort, out var proxy)) return;
+
+        proxy.ClientDisconnected -= OnClientDisconnected;
+        proxy.ExceptionExit -= OnClientDisconnected;
+        proxy.Stop();
+        WebSocketTcpProxyStopped.Invoke(this, webSocketPort);
+    }
+
+    private void OnClientDisconnected(object? sender, int webSocketPort)
+    {
+        Console.WriteLine($"Client disconnected on WebSocket port: {webSocketPort}");
+        Stop(webSocketPort);
     }
 }
