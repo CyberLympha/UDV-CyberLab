@@ -454,6 +454,9 @@ public class ProxmoxService
     /// <exception cref="Exception">Thrown when the file reading operation fails.</exception>
     public async Task<string> ReadFileAsync(string vmId, string filePath)
     {
+        if (!await IsQemuGuestAgentEnabled(vmId))
+            await EnableQemuGuestAgent(vmId);
+        
         var fileContentResult = await proxmoxClient.Nodes[nodeName].Qemu[vmId].Agent.FileRead.FileRead(filePath);
 
         if (fileContentResult.IsSuccessStatusCode)
@@ -472,6 +475,8 @@ public class ProxmoxService
     /// <returns>A task representing the asynchronous operation.</returns>
     public async Task ClearFileContent(string vmId, string filePath)
     {
+        if (!await IsQemuGuestAgentEnabled(vmId))
+            await EnableQemuGuestAgent(vmId);
         await proxmoxClient.Nodes[nodeName].Qemu[vmId].Agent.Exec.Exec(new[] { "cp", "/dev/null", filePath });
     }
 
