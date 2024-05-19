@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using WebApi.Models;
+using WebApi.Models.LabWorks;
 using WebApi.Services;
 
 namespace WebApi.Controllers;
@@ -11,14 +14,19 @@ namespace WebApi.Controllers;
 public class LabWorkInstructionStepController : ControllerBase
 {
     private readonly LabWorkInstructionService labWorkInstructionService;
+    private readonly InstructionStepsService instructionStepsService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LabWorkInstructionStepController"/> class.
     /// </summary>
     /// <param name="labWorkInstructionService">The lab work instruction service.</param>
-    public LabWorkInstructionStepController(LabWorkInstructionService labWorkInstructionService)
+    /// <param name="instructionStepsService">The lab work instruction's steps service.</param>
+    public LabWorkInstructionStepController(
+        LabWorkInstructionService labWorkInstructionService,
+        InstructionStepsService instructionStepsService)
     {
         this.labWorkInstructionService = labWorkInstructionService;
+        this.instructionStepsService = instructionStepsService;
     }
     
     /// <summary>
@@ -146,5 +154,117 @@ public class LabWorkInstructionStepController : ControllerBase
         }
     }
     
+    /// <summary>
+    /// Creates a new instruction step.
+    /// </summary>
+    /// <param name="creationRequest">The request containing instruction step details.</param>
+    /// <returns>A status code indicating the result of the operation.</returns>
+    [Authorize(Roles = "Admin, Teacher")]
+    [HttpPost("step/create", Name = nameof(Create))]
+    [Produces("application/json", "application/xml")]
+    [ProducesResponseType(typeof(void), 201)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult> Create(CreateInstructionStepRequest creationRequest)
+    {
+        try
+        {   
+            var instructionStep = new InstructionStep()
+            {
+                Answers = creationRequest.Answers,
+                Hint = creationRequest.Hint,
+                Instruction = creationRequest.Instruction,
+            };
+            await instructionStepsService.CreateAsync(instructionStep);
+            return StatusCode(201);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
     
+    /// <summary>
+    /// Updates an existing instruction step.
+    /// </summary>
+    /// <param name="updateRequest">The request containing updated instruction step details.</param>
+    /// <returns>A status code indicating the result of the operation.</returns>
+    [Authorize(Roles = "Admin, Teacher")]
+    [HttpPost("step/update", Name = nameof(Update))]
+    [Produces("application/json", "application/xml")]
+    [ProducesResponseType(typeof(void), 200)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult> Update(UpdateInstructionStepRequest updateRequest)
+    {
+        try
+        {
+            var instructionStep = new InstructionStep
+            {
+                Answers = updateRequest.Answers,
+                Hint = updateRequest.Hint,
+                Instruction = updateRequest.Instruction,
+            };
+            await instructionStepsService.UpdateAsync(instructionStep);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
+    
+    /// <summary>
+    /// Retrieves an instruction step by its identifier.
+    /// </summary>
+    /// <param name="id">The identifier of the instruction step.</param>
+    /// <returns>The requested instruction step.</returns>
+    [HttpGet("step/get/{id}", Name = nameof(Get))]
+    [Produces("application/json", "application/xml")]
+    [ProducesResponseType(typeof(InstructionStep), 200)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult<InstructionStep>> Get([FromRoute]string id)
+    {
+        try
+        {
+            return await instructionStepsService.GetByIdAsync(id);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
+    
+    /// <summary>
+    /// Retrieves all instruction steps.
+    /// </summary>
+    /// <returns>A list of all instruction steps.</returns>
+    [HttpGet("step/get", Name = nameof(GetAll))]
+    [Produces("application/json", "application/xml")]
+    [ProducesResponseType(typeof(List<InstructionStep>), 200)]
+    public async Task<List<InstructionStep>> GetAll()
+    {
+        return await instructionStepsService.GetAllAsync();
+    }
+    
+    /// <summary>
+    /// Deletes an instruction step by its identifier.
+    /// </summary>
+    /// <param name="id">The identifier of the instruction step.</param>
+    /// <returns>A status code indicating the result of the operation.</returns>
+    [Authorize(Roles = "Admin, Teacher")]
+    [HttpPost("step/delete/{id}", Name = nameof(Delete))]
+    [Produces("application/json", "application/xml")]
+    [ProducesResponseType(typeof(void), 200)]
+    [ProducesResponseType(500)]
+    public async Task<IActionResult> Delete([FromRoute]string id)
+    {
+        try
+        {
+            await instructionStepsService.DeleteAsync(id);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
 }
