@@ -77,7 +77,8 @@ public class UserLabResultsController : ControllerBase
                 CurrentStep = updateRequest.CurrentStep,
                 IsFinished = updateRequest.IsFinished,
                 UserId = updateRequest.UserId,
-                LabWorkId = updateRequest.LabWorkId
+                LabWorkId = updateRequest.LabWorkId,
+                Id = updateRequest.Id
             };
             await userLabResultsService.UpdateAsync(userLabResult);
             return Ok();

@@ -105,7 +105,8 @@ public class LabWorkController : ControllerBase
                 Description = updateRequest.Description,
                 Title = updateRequest.Title,
                 ShortDescription = updateRequest.ShortDescription,
-                InstructionId = updateRequest.InstructionId
+                InstructionId = updateRequest.InstructionId,
+                Id = updateRequest.Id
             };
             await labWorkService.UpdateAsync(labWork);
             return Ok();

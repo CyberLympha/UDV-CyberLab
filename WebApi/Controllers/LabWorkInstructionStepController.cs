@@ -172,7 +172,7 @@ public class LabWorkInstructionStepController : ControllerBase
             {
                 Answers = creationRequest.Answers,
                 Hint = creationRequest.Hint,
-                Instruction = creationRequest.Instruction,
+                Instruction = creationRequest.Instruction
             };
             await instructionStepsService.CreateAsync(instructionStep);
             return StatusCode(201);
@@ -199,6 +199,7 @@ public class LabWorkInstructionStepController : ControllerBase
         {
             var instructionStep = new InstructionStep
             {
+                Id = updateRequest.Id,
                 Answers = updateRequest.Answers,
                 Hint = updateRequest.Hint,
                 Instruction = updateRequest.Instruction,

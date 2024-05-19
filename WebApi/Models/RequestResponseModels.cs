@@ -110,6 +110,14 @@ public class CreateLabWorkRequest
 public record UpdateLabWorkRequest
 {
     /// <summary>
+    /// The id of the laboratory work
+    /// </summary>
+    [BsonId]
+    [Required]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public required string Id { get; set; }
+    
+    /// <summary>
     /// The id of the virtual machine that is template for the machine for the user to do the lab work
     /// </summary>
     [Required]
@@ -170,6 +178,14 @@ public class CreateUserLabResultRequest
 public record UpdateUserLabResultRequest
 {
     /// <summary>
+    /// The unique identifier of the user lab result.
+    /// </summary>
+    [BsonId]
+    [Required]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public required string Id { get; set; }
+    
+    /// <summary>
     /// The identifier of the user associated with this lab result.
     /// </summary>
     [Required]
@@ -217,6 +233,14 @@ public class CreateInstructionStepRequest
 
 public record UpdateInstructionStepRequest
 {
+    /// <summary>
+    /// The unique identifier of the step.
+    /// </summary>
+    [BsonId]
+    [Required]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public required string Id { get; set; }
+    
     /// <summary>
     /// The instruction for this step.
     /// </summary>
