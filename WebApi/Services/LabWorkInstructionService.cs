@@ -148,7 +148,7 @@ public class LabWorkInstructionService
         var correctAnswers = instructionStep.Answers;
         var userLogs = await logsReader.ReadLogs(instruction.LogFilePaths, vmId);
         var userLabResult = await userLabResultsService.GetAsync(userId, labWorkId) 
-                            ?? await userLabResultsService.CreateInitialUserResult(userId, labWorkId);
+                            ?? await userLabResultsService.CreateInitialUserResultAsync(userId, labWorkId);
         
         if (userLabResult.IsFinished || userLabResult.CurrentStep >= stepIntNumber)
         {
