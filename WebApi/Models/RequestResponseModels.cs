@@ -193,3 +193,45 @@ public record UpdateUserLabResultRequest
     [Required]
     public required int CurrentStep { get; set; }
 }
+
+public class CreateInstructionStepRequest
+{
+    /// <summary>
+    /// The instruction for this step.
+    /// </summary>
+    [Required]
+    public required string Instruction { get; set; }
+    
+    /// <summary>
+    /// The hint for this step.
+    /// </summary>
+    [Required]
+    public required string Hint { get; set; }
+    
+    /// <summary>
+    /// The list of possible answers for this step.
+    /// </summary>
+    [Required]
+    public required List<string> Answers { get; set; }
+}
+
+public record UpdateInstructionStepRequest
+{
+    /// <summary>
+    /// The instruction for this step.
+    /// </summary>
+    [Required]
+    public required string Instruction { get; set; }
+    
+    /// <summary>
+    /// The hint for this step.
+    /// </summary>
+    [Required]
+    public required string Hint { get; set; }
+    
+    /// <summary>
+    /// The list of possible answers for this step.
+    /// </summary>
+    [Required]
+    public required List<string> Answers { get; set; }
+}
