@@ -393,7 +393,7 @@ public class ProxmoxService
     /// </summary>
     /// <param name="vmId">The VMID of the virtual machine.</param>
     /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation, with a boolean result indicating success or failure.</returns>
-    public async Task<bool> AddVncParameter(string vmId)
+    public async Task<bool> EnableVnc(string vmId)
     {
         var apiToken = proxmoxClient.ApiToken;
         proxmoxClient.ApiToken = null;
@@ -418,7 +418,7 @@ public class ProxmoxService
     /// </summary>
     /// <param name="vmId">The VMID of the virtual machine.</param>
     /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation, with a boolean result indicating if VNC is configured.</returns>
-    public async Task<bool> IsVncExists(string vmId)
+    public async Task<bool> IsVncEnabled(string vmId)
     {
         var config = await proxmoxClient.Nodes[nodeName].Qemu[vmId].Config.VmConfig();
         var configDict = (IDictionary<string, object>)config.Response.data;
