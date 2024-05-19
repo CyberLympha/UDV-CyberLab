@@ -27,7 +27,7 @@ public class UserLabResultsService
     /// <param name="labId">The ID of the lab work.</param>
     /// <returns>The user lab result with the specified user and lab IDs.</returns>
     /// <exception cref="Exception">Thrown when an error occurs during the operation.</exception>
-    public async Task<UserLabResult> GetAsync(string userId, string labId)
+    public async Task<UserLabResult?> GetAsync(string userId, string labId)
     {
         try
         {
@@ -68,5 +68,36 @@ public class UserLabResultsService
         {
             throw new Exception(e.Message);
         }
+    }
+
+    /// <summary>
+    /// Creates an initial user lab result record with the initial step and status.
+    /// </summary>
+    /// <param name="userId">The identifier of the user.</param>
+    /// <param name="labWorkId">The identifier of the lab work.</param>
+    /// <returns>
+    /// A task representing the asynchronous operation. The task result contains the newly created <see cref="UserLabResult"/>.
+    /// </returns>
+    /// <exception cref="Exception">Thrown when there is an error inserting the new record into the collection.</exception>
+    public async Task<UserLabResult> CreateInitialUserResult(string userId, string labWorkId)
+    {
+        var newRecord = new UserLabResult()
+        {
+            CurrentStep = 0,
+            IsFinished = false,
+            UserId = userId,
+            LabWorkId = labWorkId,
+            Id = Guid.NewGuid().ToString()
+        };
+        try
+        {
+            await userLabResults.InsertOneAsync(newRecord);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+
+        return newRecord;
     }
 }

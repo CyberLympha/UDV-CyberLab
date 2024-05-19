@@ -145,4 +145,6 @@ public class LabWorkInstructionController : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
+    
+    
 }
