@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using Microsoft.CodeAnalysis.Elfie.Serialization;
+using MongoDB.Driver;
 using WebApi.Models.LabWorks;
 
 namespace WebApi.Services;
@@ -30,6 +31,87 @@ public class InstructionStepsService
         try
         {
             return (await instructionsStepsCollection.FindAsync(bson => bson.Id == id)).First();
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+    
+    /// <summary>
+    /// Creates a new instruction step.
+    /// </summary>
+    /// <param name="newStep">The instruction step to create.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when the <paramref name="newStep"/> is null.</exception>
+    public async Task CreateAsync(InstructionStep newStep)
+    {
+        if (newStep == null) throw new Exception();
+        try
+        {
+            await instructionsStepsCollection.InsertOneAsync(newStep);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
+    
+    /// <summary>
+    /// Updates an existing instruction step.
+    /// </summary>
+    /// <param name="newStep">The instruction step to update.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when the <paramref name="newStep"/> is null.</exception>
+    /// <exception cref="ColumnNotFoundException">Thrown when the instruction step to update is not found.</exception>
+    public async Task UpdateAsync(InstructionStep newStep)
+    {
+        var stepToUpdate = await instructionsStepsCollection.FindAsync(bson => bson.Id == newStep.Id) ??
+                             throw new ColumnNotFoundException();
+        try
+        {
+            var filter = Builders<InstructionStep>.Filter.Eq("Id", newStep.Id);
+            var update = Builders<InstructionStep>.Update
+                .Set("Instruction", newStep.Instruction)
+                .Set("Hint", newStep.Hint)
+                .Set("Answers", newStep.Answers);
+            await instructionsStepsCollection.UpdateOneAsync(filter, update);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+    
+    /// <summary>
+    /// Deletes an instruction step by its identifier.
+    /// </summary>
+    /// <param name="stepId">The identifier of the instruction step to delete.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    /// <exception cref="ColumnNotFoundException">Thrown when the instruction step to delete is not found.</exception>
+    public async Task DeleteAsync(string stepId)
+    {
+        var step = await GetByIdAsync(stepId) ??
+                     throw new ColumnNotFoundException();
+        try
+        {
+            await instructionsStepsCollection.DeleteOneAsync(bson => bson.Id == stepId);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+    
+    /// <summary>
+    /// Retrieves all instruction steps.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous operation, containing a list of all instruction steps.</returns>
+    public async Task<List<InstructionStep>> GetAllAsync()
+    {
+        try
+        {
+            return await instructionsStepsCollection.Find(_ => true).ToListAsync();
         }
         catch (Exception e)
         {
