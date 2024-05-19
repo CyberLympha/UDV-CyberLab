@@ -59,7 +59,7 @@ public class UserLabResultsController : ControllerBase
     /// <summary>
     /// Updates an existing user lab result.
     /// </summary>
-    /// <param name="creationRequest">The request object containing updated details of the user lab result.</param>
+    /// <param name="updateRequest">The request object containing updated details of the user lab result.</param>
     /// <returns>An <see cref="ActionResult"/> indicating the result of the operation.</returns>
     /// <response code="200">Indicates that the user lab result was successfully updated.</response>
     /// <response code="500">Indicates that an internal server error occurred.</response>
@@ -68,16 +68,16 @@ public class UserLabResultsController : ControllerBase
     [Produces("application/json", "application/xml")]
     [ProducesResponseType(typeof(void), 200)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult> Update(UpdateUserLabResultRequest creationRequest)
+    public async Task<ActionResult> Update(UpdateUserLabResultRequest updateRequest)
     {
         try
         {
             var userLabResult = new UserLabResult()
             {
-                CurrentStep = creationRequest.CurrentStep,
-                IsFinished = creationRequest.IsFinished,
-                UserId = creationRequest.UserId,
-                LabWorkId = creationRequest.LabWorkId
+                CurrentStep = updateRequest.CurrentStep,
+                IsFinished = updateRequest.IsFinished,
+                UserId = updateRequest.UserId,
+                LabWorkId = updateRequest.LabWorkId
             };
             await userLabResultsService.UpdateAsync(userLabResult);
             return Ok();
