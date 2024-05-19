@@ -147,7 +147,8 @@ public class LabWorkInstructionService
         var vmId = await vmService.GetVmId(user.VmId);
         var correctAnswers = instructionStep.Answers;
         var userLogs = await logsReader.ReadLogs(instruction.LogFilePaths, vmId);
-        var userLabResult = await userLabResultsService.GetAsync(userId, labWorkId);
+        var userLabResult = await userLabResultsService.GetAsync(userId, labWorkId) 
+                            ?? await userLabResultsService.CreateInitialUserResult(userId, labWorkId);
         
         if (userLabResult.IsFinished || userLabResult.CurrentStep >= stepIntNumber)
         {
@@ -161,7 +162,6 @@ public class LabWorkInstructionService
         await userLabResultsService.UpdateStepNumberAsync(userId, labWorkId, stepIntNumber, instruction.Steps.Count);
         
         return true;
-
     }
     
     private static bool CheckAnswer(List<string> correctAnswers, List<Log> userLogs)
