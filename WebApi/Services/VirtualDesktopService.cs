@@ -118,8 +118,8 @@ public class VirtualDesktopService
 
     private async Task<bool> StartWebsocketProxy(string vmId)
     {
-        if (!await proxmoxService.IsVncExists(vmId))
-            if (!await proxmoxService.AddVncParameter(vmId))
+        if (!await proxmoxService.IsVncEnabled(vmId))
+            if (!await proxmoxService.EnableVnc(vmId))
                 return false;
 
         websocketProxyService.WebSocketTcpProxyStopped += OnWebSocketTcpProxyStop;
