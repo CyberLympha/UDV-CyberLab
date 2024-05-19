@@ -486,4 +486,50 @@ public class ProxmoxService
         foreach (var filePath in filePaths)
             await ClearFileContent(vmId, filePath);
     }
+    
+    /// <summary>
+    /// Checks if the QEMU Guest Agent is enabled for the specified virtual machine.
+    /// </summary>
+    /// <param name="vmId">The identifier of the virtual machine.</param>
+    /// <returns>
+    /// A task representing the asynchronous operation. The task result contains a boolean value indicating whether the QEMU Guest Agent is enabled.
+    /// </returns>
+    /// <exception cref="Exception">Thrown when there is an error retrieving the VM configuration.</exception>
+    public async Task<bool> IsQemuGuestAgentEnabled(string vmId)
+    {
+        var config = await proxmoxClient.Nodes[nodeName].Qemu[vmId].Config.VmConfig();
+        var configDict = (IDictionary<string, object>)config.Response.data;
+        if (!configDict.ContainsKey("agent")) return false;
+        var agentParameter = (string)configDict["agent"];
+
+        return agentParameter == "1";
+    }
+    
+    /// <summary>
+    /// Enables the QEMU Guest Agent for the specified virtual machine.
+    /// </summary>
+    /// <param name="vmId">The identifier of the virtual machine.</param>
+    /// <returns>
+    /// A task representing the asynchronous operation. The task result contains a boolean value indicating whether the QEMU Guest Agent was successfully enabled.
+    /// </returns>
+    /// <exception cref="Exception">Thrown when there is an error updating the VM configuration.</exception>
+    public async Task<bool> EnableQemuGuestAgent(string vmId)
+    {
+        var apiToken = proxmoxClient.ApiToken;
+        proxmoxClient.ApiToken = null;
+        var agent = "1";
+        try
+        {
+            var res = await proxmoxClient.Nodes[nodeName].Qemu[vmId].Config.UpdateVmAsync(agent: agent);
+            proxmoxClient.ApiToken = apiToken;
+
+            return res.IsSuccessStatusCode;
+        }
+        catch (Exception e)
+        {
+            proxmoxClient.ApiToken = apiToken;
+
+            return false;
+        }
+    }
 }
