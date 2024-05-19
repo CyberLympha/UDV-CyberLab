@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WebApi.Models;
 using WebApi.Models.LabWorks;
 using WebApi.Services;
@@ -28,9 +29,10 @@ public class LabWorkController : ControllerBase
     /// </summary>
     /// <param name="creationRequest">The request containing information for creating the laboratory work.</param>
     /// <returns>An action result indicating the outcome of the create operation.</returns>
+    [Authorize(Roles = "Admin, Teacher")]
     [HttpPost("create", Name = nameof(Create))]
     [Produces("application/json", "application/xml")]
-    [ProducesResponseType(typeof(void), 200)]
+    [ProducesResponseType(typeof(void), 201)]
     public async Task<ActionResult> Create(CreateLabWorkRequest creationRequest)
     {
         try
@@ -89,6 +91,7 @@ public class LabWorkController : ControllerBase
     /// </summary>
     /// <param name="updateRequest">The request containing information for updating the laboratory work.</param>
     /// <returns>An action result indicating the outcome of the update operation.</returns>
+    [Authorize(Roles = "Admin, Teacher")]
     [HttpPost("update", Name = nameof(Update))]
     [Produces("application/json", "application/xml")]
     [ProducesResponseType(typeof(void), 200)]
@@ -118,6 +121,7 @@ public class LabWorkController : ControllerBase
     /// </summary>
     /// <param name="labWorkId">The ID of the laboratory work to delete.</param>
     /// <returns>An action result indicating the outcome of the delete operation.</returns>
+    [Authorize(Roles = "Admin, Teacher")]
     [HttpPost("delete/{labWorkId}", Name = nameof(Delete))]
     [Produces("application/json", "application/xml")]
     [ProducesResponseType(typeof(void), 200)]

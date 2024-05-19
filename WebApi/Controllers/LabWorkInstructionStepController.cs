@@ -4,19 +4,19 @@ using WebApi.Services;
 namespace WebApi.Controllers;
 
 /// <summary>
-/// Controller for handling lab work instructions.
+/// Controller for handling lab work instruction's steps.
 /// </summary>
 [Route("/api/lab-work-instruction")]
 [ApiController]
-public class LabWorkInstructionController : ControllerBase
+public class LabWorkInstructionStepController : ControllerBase
 {
     private readonly LabWorkInstructionService labWorkInstructionService;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="LabWorkInstructionController"/> class.
+    /// Initializes a new instance of the <see cref="LabWorkInstructionStepController"/> class.
     /// </summary>
     /// <param name="labWorkInstructionService">The lab work instruction service.</param>
-    public LabWorkInstructionController(LabWorkInstructionService labWorkInstructionService)
+    public LabWorkInstructionStepController(LabWorkInstructionService labWorkInstructionService)
     {
         this.labWorkInstructionService = labWorkInstructionService;
     }
