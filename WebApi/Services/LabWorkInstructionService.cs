@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using Microsoft.CodeAnalysis.Elfie.Serialization;
+using MongoDB.Driver;
 using WebApi.Models.LabWorks;
 using WebApi.Models.Logs;
 using WebApi.Services.Logs;
@@ -56,7 +57,7 @@ public class LabWorkInstructionService
     /// <param name="instructionId">The ID of the instruction to retrieve.</param>
     /// <returns>The lab work instruction with the specified ID.</returns>
     /// <exception cref="Exception">Thrown when an error occurs during the operation.</exception>
-    public async Task<LabWorkInstruction> GetAsync(string instructionId)
+    public async Task<LabWorkInstruction> GetByIdAsync(string instructionId)
     {
         try
         {
@@ -76,7 +77,7 @@ public class LabWorkInstructionService
     /// <returns>The instruction text for the specified step.</returns>
     public async Task<string> GetStepInstructionAsync(string instructionId, string stepNumber)
     {
-        var instruction = await GetAsync(instructionId);
+        var instruction = await GetByIdAsync(instructionId);
         var stepId = instruction.Steps[stepNumber];
         var step = await instructionStepsService.GetByIdAsync(stepId);
         
@@ -91,7 +92,7 @@ public class LabWorkInstructionService
     /// <returns>True if the step is the last step; otherwise, false.</returns>
     public async Task<bool> IsStepLastAsync(string instructionId, string stepNumber)
     {
-        var instruction = await GetAsync(instructionId);
+        var instruction = await GetByIdAsync(instructionId);
 
         if (int.TryParse(stepNumber, out var stepIntNumber))
             return stepIntNumber == instruction.Steps.Count;
@@ -107,7 +108,7 @@ public class LabWorkInstructionService
     /// <returns>The hint for the specified step.</returns>
     public async Task<string> GetStepHintAsync(string instructionId, string stepNumber)
     {
-        var instruction = await GetAsync(instructionId);
+        var instruction = await GetByIdAsync(instructionId);
         var stepId = instruction.Steps[stepNumber];
         var step = await instructionStepsService.GetByIdAsync(stepId);
         
@@ -122,7 +123,7 @@ public class LabWorkInstructionService
     /// <exception cref="Exception">Thrown when an error occurs during the operation.</exception>
     public async Task<int> GetStepsAmountAsync(string instructionId)
     {
-        var instruction = await GetAsync(instructionId);
+        var instruction = await GetByIdAsync(instructionId);
         
         return instruction.Steps.Count;
     }
@@ -140,7 +141,7 @@ public class LabWorkInstructionService
             return false;
 
         var labWork = await labWorkService.GetByIdAsync(labWorkId);
-        var instruction = await GetAsync(labWork.InstructionId);
+        var instruction = await GetByIdAsync(labWork.InstructionId);
         var instructionStepId = instruction.Steps[stepNumber];
         var instructionStep = await instructionStepsService.GetByIdAsync(instructionStepId);
         var user = await userService.GetAsyncById(userId);
@@ -197,5 +198,86 @@ public class LabWorkInstructionService
     {
         return answerWords.Length <= logArguments.Count 
                && !answerWords.Where((t, i) => t != logArguments[i]).Any();
+    }
+    
+    /// <summary>
+    /// Creates a new lab work instruction.
+    /// </summary>
+    /// <param name="newInstruction">The lab work instruction to create.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when the <paramref name="newInstruction"/> is null.</exception>
+    public async Task CreateAsync(LabWorkInstruction newInstruction)
+    {
+        if (newInstruction == null) throw new Exception();
+        try
+        {
+            await labWorkInstructionsCollection.InsertOneAsync(newInstruction);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
+    
+    /// <summary>
+    /// Updates an existing lab work instruction.
+    /// </summary>
+    /// <param name="instruction">The lab work instruction to update.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when the <paramref name="instruction"/> is null.</exception>
+    /// <exception cref="ColumnNotFoundException">Thrown when the lab work instruction to update is not found.</exception>
+    public async Task UpdateAsync(LabWorkInstruction instruction)
+    {
+        var instructionToUpdate = await labWorkInstructionsCollection.FindAsync(bson => bson.Id == instruction.Id) ??
+                                  throw new ColumnNotFoundException();
+        try
+        {
+            var filter = Builders<LabWorkInstruction>.Filter.Eq("Id", instruction.Id);
+            var update = Builders<LabWorkInstruction>.Update
+                .Set("Steps", instruction.Steps)
+                .Set("LogFilePaths", instruction.LogFilePaths);
+
+            await labWorkInstructionsCollection.UpdateOneAsync(filter, update);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+    
+    /// <summary>
+    /// Deletes a lab work instruction by its identifier.
+    /// </summary>
+    /// <param name="instructionId">The identifier of the lab work instruction to delete.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    /// <exception cref="ColumnNotFoundException">Thrown when the lab work instruction to delete is not found.</exception>
+    public async Task DeleteAsync(string instructionId)
+    {
+        var instruction = await GetByIdAsync(instructionId) ??
+                          throw new ColumnNotFoundException();
+        try
+        {
+            await labWorkInstructionsCollection.DeleteOneAsync(bson => bson.Id == instructionId);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+    
+    /// <summary>
+    /// Retrieves all lab work instructions.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous operation, containing a list of all lab work instructions.</returns>
+    public async Task<List<LabWorkInstruction>> GetAllAsync()
+    {
+        try
+        {
+            return await labWorkInstructionsCollection.Find(_ => true).ToListAsync();
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 }
