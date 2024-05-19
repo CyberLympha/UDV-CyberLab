@@ -139,3 +139,57 @@ public record UpdateLabWorkRequest
     [Required]
     public required string Description { get; set; }
 }
+
+public class CreateUserLabResultRequest
+{
+    /// <summary>
+    /// The identifier of the user associated with this lab result.
+    /// </summary>
+    [Required]
+    public required string UserId { get; set; }
+    
+    /// <summary>
+    /// The identifier of the lab work associated with this result.
+    /// </summary>
+    [Required]
+    public required string LabWorkId { get; set; }
+    
+    /// <summary>
+    /// Indicates whether the lab work is finished for this user.
+    /// </summary>
+    [Required]
+    public required bool IsFinished { get; set; }
+    
+    /// <summary>
+    /// The current step reached by the user in the lab work.
+    /// </summary>
+    [Required]
+    public required int CurrentStep { get; set; }
+}
+
+public record UpdateUserLabResultRequest
+{
+    /// <summary>
+    /// The identifier of the user associated with this lab result.
+    /// </summary>
+    [Required]
+    public required string UserId { get; set; }
+    
+    /// <summary>
+    /// The identifier of the lab work associated with this result.
+    /// </summary>
+    [Required]
+    public required string LabWorkId { get; set; }
+    
+    /// <summary>
+    /// Indicates whether the lab work is finished for this user.
+    /// </summary>
+    [Required]
+    public required bool IsFinished { get; set; }
+    
+    /// <summary>
+    /// The current step reached by the user in the lab work.
+    /// </summary>
+    [Required]
+    public required int CurrentStep { get; set; }
+}
