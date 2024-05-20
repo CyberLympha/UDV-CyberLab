@@ -30,10 +30,10 @@ public class LabWorkController : ControllerBase
     /// <param name="creationRequest">The request containing information for creating the laboratory work.</param>
     /// <returns>An action result indicating the outcome of the create operation.</returns>
     [Authorize(Roles = "Admin, Teacher")]
-    [HttpPost("create", Name = nameof(Create))]
+    [HttpPost("create", Name = nameof(CreateLabWork))]
     [Produces("application/json", "application/xml")]
     [ProducesResponseType(typeof(void), 201)]
-    public async Task<ActionResult> Create(CreateLabWorkRequest creationRequest)
+    public async Task<ActionResult> CreateLabWork(CreateLabWorkRequest creationRequest)
     {
         try
         {
@@ -59,10 +59,10 @@ public class LabWorkController : ControllerBase
     /// </summary>
     /// <param name="id">The ID of the laboratory work to retrieve.</param>
     /// <returns>An action result containing the retrieved laboratory work.</returns>
-    [HttpGet("get/{id}", Name = nameof(Get))]
+    [HttpGet("get/{id}", Name = nameof(GetLabWork))]
     [Produces("application/json", "application/xml")]
     [ProducesResponseType(typeof(LabWork), 200)]
-    public async Task<ActionResult<LabWork>> Get([FromRoute] string id)
+    public async Task<ActionResult<LabWork>> GetLabWork([FromRoute] string id)
     {
         try
         {
@@ -78,10 +78,10 @@ public class LabWorkController : ControllerBase
     ///     Retrieves all laboratory works.
     /// </summary>
     /// <returns>A list of all laboratory works.</returns>
-    [HttpGet("get", Name = nameof(GetAll))]
+    [HttpGet("get", Name = nameof(GetAllLabWorks))]
     [Produces("application/json", "application/xml")]
     [ProducesResponseType(typeof(List<LabWork>), 200)]
-    public async Task<List<LabWork>> GetAll()
+    public async Task<List<LabWork>> GetAllLabWorks()
     {
         return await labWorkService.GetAllAsync();
     }
@@ -92,10 +92,10 @@ public class LabWorkController : ControllerBase
     /// <param name="updateRequest">The request containing information for updating the laboratory work.</param>
     /// <returns>An action result indicating the outcome of the update operation.</returns>
     [Authorize(Roles = "Admin, Teacher")]
-    [HttpPost("update", Name = nameof(Update))]
+    [HttpPost("update", Name = nameof(UpdateLabWork))]
     [Produces("application/json", "application/xml")]
     [ProducesResponseType(typeof(void), 200)]
-    public async Task<IActionResult> Update(UpdateLabWorkRequest updateRequest)
+    public async Task<IActionResult> UpdateLabWork(UpdateLabWorkRequest updateRequest)
     {
         try
         {
@@ -123,10 +123,10 @@ public class LabWorkController : ControllerBase
     /// <param name="labWorkId">The ID of the laboratory work to delete.</param>
     /// <returns>An action result indicating the outcome of the delete operation.</returns>
     [Authorize(Roles = "Admin, Teacher")]
-    [HttpPost("delete/{labWorkId}", Name = nameof(Delete))]
+    [HttpPost("delete/{labWorkId}", Name = nameof(DeleteLabWork))]
     [Produces("application/json", "application/xml")]
     [ProducesResponseType(typeof(void), 200)]
-    public async Task<IActionResult> Delete([FromRoute] string labWorkId)
+    public async Task<IActionResult> DeleteLabWork([FromRoute] string labWorkId)
     {
         try
         {

@@ -30,11 +30,11 @@ public class LabWorkInstructionController : ControllerBase
     /// <param name="creationRequest">The request containing information for creating the lab work instruction.</param>
     /// <returns>An action result indicating the outcome of the create operation.</returns>
     [Authorize(Roles = "Admin, Teacher")]
-    [HttpPost("create", Name = nameof(Create))]
+    [HttpPost("create", Name = nameof(CreateInstruction))]
     [Produces("application/json", "application/xml")]
     [ProducesResponseType(typeof(void), 201)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult> Create(CreateLabWorkInstructionRequest creationRequest)
+    public async Task<ActionResult> CreateInstruction(CreateLabWorkInstructionRequest creationRequest)
     {
         try
         {
@@ -58,11 +58,11 @@ public class LabWorkInstructionController : ControllerBase
     /// <param name="updateRequest">The request containing information for updating the lab work instruction.</param>
     /// <returns>An action result indicating the outcome of the update operation.</returns>
     [Authorize(Roles = "Admin, Teacher")]
-    [HttpPost("update", Name = nameof(Update))]
+    [HttpPost("update", Name = nameof(UpdateInstruction))]
     [Produces("application/json", "application/xml")]
     [ProducesResponseType(typeof(void), 200)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult> Update(UpdateLabWorkInstructionRequest updateRequest)
+    public async Task<ActionResult> UpdateInstruction(UpdateLabWorkInstructionRequest updateRequest)
     {
         try
         {
@@ -86,11 +86,11 @@ public class LabWorkInstructionController : ControllerBase
     /// </summary>
     /// <param name="id">The ID of the lab work instruction to retrieve.</param>
     /// <returns>An action result containing the retrieved lab work instruction.</returns>
-    [HttpGet("get/{id}", Name = nameof(Get))]
+    [HttpGet("get/{id}", Name = nameof(GetInstruction))]
     [Produces("application/json", "application/xml")]
     [ProducesResponseType(typeof(LabWorkInstruction), 200)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<LabWorkInstruction>> Get([FromRoute] string id)
+    public async Task<ActionResult<LabWorkInstruction>> GetInstruction([FromRoute] string id)
     {
         try
         {
@@ -106,10 +106,10 @@ public class LabWorkInstructionController : ControllerBase
     ///     Retrieves all lab work instructions.
     /// </summary>
     /// <returns>A list of all lab work instructions.</returns>
-    [HttpGet("get", Name = nameof(GetAll))]
+    [HttpGet("get", Name = nameof(GetAllInstructions))]
     [Produces("application/json", "application/xml")]
     [ProducesResponseType(typeof(List<LabWorkInstruction>), 200)]
-    public async Task<List<LabWorkInstruction>> GetAll()
+    public async Task<List<LabWorkInstruction>> GetAllInstructions()
     {
         return await labWorkInstructionService.GetAllAsync();
     }
@@ -120,11 +120,11 @@ public class LabWorkInstructionController : ControllerBase
     /// <param name="id">The ID of the lab work instruction to delete.</param>
     /// <returns>An action result indicating the outcome of the delete operation.</returns>
     [Authorize(Roles = "Admin, Teacher")]
-    [HttpPost("delete/{id}", Name = nameof(Delete))]
+    [HttpPost("delete/{id}", Name = nameof(DeleteInstruction))]
     [Produces("application/json", "application/xml")]
     [ProducesResponseType(typeof(void), 200)]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> Delete([FromRoute] string id)
+    public async Task<IActionResult> DeleteInstruction([FromRoute] string id)
     {
         try
         {
