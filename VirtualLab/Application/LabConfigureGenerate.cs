@@ -64,7 +64,8 @@ public class LabConfigure : ILabConfigure
             userLabConfig.VmsData.Add(new VmInfo
             {
                 ProxmoxId = virtualMachine.ProxmoxVmId,
-                Nets = nets
+                Nets = nets,
+                Node = virtualMachine.Node
             });
         }
 

@@ -76,6 +76,7 @@ public class UserLabProviderService : IUserLabProvider
             Manual = "Dfasdf",
             Rate = 234,
             Status = Guid.NewGuid(),
+            
         });
         
         throw new NotImplementedException();

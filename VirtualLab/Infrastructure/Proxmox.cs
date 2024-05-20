@@ -49,10 +49,30 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
 
     public async Task<Result<NetCollection>> GetAllNetworksBridgeByVm(int vmId, string node)
     {
-        var result = await _client.Nodes[node].Qemu[vmId].Config.VmConfig();
+        var response = await _client.Nodes[node].Qemu[vmId].Config.VmConfig();
+        
+        var listNet = response.Response.data;
 
-        var listNet = result.Response["data"]["config"]["net"];
-        throw new NotImplementedException();
+        var result = new NetCollection();
+        
+            // здесь ужасная реализация
+        foreach (var Dnets in listNet)
+        {
+            var net = (Dnets is KeyValuePair<string, object> ? (KeyValuePair<string, object>)Dnets : default);
+            if (!net.Key.StartsWith("net")) continue;
+            var netSettings = net.Value as string;
+            var data = netSettings.Split(",");
+            var type = data[0].Split("=")[0];
+            var iFace = data[1].Split('=')[1];
+            
+            result.Add(new NetSettings()
+            {
+                Bridge = iFace,
+                Model = type
+            });
+        }
+
+        return result;
     }
 
     public async Task<Result> CreateInterface(string node , Net net)
@@ -106,12 +126,14 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
     public async Task<Result<ProxmoxVmStatus>> GetStatus(string node, int qemu)
     {
         var result = await _client.Nodes[node].Qemu[qemu].Status.Current.VmStatus();
+        if (!result.IsSuccessStatusCode)
+        {
+            return Result.Fail(result.ReasonPhrase);
+        }
+        
+        var status = result.Response.data.qmpstatus as string;
 
-        throw new NotImplementedException();
-        return result.Match(
-            Result.Ok,
-            responseError => ApiResultError.WithProxmox.VmGetStatusFailure(responseError, node, qemu),
-        errors => ApiResultError.WithProxmox.VmGetStatusFailure(errors, node, qemu));
+        return Enum.Parse<ProxmoxVmStatus>(status);
     }
 
     public async Task<Result> StartVm(LaunchVm request)
@@ -125,9 +147,16 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
         );
     }
 
-    public Task<Result> Delete(string node, int qemu)
+    public async Task<Result> Delete(string node, int qemu)
     {
-        throw new NotImplementedException();
+        var response = await _client.Nodes[node].Qemu[qemu].DestroyVm();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            return Result.Fail(response.ReasonPhrase);
+        }
+
+        return Result.Ok();
     }
 
     public async Task<Result> StopVm(string node, int qemu)

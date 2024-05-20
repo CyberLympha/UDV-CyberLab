@@ -52,6 +52,7 @@ public class StandManager : IStandManager
 
         var virtualMachineInfos = new List<VirtualMachineInfo>();
 
+        Thread.Sleep(40000);
         foreach (var cloneVmConfig in standCreateConfig.CloneVmConfig)
         {
             if (!cloneVmConfig.Template.WithVmbr0)
@@ -87,21 +88,20 @@ public class StandManager : IStandManager
     {
         var vmsDeleted = await DeleteVms(standRemoveConfig.VmsData.AsReadOnly());
         if (vmsDeleted.IsFailed) return vmsDeleted;
-        
 
-        foreach (var vmData in standRemoveConfig.VmsData.AsReadOnly())
+
+        foreach (var net in standRemoveConfig.GetAllNetsInterfaces().Where(e => e.Bridge != "vmbr0"))
         {
-            foreach (var net in vmData.Nets)
-            {
-                var iFaceDeleted = await _proxmoxNetworkDevice.RemoveInterface(vmData.Node, net);
-                if (iFaceDeleted.IsFailed) return iFaceDeleted;
-            }
+            var iFaceDeleted = await _proxmoxNetworkDevice.RemoveInterface(standRemoveConfig.VmsData[0].Node, net); // todo: кринж с array
+            if (iFaceDeleted.IsFailed) return iFaceDeleted;
         }
+
+        await _proxmoxNetworkDevice.Apply("pve");
 
         return Result.Ok();
     }
 
-    private async Task<Result> DeleteVms(IReadOnlyCollection<VmInfo> vmsInfo)
+    private async Task<Result> DeleteVms(IReadOnlyCollection<VmInfo> vmsInfo) // здесь еще идёт стопа vm
     {
         foreach (var vmInfo in vmsInfo)
         {
@@ -114,11 +114,11 @@ public class StandManager : IStandManager
                 return Result.Fail(getStatus.Errors);
             }
 
-            while (curVmStatus == ProxmoxVmStatus.Run)
+            while (curVmStatus == ProxmoxVmStatus.running)
             {
                 Thread.Sleep(1000);
                 getStatus = await _proxmoxVm.GetStatus(vmInfo.Node, vmInfo.ProxmoxId);
-                if (getStatus.TryGetValue(out curVmStatus))
+                if (!getStatus.TryGetValue(out curVmStatus))
                 {
                     return Result.Fail(getStatus.Errors);
                 }

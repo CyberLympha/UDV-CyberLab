@@ -1,7 +1,5 @@
-using System.Runtime.InteropServices.JavaScript;
 using Microsoft.EntityFrameworkCore;
 using VirtualLab.Domain.Entities;
-using VirtualLab.Domain.Entities.Enums;
 using VirtualLab.Infrastructure.DataBase;
 using Vostok.Logging.Abstractions;
 using StatusUserLab = VirtualLab.Domain.Entities.StatusUserLab;

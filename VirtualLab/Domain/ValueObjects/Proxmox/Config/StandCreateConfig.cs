@@ -10,9 +10,6 @@ public record StandCreateConfig // он record здесь мало смысла.
     public Guid LabId { get; set; }
     public string Node { get; init; } 
     public List<CloneVmConfig> CloneVmConfig { get;  init; } //todo: ваще не нравится это название
-
-
-    
     
     public IEnumerable<Net> GetAllNetsInterfaces()
     {
