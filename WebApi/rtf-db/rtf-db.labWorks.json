@@ -1,0 +1,10 @@
+[{
+  "_id": {
+    "$oid": "6629247cf862108e585f2a59"
+  },
+  "VmId": "100",
+  "Title": "First Lab",
+  "ShortDescription": "This is first lab",
+  "Description": "This is first lab and no more",
+  "InstructionId": "6641e3264168e9285265522c"
+}]

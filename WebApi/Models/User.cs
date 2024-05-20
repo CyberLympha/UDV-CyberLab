@@ -30,4 +30,9 @@ public class User
     [Required] public UserRole Role { get; set; } = UserRole.Anon;
     [Required] public string Labs { get; set; } = null!;
     [Required] public bool IsApproved { get; set; } = false;
+    
+    /// <summary>
+    /// Id of the vm record in db
+    /// </summary>
+    public string VmId { get; set; }
 }

@@ -8,7 +8,8 @@
   "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
   "Role": 2,
   "Labs": "65880b9c5de6bd5d3b5101eb",
-  "IsApproved": true
+  "IsApproved": true,
+  "VmId": "66292f8343226c0a540915c5"
 },
 {
   "_id": {
@@ -20,29 +21,6 @@
   "Password": "$2a$11$PHXa4fF00Sam95xRjnbU/u7T7EsmerXqB3xdo2W5tJHqgZF/thgOm",
   "Role": 1,
   "Labs": "65880b9c5de6bd5d3b5101eb",
-  "IsApproved": true
-},
-{
-  "_id": {
-    "$oid": "659d5c07f534a713c3df12ae"
-  },
-  "FirstName": "Ивченко Максим",
-  "SecondName": "Степанович",
-  "Email": "teacher",
-  "Password": "$2a$11$zj/H2JOMni/ZwJpH6aaUKe7reH0/qSyLCliQft.V1EELu7Bd2S5Le",
-  "Role": 4,
-  "Labs": "65880b9c5de6bd5d3b5101eb",
-  "IsApproved": true
-},
-{
-  "_id": {
-    "$oid": "65a10e3f6e767af80a62904f"
-  },
-  "FirstName": "Давыдов Давыд",
-  "SecondName": "Давыдович",
-  "Email": "teacher2",
-  "Password": "$2a$11$d4iz0SbDZtdEugunj7fFN.XdVDoRJvVrYMm3930hsWgCeef8cR/4a",
-  "Role": 4,
-  "Labs": "65880b9c5de6bd5d3b5101eb",
-  "IsApproved": true
+  "IsApproved": true,
+  "VmId": "6645e111261d68db63c6ffc4"
 }]
