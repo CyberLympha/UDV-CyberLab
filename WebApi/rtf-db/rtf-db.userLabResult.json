@@ -1,0 +1,9 @@
+[{
+  "_id": {
+    "$oid": "6641e3d84168e92852655231"
+  },
+  "UserId": "659994ba587b72e22e8941c1",
+  "LabWorkId": "6629247cf862108e585f2a59",
+  "IsFinished": false,
+  "CurrentStep": 2
+}]

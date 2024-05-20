@@ -3,7 +3,7 @@
     "$oid": "659aa2c90aebec86bca61f16"
   },
   "VmId": 100,
-  "Name": "first",
+  "Name": "100",
   "LabWorkId": "6629247cf862108e585f2a59"
 },
 {
@@ -20,5 +20,13 @@
   },
   "VmId": 101,
   "Name": "101",
+  "LabWorkId": "6629247cf862108e585f2a59"
+},
+{
+  "_id": {
+    "$oid": "6645e111261d68db63c6ffc4"
+  },
+  "VmId": 102,
+  "Name": "102",
   "LabWorkId": "6629247cf862108e585f2a59"
 }]
