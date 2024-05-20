@@ -7,7 +7,7 @@ using WebApi.Services;
 namespace WebApi.Controllers;
 
 /// <summary>
-/// Controller for managing laboratory work operations.
+///     Controller for managing laboratory work operations.
 /// </summary>
 [Route("/api/lab-works")]
 [ApiController]
@@ -16,16 +16,16 @@ public class LabWorkController : ControllerBase
     private readonly LabWorkService labWorkService;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="LabWorkController"/> class.
+    ///     Initializes a new instance of the <see cref="LabWorkController" /> class.
     /// </summary>
     /// <param name="labWorkService">The service responsible for laboratory work operations.</param>
     public LabWorkController(LabWorkService labWorkService)
     {
         this.labWorkService = labWorkService;
     }
-    
+
     /// <summary>
-    /// Creates a new laboratory work.
+    ///     Creates a new laboratory work.
     /// </summary>
     /// <param name="creationRequest">The request containing information for creating the laboratory work.</param>
     /// <returns>An action result indicating the outcome of the create operation.</returns>
@@ -37,7 +37,7 @@ public class LabWorkController : ControllerBase
     {
         try
         {
-            var labWork = new LabWork()
+            var labWork = new LabWork
             {
                 VmId = creationRequest.VmId,
                 Description = creationRequest.Description,
@@ -55,14 +55,14 @@ public class LabWorkController : ControllerBase
     }
 
     /// <summary>
-    /// Retrieves a laboratory work by its ID.
+    ///     Retrieves a laboratory work by its ID.
     /// </summary>
     /// <param name="id">The ID of the laboratory work to retrieve.</param>
     /// <returns>An action result containing the retrieved laboratory work.</returns>
     [HttpGet("get/{id}", Name = nameof(Get))]
     [Produces("application/json", "application/xml")]
     [ProducesResponseType(typeof(LabWork), 200)]
-    public async Task<ActionResult<LabWork>> Get([FromRoute]string id)
+    public async Task<ActionResult<LabWork>> Get([FromRoute] string id)
     {
         try
         {
@@ -73,9 +73,9 @@ public class LabWorkController : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    
+
     /// <summary>
-    /// Retrieves all laboratory works.
+    ///     Retrieves all laboratory works.
     /// </summary>
     /// <returns>A list of all laboratory works.</returns>
     [HttpGet("get", Name = nameof(GetAll))]
@@ -85,9 +85,9 @@ public class LabWorkController : ControllerBase
     {
         return await labWorkService.GetAllAsync();
     }
-    
+
     /// <summary>
-    /// Updates an existing laboratory work.
+    ///     Updates an existing laboratory work.
     /// </summary>
     /// <param name="updateRequest">The request containing information for updating the laboratory work.</param>
     /// <returns>An action result indicating the outcome of the update operation.</returns>
@@ -99,7 +99,7 @@ public class LabWorkController : ControllerBase
     {
         try
         {
-            var labWork = new LabWork()
+            var labWork = new LabWork
             {
                 VmId = updateRequest.VmId,
                 Description = updateRequest.Description,
@@ -116,9 +116,9 @@ public class LabWorkController : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    
+
     /// <summary>
-    /// Deletes a laboratory work by its ID.
+    ///     Deletes a laboratory work by its ID.
     /// </summary>
     /// <param name="labWorkId">The ID of the laboratory work to delete.</param>
     /// <returns>An action result indicating the outcome of the delete operation.</returns>
@@ -126,7 +126,7 @@ public class LabWorkController : ControllerBase
     [HttpPost("delete/{labWorkId}", Name = nameof(Delete))]
     [Produces("application/json", "application/xml")]
     [ProducesResponseType(typeof(void), 200)]
-    public async Task<IActionResult> Delete([FromRoute]string labWorkId)
+    public async Task<IActionResult> Delete([FromRoute] string labWorkId)
     {
         try
         {

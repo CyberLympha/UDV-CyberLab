@@ -7,21 +7,21 @@ using WebApi.Services.Logs;
 namespace WebApi.Services;
 
 /// <summary>
-/// Service for managing lab work instructions.
+///     Service for managing lab work instructions.
 /// </summary>
 public class LabWorkInstructionService
 {
-    private readonly IMongoCollection<LabWorkInstruction> labWorkInstructionsCollection;
     private readonly InstructionStepsService instructionStepsService;
-    private readonly UserLabResultsService userLabResultsService;
+    private readonly IMongoCollection<LabWorkInstruction> labWorkInstructionsCollection;
     private readonly LabWorkService labWorkService;
     private readonly LogsReader logsReader;
-    private readonly UserService userService;
     private readonly ProxmoxService proxmoxService;
+    private readonly UserLabResultsService userLabResultsService;
+    private readonly UserService userService;
     private readonly VmService vmService;
-    
+
     /// <summary>
-    /// Initializes a new instance of the <see cref="LabWorkInstructionService"/> class.
+    ///     Initializes a new instance of the <see cref="LabWorkInstructionService" /> class.
     /// </summary>
     /// <param name="labWorkInstructionsCollection">The MongoDB collection of lab work instructions.</param>
     /// <param name="instructionStepsService">The service for managing instruction steps.</param>
@@ -50,9 +50,9 @@ public class LabWorkInstructionService
         this.proxmoxService = proxmoxService;
         this.vmService = vmService;
     }
-    
+
     /// <summary>
-    /// Retrieves a lab work instruction asynchronously.
+    ///     Retrieves a lab work instruction asynchronously.
     /// </summary>
     /// <param name="instructionId">The ID of the instruction to retrieve.</param>
     /// <returns>The lab work instruction with the specified ID.</returns>
@@ -70,7 +70,7 @@ public class LabWorkInstructionService
     }
 
     /// <summary>
-    /// Retrieves the instruction text for a specific step asynchronously.
+    ///     Retrieves the instruction text for a specific step asynchronously.
     /// </summary>
     /// <param name="instructionId">The ID of the instruction.</param>
     /// <param name="stepNumber">The number of the step.</param>
@@ -80,12 +80,12 @@ public class LabWorkInstructionService
         var instruction = await GetByIdAsync(instructionId);
         var stepId = instruction.Steps[stepNumber];
         var step = await instructionStepsService.GetByIdAsync(stepId);
-        
+
         return step.Instruction;
     }
-    
+
     /// <summary>
-    /// Checks if a step is the last step in an instruction asynchronously.
+    ///     Checks if a step is the last step in an instruction asynchronously.
     /// </summary>
     /// <param name="instructionId">The ID of the instruction.</param>
     /// <param name="stepNumber">The number of the step to check.</param>
@@ -96,12 +96,12 @@ public class LabWorkInstructionService
 
         if (int.TryParse(stepNumber, out var stepIntNumber))
             return stepIntNumber == instruction.Steps.Count;
-        
+
         return false;
     }
 
     /// <summary>
-    /// Retrieves the hint for a specific step in an instruction asynchronously.
+    ///     Retrieves the hint for a specific step in an instruction asynchronously.
     /// </summary>
     /// <param name="instructionId">The ID of the instruction.</param>
     /// <param name="stepNumber">The number of the step.</param>
@@ -111,12 +111,12 @@ public class LabWorkInstructionService
         var instruction = await GetByIdAsync(instructionId);
         var stepId = instruction.Steps[stepNumber];
         var step = await instructionStepsService.GetByIdAsync(stepId);
-        
+
         return step.Hint;
     }
-    
+
     /// <summary>
-    /// Retrieves the number of steps in a lab work instruction asynchronously.
+    ///     Retrieves the number of steps in a lab work instruction asynchronously.
     /// </summary>
     /// <param name="instructionId">The ID of the lab work instruction.</param>
     /// <returns>The number of steps in the instruction.</returns>
@@ -124,12 +124,12 @@ public class LabWorkInstructionService
     public async Task<int> GetStepsAmountAsync(string instructionId)
     {
         var instruction = await GetByIdAsync(instructionId);
-        
+
         return instruction.Steps.Count;
     }
-    
+
     /// <summary>
-    /// Checks the user's answer for a lab work task asynchronously.
+    ///     Checks the user's answer for a lab work task asynchronously.
     /// </summary>
     /// <param name="userId">The ID of the user.</param>
     /// <param name="labWorkId">The ID of the lab work.</param>
@@ -148,9 +148,9 @@ public class LabWorkInstructionService
         var vmId = await vmService.GetVmId(user.VmId);
         var correctAnswers = instructionStep.Answers;
         var userLogs = await logsReader.ReadLogs(instruction.LogFilePaths, vmId);
-        var userLabResult = await userLabResultsService.GetAsync(userId, labWorkId) 
+        var userLabResult = await userLabResultsService.GetAsync(userId, labWorkId)
                             ?? await userLabResultsService.CreateInitialUserResultAsync(userId, labWorkId);
-        
+
         if (userLabResult.IsFinished || userLabResult.CurrentStep >= stepIntNumber)
         {
             await proxmoxService.ClearFilesContent(vmId, instruction.LogFilePaths.Values.ToList());
@@ -158,13 +158,13 @@ public class LabWorkInstructionService
         }
 
         if (!CheckAnswer(correctAnswers, userLogs)) return false;
-        
+
         await proxmoxService.ClearFilesContent(vmId, instruction.LogFilePaths.Values.ToList());
         await userLabResultsService.UpdateStepNumberAsync(userId, labWorkId, stepIntNumber, instruction.Steps.Count);
-        
+
         return true;
     }
-    
+
     private static bool CheckAnswer(List<string> correctAnswers, List<Log> userLogs)
     {
         return correctAnswers.Any(correctAnswer =>
@@ -182,7 +182,7 @@ public class LabWorkInstructionService
         {
             var correctAnswerLine = correctAnswerLines[currentIndexInCorrectAnswer];
             var correctAnswerWords = correctAnswerLine.Split(' ');
-            
+
             if (CompareAnswerToLog(correctAnswerWords, log.Arguments))
             {
                 currentIndexInCorrectAnswer++;
@@ -196,16 +196,16 @@ public class LabWorkInstructionService
 
     private static bool CompareAnswerToLog(string[] answerWords, List<string> logArguments)
     {
-        return answerWords.Length <= logArguments.Count 
+        return answerWords.Length <= logArguments.Count
                && !answerWords.Where((t, i) => t != logArguments[i]).Any();
     }
-    
+
     /// <summary>
-    /// Creates a new lab work instruction.
+    ///     Creates a new lab work instruction.
     /// </summary>
     /// <param name="newInstruction">The lab work instruction to create.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when the <paramref name="newInstruction"/> is null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when the <paramref name="newInstruction" /> is null.</exception>
     public async Task CreateAsync(LabWorkInstruction newInstruction)
     {
         if (newInstruction == null) throw new Exception();
@@ -218,13 +218,13 @@ public class LabWorkInstructionService
             throw new Exception(ex.Message);
         }
     }
-    
+
     /// <summary>
-    /// Updates an existing lab work instruction.
+    ///     Updates an existing lab work instruction.
     /// </summary>
     /// <param name="instruction">The lab work instruction to update.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when the <paramref name="instruction"/> is null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when the <paramref name="instruction" /> is null.</exception>
     /// <exception cref="ColumnNotFoundException">Thrown when the lab work instruction to update is not found.</exception>
     public async Task UpdateAsync(LabWorkInstruction instruction)
     {
@@ -244,9 +244,9 @@ public class LabWorkInstructionService
             throw new Exception(e.Message);
         }
     }
-    
+
     /// <summary>
-    /// Deletes a lab work instruction by its identifier.
+    ///     Deletes a lab work instruction by its identifier.
     /// </summary>
     /// <param name="instructionId">The identifier of the lab work instruction to delete.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
@@ -264,9 +264,9 @@ public class LabWorkInstructionService
             throw new Exception(e.Message);
         }
     }
-    
+
     /// <summary>
-    /// Retrieves all lab work instructions.
+    ///     Retrieves all lab work instructions.
     /// </summary>
     /// <returns>A task that represents the asynchronous operation, containing a list of all lab work instructions.</returns>
     public async Task<List<LabWorkInstruction>> GetAllAsync()

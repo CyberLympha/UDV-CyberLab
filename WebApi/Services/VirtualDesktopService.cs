@@ -1,24 +1,23 @@
-﻿using System.Reflection.Metadata;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using WebApi.Models;
 using WebApi.Models.WebsocketProxies;
 
 namespace WebApi.Services;
 
 /// <summary>
-/// Service responsible for managing virtual desktops and associated WebSocket proxies.
+///     Service responsible for managing virtual desktops and associated WebSocket proxies.
 /// </summary>
 public class VirtualDesktopService
 {
-    private readonly WebsocketProxyService websocketProxyService;
-    private readonly ProxmoxService proxmoxService;
     private readonly LabWorkService labWorkService;
+    private readonly ProxmoxService proxmoxService;
     private readonly UserService userService;
     private readonly VmService vmService;
+    private readonly WebsocketProxyService websocketProxyService;
     private readonly WebsocketProxySettings websocketProxySettings;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="VirtualDesktopService"/> class.
+    ///     Initializes a new instance of the <see cref="VirtualDesktopService" /> class.
     /// </summary>
     /// <param name="websocketProxyService">The storage for WebSocket proxies.</param>
     /// <param name="proxmoxService">The service for interacting with Proxmox Virtual Environment.</param>
@@ -43,7 +42,7 @@ public class VirtualDesktopService
     }
 
     /// <summary>
-    /// Starts a vm and its associated WebSocket proxy.
+    ///     Starts a vm and its associated WebSocket proxy.
     /// </summary>
     /// <param name="userId">The identifier of the user starting virtual desktop.</param>
     /// <param name="labWorkId">The identifier of the lab work.</param>
@@ -87,7 +86,7 @@ public class VirtualDesktopService
     }
 
     /// <summary>
-    /// Stops a vm and its associated WebSocket proxy.
+    ///     Stops a vm and its associated WebSocket proxy.
     /// </summary>
     /// <param name="userId">The identifier of the user starting virtual desktop.</param>
     /// <returns>True if the virtual desktop was successfully stopped; otherwise, false.</returns>
@@ -97,12 +96,12 @@ public class VirtualDesktopService
         var vm = await vmService.GetByIdAsync(user.VmId);
         var vmId = vm.VmId.ToString();
         StopWebsocketProxy(vmId);
-        
+
         return await proxmoxService.StopMachine(vmId);
     }
 
     /// <summary>
-    /// Retrieves a url to connect to websocket proxy.
+    ///     Retrieves a url to connect to websocket proxy.
     /// </summary>
     /// <param name="userId">The ID of the user that starting vm.</param>
     /// <param name="protocol">Current client protocol.</param>
@@ -177,7 +176,7 @@ public class VirtualDesktopService
 
         return true;
     }
-    
+
     private async void OnWebSocketTcpProxyStop(object? sender, int webSocketPort)
     {
         await proxmoxService.StopMachine(GetVmIdFromWebsocketProxyPort(webSocketPort).ToString());

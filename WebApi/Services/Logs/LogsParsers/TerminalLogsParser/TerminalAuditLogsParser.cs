@@ -1,16 +1,16 @@
 ﻿using System.Text.RegularExpressions;
-using WebApi.Models;
 using WebApi.Models.Logs;
 
 namespace WebApi.Services.Logs.LogsParsers.TerminalLogsParser;
 
-public class TerminalAuditLogsParser: ILogsParser
+public class TerminalAuditLogsParser : ILogsParser
 {
     private const string TimeRegexPattern = @"msg=audit\((\d+)";
-    private const string ArgumentsRegexPattern =  @"argc=(\d+)";
-    private const string ArgumentRegexPattern =  @"a\d+=""([^""]+)""";
+    private const string ArgumentsRegexPattern = @"argc=(\d+)";
+    private const string ArgumentRegexPattern = @"a\d+=""([^""]+)""";
     private const string PathPattern = @"cwd=""([^""]+)""";
     public LogsType LogsType { get; } = LogsType.Terminal;
+
     public List<Log> ParseLogs(string logsText)
     {
         var logs = logsText.Split("type=");
@@ -39,13 +39,12 @@ public class TerminalAuditLogsParser: ILogsParser
         var match = Regex.Match(log, TimeRegexPattern);
         if (!match.Success)
             throw new Exception("log doesn't contain time");
-        
-        var seconds= match.Groups[1].Value;
-        if(!int.TryParse(seconds, out var secondsAsNumber))
+
+        var seconds = match.Groups[1].Value;
+        if (!int.TryParse(seconds, out var secondsAsNumber))
             throw new Exception("log doesn't contain time");
-        
-        return new TimeSpan(0,0, secondsAsNumber);
-        
+
+        return new TimeSpan(0, 0, secondsAsNumber);
     }
 
     private List<string> ParseTerminalArguments(string log)
@@ -74,9 +73,9 @@ public class TerminalAuditLogsParser: ILogsParser
         var match = Regex.Match(log, PathPattern);
         if (!match.Success)
             throw new Exception();
-        
-        var path= match.Groups[1].Value;
-        
+
+        var path = match.Groups[1].Value;
+
         return path;
     }
 }

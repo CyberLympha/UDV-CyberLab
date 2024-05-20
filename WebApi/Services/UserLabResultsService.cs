@@ -1,19 +1,18 @@
 ﻿using Microsoft.CodeAnalysis.Elfie.Serialization;
 using MongoDB.Driver;
-using WebApi.Models;
 using WebApi.Models.LabWorks;
 
 namespace WebApi.Services;
 
 /// <summary>
-/// Service for managing user lab results.
+///     Service for managing user lab results.
 /// </summary>
 public class UserLabResultsService
 {
     private readonly IMongoCollection<UserLabResult> userLabResults;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="UserLabResultsService"/> class.
+    ///     Initializes a new instance of the <see cref="UserLabResultsService" /> class.
     /// </summary>
     /// <param name="userLabResults">The MongoDB collection of user lab results.</param>
     public UserLabResultsService(IMongoCollection<UserLabResult> userLabResults)
@@ -22,7 +21,7 @@ public class UserLabResultsService
     }
 
     /// <summary>
-    /// Retrieves the user lab result asynchronously.
+    ///     Retrieves the user lab result asynchronously.
     /// </summary>
     /// <param name="userId">The ID of the user.</param>
     /// <param name="labId">The ID of the lab work.</param>
@@ -41,7 +40,7 @@ public class UserLabResultsService
     }
 
     /// <summary>
-    /// Updates the current step number for a user's lab work asynchronously.
+    ///     Updates the current step number for a user's lab work asynchronously.
     /// </summary>
     /// <param name="userId">The ID of the user.</param>
     /// <param name="labWorkId">The ID of the lab work.</param>
@@ -49,7 +48,7 @@ public class UserLabResultsService
     /// <param name="stepsAmount">The amount of steps in the instruction</param>
     /// <exception cref="Exception">Thrown when an error occurs during the operation.</exception>
     public async Task UpdateStepNumberAsync(string userId, string labWorkId, int number, int stepsAmount)
-    {   
+    {
         await GetAsync(userId, labWorkId);
         try
         {
@@ -62,7 +61,7 @@ public class UserLabResultsService
                 .Set("CurrentStep", number.ToString());
             if (stepsAmount == number)
                 update.Set("IsFinished", true);
-            
+
             await userLabResults.UpdateOneAsync(filter, update);
         }
         catch (Exception e)
@@ -72,17 +71,18 @@ public class UserLabResultsService
     }
 
     /// <summary>
-    /// Creates an initial user lab result record with the initial step and status.
+    ///     Creates an initial user lab result record with the initial step and status.
     /// </summary>
     /// <param name="userId">The identifier of the user.</param>
     /// <param name="labWorkId">The identifier of the lab work.</param>
     /// <returns>
-    /// A task representing the asynchronous operation. The task result contains the newly created <see cref="UserLabResult"/>.
+    ///     A task representing the asynchronous operation. The task result contains the newly created
+    ///     <see cref="UserLabResult" />.
     /// </returns>
     /// <exception cref="Exception">Thrown when there is an error inserting the new record into the collection.</exception>
     public async Task<UserLabResult> CreateInitialUserResultAsync(string userId, string labWorkId)
     {
-        var newRecord = new UserLabResult()
+        var newRecord = new UserLabResult
         {
             CurrentStep = 0,
             IsFinished = false,
@@ -101,13 +101,13 @@ public class UserLabResultsService
 
         return newRecord;
     }
-    
+
     /// <summary>
-    /// Retrieves a <see cref="UserLabResult"/> by its identifier.
+    ///     Retrieves a <see cref="UserLabResult" /> by its identifier.
     /// </summary>
     /// <param name="id">The identifier of the user lab result.</param>
     /// <returns>
-    /// A task representing the asynchronous operation. The task result contains the <see cref="UserLabResult"/>.
+    ///     A task representing the asynchronous operation. The task result contains the <see cref="UserLabResult" />.
     /// </returns>
     /// <exception cref="Exception">Thrown when an error occurs while retrieving the user lab result.</exception>
     public async Task<UserLabResult> GetByIdAsync(string id)
@@ -123,7 +123,7 @@ public class UserLabResultsService
     }
 
     /// <summary>
-    /// Creates a new <see cref="UserLabResult"/>.
+    ///     Creates a new <see cref="UserLabResult" />.
     /// </summary>
     /// <param name="newResult">The new user lab result to create.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
@@ -140,9 +140,9 @@ public class UserLabResultsService
             throw new Exception(ex.Message);
         }
     }
-    
+
     /// <summary>
-    /// Updates an existing <see cref="UserLabResult"/>.
+    ///     Updates an existing <see cref="UserLabResult" />.
     /// </summary>
     /// <param name="newResult">The updated user lab result.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
@@ -150,7 +150,7 @@ public class UserLabResultsService
     public async Task UpdateAsync(UserLabResult newResult)
     {
         var resultToUpdate = await userLabResults.FindAsync(bson => bson.Id == newResult.Id) ??
-                              throw new ColumnNotFoundException();
+                             throw new ColumnNotFoundException();
         try
         {
             var filter = Builders<UserLabResult>.Filter.Eq("Id", newResult.Id);
@@ -166,9 +166,9 @@ public class UserLabResultsService
             throw new Exception(e.Message);
         }
     }
-    
+
     /// <summary>
-    /// Deletes a <see cref="UserLabResult"/> by its identifier.
+    ///     Deletes a <see cref="UserLabResult" /> by its identifier.
     /// </summary>
     /// <param name="resultId">The identifier of the user lab result to delete.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
@@ -176,7 +176,7 @@ public class UserLabResultsService
     public async Task DeleteAsync(string resultId)
     {
         var result = await GetByIdAsync(resultId) ??
-                      throw new ColumnNotFoundException();
+                     throw new ColumnNotFoundException();
         try
         {
             await userLabResults.DeleteOneAsync(bson => bson.Id == resultId);
@@ -186,12 +186,13 @@ public class UserLabResultsService
             throw new Exception(e.Message);
         }
     }
-    
+
     /// <summary>
-    /// Retrieves all <see cref="UserLabResult"/> records.
+    ///     Retrieves all <see cref="UserLabResult" /> records.
     /// </summary>
     /// <returns>
-    /// A task representing the asynchronous operation. The task result contains a list of all <see cref="UserLabResult"/> records.
+    ///     A task representing the asynchronous operation. The task result contains a list of all <see cref="UserLabResult" />
+    ///     records.
     /// </returns>
     /// <exception cref="Exception">Thrown when an error occurs while retrieving the results.</exception>
     public async Task<List<UserLabResult>> GetAllAsync()
@@ -205,13 +206,14 @@ public class UserLabResultsService
             throw new Exception(e.Message);
         }
     }
-    
+
     /// <summary>
-    /// Retrieves a list of <see cref="UserLabResult"/> records for a specific user.
+    ///     Retrieves a list of <see cref="UserLabResult" /> records for a specific user.
     /// </summary>
     /// <param name="userId">The identifier of the user.</param>
     /// <returns>
-    /// A task representing the asynchronous operation. The task result contains a list of <see cref="UserLabResult"/> records for the specified user.
+    ///     A task representing the asynchronous operation. The task result contains a list of <see cref="UserLabResult" />
+    ///     records for the specified user.
     /// </returns>
     /// <exception cref="Exception">Thrown when an error occurs while retrieving the user results.</exception>
     public async Task<List<UserLabResult>> GetUserResultsAsync(string userId)

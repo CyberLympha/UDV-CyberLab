@@ -3,33 +3,28 @@
 namespace WebApi.Services;
 
 /// <summary>
-/// Service for interacting with the Proxmox Virtual Environment through the Proxmox VE API.
+///     Service for interacting with the Proxmox Virtual Environment through the Proxmox VE API.
 /// </summary>
 public class ProxmoxService
 {
     private readonly IConfiguration configuration;
-    private PveClient proxmoxClient;
-    private string nodeName;
     private string kaliNode;
-    private string winNode;
+    private readonly string nodeName;
+    private readonly PveClient proxmoxClient;
     private string ubuntuNode;
+    private string winNode;
 
     /// <summary>
-    /// Gets the host address of the Proxmox server.
-    /// </summary>
-    public string HostAddress { get; private set; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ProxmoxService"/> class.
+    ///     Initializes a new instance of the <see cref="ProxmoxService" /> class.
     /// </summary>
     /// <param name="configuration">The application configuration where Proxmox credentials are stored.</param>
     public ProxmoxService(IConfiguration configuration)
     {
         this.configuration = configuration;
-        this.nodeName = this.configuration["ProxmoxCredentials:NodeName"];
-        this.kaliNode = this.configuration["ProxmoxCredentials:KaliNode"];
-        this.winNode = this.configuration["ProxmoxCredentials:WinNode"];
-        this.ubuntuNode = this.configuration["ProxmoxCredentials:UbuntuNode"];
+        nodeName = this.configuration["ProxmoxCredentials:NodeName"];
+        kaliNode = this.configuration["ProxmoxCredentials:KaliNode"];
+        winNode = this.configuration["ProxmoxCredentials:WinNode"];
+        ubuntuNode = this.configuration["ProxmoxCredentials:UbuntuNode"];
         HostAddress = this.configuration["ProxmoxCredentials:Host"];
         proxmoxClient = new PveClient(this.configuration["ProxmoxCredentials:Host"]);
         var userName = this.configuration["ProxmoxCredentials:UserName"];
@@ -38,15 +33,17 @@ public class ProxmoxService
         proxmoxClient.ApiToken = this.configuration["ProxmoxCredentials:ApiKey"];
     }
 
+    /// <summary>
+    ///     Gets the host address of the Proxmox server.
+    /// </summary>
+    public string HostAddress { get; private set; }
+
     public async Task<IDictionary<string, object>> StartNode(string node)
     {
         try
         {
             var result = await proxmoxClient.Nodes[nodeName].Qemu[node].Status.Start.VmStart();
-            if (result.IsSuccessStatusCode)
-            {
-                return result.ResponseToDictionary;
-            }
+            if (result.IsSuccessStatusCode) return result.ResponseToDictionary;
 
             throw new Exception(result.ReasonPhrase);
         }
@@ -61,10 +58,7 @@ public class ProxmoxService
         try
         {
             var result = await proxmoxClient.Nodes[nodeName].Qemu[node].Status.Shutdown.VmShutdown(true);
-            if (result.IsSuccessStatusCode)
-            {
-                return result.ResponseToDictionary;
-            }
+            if (result.IsSuccessStatusCode) return result.ResponseToDictionary;
 
             throw new Exception(result.ReasonPhrase);
         }
@@ -79,10 +73,7 @@ public class ProxmoxService
         try
         {
             var result = await proxmoxClient.Nodes[nodeName].Qemu[node].Status.Current.VmStatus();
-            if (result.IsSuccessStatusCode)
-            {
-                return result.ResponseToDictionary;
-            }
+            if (result.IsSuccessStatusCode) return result.ResponseToDictionary;
 
             throw new Exception(result.ReasonPhrase);
         }
@@ -99,10 +90,7 @@ public class ProxmoxService
         {
             var result = await proxmoxClient.Nodes[nodeName].Qemu[vmid].Config
                 .UpdateVmAsync(ciuser: username, cipassword: password, sshkeys: sshKey.TrimEnd());
-            if (result.IsSuccessStatusCode)
-            {
-                return result.ResponseToDictionary;
-            }
+            if (result.IsSuccessStatusCode) return result.ResponseToDictionary;
 
             throw new Exception(result.ReasonPhrase);
         }
@@ -118,10 +106,7 @@ public class ProxmoxService
         try
         {
             var result = await proxmoxClient.Nodes[nodeName].Qemu[node].Config.VmConfig();
-            if (result.IsSuccessStatusCode)
-            {
-                return result.ResponseToDictionary;
-            }
+            if (result.IsSuccessStatusCode) return result.ResponseToDictionary;
 
             throw new Exception(result.ReasonPhrase);
         }
@@ -136,10 +121,7 @@ public class ProxmoxService
         try
         {
             var result = await proxmoxClient.Nodes[nodeName].Tasks[uuid].Status.ReadTaskStatus();
-            if (result.IsSuccessStatusCode)
-            {
-                return result.ResponseToDictionary;
-            }
+            if (result.IsSuccessStatusCode) return result.ResponseToDictionary;
 
             throw new Exception(result.ReasonPhrase);
         }
@@ -155,10 +137,7 @@ public class ProxmoxService
         {
             var result = await proxmoxClient.Nodes[nodeName].Qemu[node].Agent.NetworkGetInterfaces
                 .NetworkGetInterfaces();
-            if (result.IsSuccessStatusCode)
-            {
-                return result.ResponseToDictionary;
-            }
+            if (result.IsSuccessStatusCode) return result.ResponseToDictionary;
 
             throw new Exception(result.ReasonPhrase);
         }
@@ -174,10 +153,7 @@ public class ProxmoxService
         {
             var result = await proxmoxClient.Nodes[nodeName].Qemu[clonedVmId].Clone
                 .CloneVm((int)id, full: true, name: name);
-            if (result.IsSuccessStatusCode)
-            {
-                return result.ResponseToDictionary;
-            }
+            if (result.IsSuccessStatusCode) return result.ResponseToDictionary;
 
             throw new Exception(result.ReasonPhrase);
         }
@@ -191,13 +167,10 @@ public class ProxmoxService
     {
         try
         {
-            var iface = "vmbr" + id.ToString();
-            var result = await proxmoxClient.Nodes[nodeName].Network.CreateNetwork(iface, type: "bridge",
+            var iface = "vmbr" + id;
+            var result = await proxmoxClient.Nodes[nodeName].Network.CreateNetwork(iface, "bridge",
                 cidr: $"192.168.{subnet}.0/24", autostart: true);
-            if (result.IsSuccessStatusCode)
-            {
-                return iface;
-            }
+            if (result.IsSuccessStatusCode) return iface;
 
             throw new Exception(result.ReasonPhrase);
         }
@@ -212,10 +185,7 @@ public class ProxmoxService
         try
         {
             var result = await proxmoxClient.Nodes[nodeName].Network.ReloadNetworkConfig();
-            if (result.IsSuccessStatusCode)
-            {
-                return result.ResponseToDictionary;
-            }
+            if (result.IsSuccessStatusCode) return result.ResponseToDictionary;
 
             throw new Exception(result.ReasonPhrase);
         }
@@ -233,19 +203,16 @@ public class ProxmoxService
                 .ResponseToDictionary;
             var currentNetIface = ((IDictionary<string, object>)vmConfig["data"])[$"net{netN}"];
 
-            string oldAddress = ((string)currentNetIface).Split(',')[0].Split('=')[1];
-            string newAddress = $"rtl8139={oldAddress},bridge={name},firewall=1";
+            var oldAddress = ((string)currentNetIface).Split(',')[0].Split('=')[1];
+            var newAddress = $"rtl8139={oldAddress},bridge={name},firewall=1";
 
             var result = await proxmoxClient.Nodes[nodeName].Qemu[id.ToString()].Config.UpdateVmAsync(
-                netN: new Dictionary<int, string>()
+                netN: new Dictionary<int, string>
                 {
                     { netN, newAddress }
                 });
 
-            if (result.IsSuccessStatusCode)
-            {
-                return newAddress;
-            }
+            if (result.IsSuccessStatusCode) return newAddress;
 
             throw new Exception(result.ReasonPhrase);
         }
@@ -260,16 +227,13 @@ public class ProxmoxService
         try
         {
             var result = await proxmoxClient.Nodes[nodeName].Qemu[id.ToString()].Config.UpdateVmAsync(
-                netN: new Dictionary<int, string>()
+                netN: new Dictionary<int, string>
                 {
                     { 1, names[0] },
                     { 2, names[1] },
-                    { 3, names[2] },
+                    { 3, names[2] }
                 });
-            if (result.IsSuccessStatusCode)
-            {
-                return result.ResponseToDictionary;
-            }
+            if (result.IsSuccessStatusCode) return result.ResponseToDictionary;
 
             throw new Exception(result.ReasonPhrase);
         }
@@ -280,12 +244,15 @@ public class ProxmoxService
     }
 
     /// <summary>
-    /// Creates a new virtual machine node by cloning an existing VM.
+    ///     Creates a new virtual machine node by cloning an existing VM.
     /// </summary>
     /// <param name="id">The unique identifier for the new VM.</param>
     /// <param name="name">The name of the new VM.</param>
     /// <param name="clonedVmId">The VMID of the VM to clone.</param>
-    /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation, with a boolean result indicating success or failure.</returns>
+    /// <returns>
+    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation, with a boolean result indicating
+    ///     success or failure.
+    /// </returns>
     public async Task<bool> CloneMachine(long id, string name, string clonedVmId)
     {
         try
@@ -302,10 +269,13 @@ public class ProxmoxService
     }
 
     /// <summary>
-    /// Checks if a virtual machine with the specified VMID exists in the Proxmox cluster.
+    ///     Checks if a virtual machine with the specified VMID exists in the Proxmox cluster.
     /// </summary>
     /// <param name="vmId">The VMID of the virtual machine to check.</param>
-    /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation, with a boolean result indicating if the VM exists.</returns>
+    /// <returns>
+    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation, with a boolean result indicating if
+    ///     the VM exists.
+    /// </returns>
     public async Task<bool> IsMachineExists(string vmId)
     {
         var res = await proxmoxClient.Cluster.Resources.Resources();
@@ -321,10 +291,13 @@ public class ProxmoxService
     }
 
     /// <summary>
-    /// Starts a virtual machine with the specified VMID.
+    ///     Starts a virtual machine with the specified VMID.
     /// </summary>
     /// <param name="vmId">The VMID of the virtual machine to start.</param>
-    /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation, with a boolean result indicating success or failure.</returns>
+    /// <returns>
+    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation, with a boolean result indicating
+    ///     success or failure.
+    /// </returns>
     public async Task<bool> StartMachine(string vmId)
     {
         if (await IsMachineRunning(vmId))
@@ -337,10 +310,13 @@ public class ProxmoxService
     }
 
     /// <summary>
-    /// Stops a virtual machine with the specified VMID.
+    ///     Stops a virtual machine with the specified VMID.
     /// </summary>
     /// <param name="vmId">The VMID of the virtual machine to stop.</param>
-    /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation, with a boolean result indicating success or failure.</returns>
+    /// <returns>
+    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation, with a boolean result indicating
+    ///     success or failure.
+    /// </returns>
     public async Task<bool> StopMachine(string vmId)
     {
         if (!await IsMachineRunning(vmId))
@@ -354,10 +330,13 @@ public class ProxmoxService
     }
 
     /// <summary>
-    /// Checks if a virtual machine with the specified VMID is currently running.
+    ///     Checks if a virtual machine with the specified VMID is currently running.
     /// </summary>
     /// <param name="vmId">The VMID of the virtual machine to check.</param>
-    /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation, with a boolean result indicating if the VM is running.</returns>
+    /// <returns>
+    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation, with a boolean result indicating if
+    ///     the VM is running.
+    /// </returns>
     public async Task<bool> IsMachineRunning(string vmId)
     {
         var vmRef = proxmoxClient.Nodes[nodeName].Qemu[vmId];
@@ -368,10 +347,13 @@ public class ProxmoxService
     }
 
     /// <summary>
-    /// Checks if a virtual machine with the specified VMID is locked.
+    ///     Checks if a virtual machine with the specified VMID is locked.
     /// </summary>
     /// <param name="vmId">The VMID of the virtual machine to check.</param>
-    /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation, with a boolean result indicating if the VM is locked.</returns>
+    /// <returns>
+    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation, with a boolean result indicating if
+    ///     the VM is locked.
+    /// </returns>
     public async Task<bool> IsMachineLocked(string vmId)
     {
         var res = await proxmoxClient.Cluster.Resources.Resources();
@@ -380,19 +362,20 @@ public class ProxmoxService
         {
             var vmInfoDict = (IDictionary<string, object>)vmInfo;
             if (vmInfoDict.TryGetValue("vmid", out var id) && id.ToString() == vmId)
-            {
                 return vmInfoDict.TryGetValue("lock", out var lockReason);
-            }
         }
 
         return false;
     }
 
     /// <summary>
-    /// Adds a VNC parameter to the virtual machine configuration.
+    ///     Adds a VNC parameter to the virtual machine configuration.
     /// </summary>
     /// <param name="vmId">The VMID of the virtual machine.</param>
-    /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation, with a boolean result indicating success or failure.</returns>
+    /// <returns>
+    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation, with a boolean result indicating
+    ///     success or failure.
+    /// </returns>
     public async Task<bool> EnableVnc(string vmId)
     {
         var apiToken = proxmoxClient.ApiToken;
@@ -414,10 +397,13 @@ public class ProxmoxService
     }
 
     /// <summary>
-    /// Checks if a VNC server is configured for the virtual machine.
+    ///     Checks if a VNC server is configured for the virtual machine.
     /// </summary>
     /// <param name="vmId">The VMID of the virtual machine.</param>
-    /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation, with a boolean result indicating if VNC is configured.</returns>
+    /// <returns>
+    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation, with a boolean result indicating if
+    ///     VNC is configured.
+    /// </returns>
     public async Task<bool> IsVncEnabled(string vmId)
     {
         var config = await proxmoxClient.Nodes[nodeName].Qemu[vmId].Config.VmConfig();
@@ -429,7 +415,7 @@ public class ProxmoxService
     }
 
     /// <summary>
-    /// Retrieves the next available ID from the Proxmox cluster asynchronously.
+    ///     Retrieves the next available ID from the Proxmox cluster asynchronously.
     /// </summary>
     /// <returns>The next available ID as a string.</returns>
     /// <exception cref="Exception">Thrown when the request to Proxmox fails.</exception>
@@ -437,16 +423,13 @@ public class ProxmoxService
     {
         var idResult = await proxmoxClient.Cluster.Nextid.Nextid();
 
-        if (idResult.IsSuccessStatusCode)
-        {
-            return idResult.Response.data.ToString();
-        }
+        if (idResult.IsSuccessStatusCode) return idResult.Response.data.ToString();
 
         throw new Exception(idResult.ReasonPhrase);
     }
 
     /// <summary>
-    /// Reads the content of a file from the virtual machine asynchronously.
+    ///     Reads the content of a file from the virtual machine asynchronously.
     /// </summary>
     /// <param name="vmId">The identifier of the virtual machine.</param>
     /// <param name="filePath">The path to the file to be read.</param>
@@ -456,19 +439,16 @@ public class ProxmoxService
     {
         if (!await IsQemuGuestAgentEnabled(vmId))
             await EnableQemuGuestAgent(vmId);
-        
+
         var fileContentResult = await proxmoxClient.Nodes[nodeName].Qemu[vmId].Agent.FileRead.FileRead(filePath);
 
-        if (fileContentResult.IsSuccessStatusCode)
-        {
-            return fileContentResult.Response.data.content;
-        }
+        if (fileContentResult.IsSuccessStatusCode) return fileContentResult.Response.data.content;
 
         throw new Exception(fileContentResult.ReasonPhrase);
     }
 
     /// <summary>
-    /// Clears the content of a file on a virtual machine.
+    ///     Clears the content of a file on a virtual machine.
     /// </summary>
     /// <param name="vmId">The ID of the virtual machine.</param>
     /// <param name="filePath">The path to the file to clear.</param>
@@ -481,7 +461,7 @@ public class ProxmoxService
     }
 
     /// <summary>
-    /// Clears the content of multiple files on a virtual machine.
+    ///     Clears the content of multiple files on a virtual machine.
     /// </summary>
     /// <param name="vmId">The ID of the virtual machine.</param>
     /// <param name="filePaths">A list of paths to the files to clear.</param>
@@ -491,13 +471,14 @@ public class ProxmoxService
         foreach (var filePath in filePaths)
             await ClearFileContent(vmId, filePath);
     }
-    
+
     /// <summary>
-    /// Checks if the QEMU Guest Agent is enabled for the specified virtual machine.
+    ///     Checks if the QEMU Guest Agent is enabled for the specified virtual machine.
     /// </summary>
     /// <param name="vmId">The identifier of the virtual machine.</param>
     /// <returns>
-    /// A task representing the asynchronous operation. The task result contains a boolean value indicating whether the QEMU Guest Agent is enabled.
+    ///     A task representing the asynchronous operation. The task result contains a boolean value indicating whether the
+    ///     QEMU Guest Agent is enabled.
     /// </returns>
     /// <exception cref="Exception">Thrown when there is an error retrieving the VM configuration.</exception>
     public async Task<bool> IsQemuGuestAgentEnabled(string vmId)
@@ -509,13 +490,14 @@ public class ProxmoxService
 
         return agentParameter == "1";
     }
-    
+
     /// <summary>
-    /// Enables the QEMU Guest Agent for the specified virtual machine.
+    ///     Enables the QEMU Guest Agent for the specified virtual machine.
     /// </summary>
     /// <param name="vmId">The identifier of the virtual machine.</param>
     /// <returns>
-    /// A task representing the asynchronous operation. The task result contains a boolean value indicating whether the QEMU Guest Agent was successfully enabled.
+    ///     A task representing the asynchronous operation. The task result contains a boolean value indicating whether the
+    ///     QEMU Guest Agent was successfully enabled.
     /// </returns>
     /// <exception cref="Exception">Thrown when there is an error updating the VM configuration.</exception>
     public async Task<bool> EnableQemuGuestAgent(string vmId)

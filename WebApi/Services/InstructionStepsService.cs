@@ -5,23 +5,23 @@ using WebApi.Models.LabWorks;
 namespace WebApi.Services;
 
 /// <summary>
-/// Service for managing instruction steps.
+///     Service for managing instruction steps.
 /// </summary>
 public class InstructionStepsService
 {
     private readonly IMongoCollection<InstructionStep> instructionsStepsCollection;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="InstructionStepsService"/> class.
+    ///     Initializes a new instance of the <see cref="InstructionStepsService" /> class.
     /// </summary>
     /// <param name="instructionsStepsCollection">The MongoDB collection of instruction steps.</param>
     public InstructionStepsService(IMongoCollection<InstructionStep> instructionsStepsCollection)
     {
         this.instructionsStepsCollection = instructionsStepsCollection;
     }
-    
+
     /// <summary>
-    /// Retrieves an instruction step by its identifier asynchronously.
+    ///     Retrieves an instruction step by its identifier asynchronously.
     /// </summary>
     /// <param name="id">The identifier of the instruction step.</param>
     /// <returns>The instruction step with the specified identifier.</returns>
@@ -37,13 +37,13 @@ public class InstructionStepsService
             throw new Exception(e.Message);
         }
     }
-    
+
     /// <summary>
-    /// Creates a new instruction step.
+    ///     Creates a new instruction step.
     /// </summary>
     /// <param name="newStep">The instruction step to create.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when the <paramref name="newStep"/> is null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when the <paramref name="newStep" /> is null.</exception>
     public async Task CreateAsync(InstructionStep newStep)
     {
         if (newStep == null) throw new Exception();
@@ -56,18 +56,18 @@ public class InstructionStepsService
             throw new Exception(ex.Message);
         }
     }
-    
+
     /// <summary>
-    /// Updates an existing instruction step.
+    ///     Updates an existing instruction step.
     /// </summary>
     /// <param name="newStep">The instruction step to update.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when the <paramref name="newStep"/> is null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when the <paramref name="newStep" /> is null.</exception>
     /// <exception cref="ColumnNotFoundException">Thrown when the instruction step to update is not found.</exception>
     public async Task UpdateAsync(InstructionStep newStep)
     {
         var stepToUpdate = await instructionsStepsCollection.FindAsync(bson => bson.Id == newStep.Id) ??
-                             throw new ColumnNotFoundException();
+                           throw new ColumnNotFoundException();
         try
         {
             var filter = Builders<InstructionStep>.Filter.Eq("Id", newStep.Id);
@@ -82,9 +82,9 @@ public class InstructionStepsService
             throw new Exception(e.Message);
         }
     }
-    
+
     /// <summary>
-    /// Deletes an instruction step by its identifier.
+    ///     Deletes an instruction step by its identifier.
     /// </summary>
     /// <param name="stepId">The identifier of the instruction step to delete.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
@@ -92,7 +92,7 @@ public class InstructionStepsService
     public async Task DeleteAsync(string stepId)
     {
         var step = await GetByIdAsync(stepId) ??
-                     throw new ColumnNotFoundException();
+                   throw new ColumnNotFoundException();
         try
         {
             await instructionsStepsCollection.DeleteOneAsync(bson => bson.Id == stepId);
@@ -102,9 +102,9 @@ public class InstructionStepsService
             throw new Exception(e.Message);
         }
     }
-    
+
     /// <summary>
-    /// Retrieves all instruction steps.
+    ///     Retrieves all instruction steps.
     /// </summary>
     /// <returns>A task that represents the asynchronous operation, containing a list of all instruction steps.</returns>
     public async Task<List<InstructionStep>> GetAllAsync()

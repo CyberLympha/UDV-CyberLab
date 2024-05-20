@@ -5,28 +5,18 @@ using System.Net.WebSockets;
 namespace WebApi.Models.WebsocketProxies;
 
 /// <summary>
-/// Represents a WebSocket TCP proxy server that forwards WebSocket traffic to a TCP server.
+///     Represents a WebSocket TCP proxy server that forwards WebSocket traffic to a TCP server.
 /// </summary>
 public class WebSocketTcpProxy
 {
+    private readonly HttpListener httpListener;
     private readonly string tcpHost;
     private readonly int tcpPort;
     private readonly int webSocketPort;
-    private readonly HttpListener httpListener;
     private CancellationTokenSource cancellationTokenSource;
-    
-    /// <summary>
-    /// Event raised when a client is disconnected from the WebSocket server.
-    /// </summary>
-    public event EventHandler<int> ClientDisconnected;
-    
-    /// <summary>
-    /// Event raised when an exception occurs and the server exits.
-    /// </summary>
-    public event EventHandler<int> ExceptionExit;
 
     /// <summary>
-    /// Initializes a new instance of the WebSocketTcpProxy class.
+    ///     Initializes a new instance of the WebSocketTcpProxy class.
     /// </summary>
     /// <param name="webSocketPort">The port number on which the WebSocket server listens.</param>
     /// <param name="tcpHost">The hostname of the TCP server to which WebSocket traffic will be forwarded.</param>
@@ -41,7 +31,17 @@ public class WebSocketTcpProxy
     }
 
     /// <summary>
-    /// Starts the WebSocket TCP proxy server.
+    ///     Event raised when a client is disconnected from the WebSocket server.
+    /// </summary>
+    public event EventHandler<int> ClientDisconnected;
+
+    /// <summary>
+    ///     Event raised when an exception occurs and the server exits.
+    /// </summary>
+    public event EventHandler<int> ExceptionExit;
+
+    /// <summary>
+    ///     Starts the WebSocket TCP proxy server.
     /// </summary>
     /// <param name="cts">The CancellationTokenSource to cancel the operation.</param>
     public void Start(CancellationTokenSource cts)
@@ -51,7 +51,7 @@ public class WebSocketTcpProxy
     }
 
     /// <summary>
-    /// Stops the WebSocket TCP proxy server.
+    ///     Stops the WebSocket TCP proxy server.
     /// </summary>
     public void Stop()
     {

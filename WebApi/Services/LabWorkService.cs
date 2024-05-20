@@ -4,23 +4,23 @@ using WebApi.Models.LabWorks;
 namespace WebApi.Services;
 
 /// <summary>
-/// Service for CRUD operations on laboratory work data stored in MongoDB.
+///     Service for CRUD operations on laboratory work data stored in MongoDB.
 /// </summary>
 public class LabWorkService
 {
     private readonly IMongoCollection<LabWork> labWorkCollection;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="LabWorkService"/> class.
+    ///     Initializes a new instance of the <see cref="LabWorkService" /> class.
     /// </summary>
     /// <param name="labWorkCollection">The MongoDB collection used for storing laboratory work data.</param>
     public LabWorkService(IMongoCollection<LabWork> labWorkCollection)
     {
         this.labWorkCollection = labWorkCollection;
     }
-    
+
     /// <summary>
-    /// Creates a new laboratory work record.
+    ///     Creates a new laboratory work record.
     /// </summary>
     /// <param name="newLabWork">The laboratory work record to create.</param>
     public async Task CreateAsync(LabWork newLabWork)
@@ -37,7 +37,7 @@ public class LabWorkService
     }
 
     /// <summary>
-    /// Retrieves a laboratory work record by its ID.
+    ///     Retrieves a laboratory work record by its ID.
     /// </summary>
     /// <param name="id">The ID of the laboratory work to retrieve.</param>
     /// <returns>The laboratory work record.</returns>
@@ -54,13 +54,13 @@ public class LabWorkService
     }
 
     /// <summary>
-    /// Updates an existing laboratory work record.
+    ///     Updates an existing laboratory work record.
     /// </summary>
     /// <param name="labWork">The updated laboratory work record.</param>
     public async Task UpdateAsync(LabWork labWork)
     {
         var labWorkToUpdate = await labWorkCollection.FindAsync(bson => bson.Id == labWork.Id) ??
-            throw new Exception("LabWork not found");
+                              throw new Exception("LabWork not found");
         try
         {
             var filter = Builders<LabWork>.Filter.Eq("Id", labWork.Id);
@@ -78,13 +78,13 @@ public class LabWorkService
     }
 
     /// <summary>
-    /// Deletes a laboratory work record by its ID.
+    ///     Deletes a laboratory work record by its ID.
     /// </summary>
     /// <param name="labWorkId">The ID of the laboratory work to delete.</param>
     public async Task DeleteAsync(string labWorkId)
     {
         var labWork = await GetByIdAsync(labWorkId) ??
-                throw new Exception("Reservation not found");
+                      throw new Exception("Reservation not found");
         try
         {
             await labWorkCollection.DeleteOneAsync(bson => bson.Id == labWorkId);
@@ -96,7 +96,7 @@ public class LabWorkService
     }
 
     /// <summary>
-    /// Retrieves all laboratory work records.
+    ///     Retrieves all laboratory work records.
     /// </summary>
     /// <returns>A list of all laboratory work records.</returns>
     public async Task<List<LabWork>> GetAllAsync()

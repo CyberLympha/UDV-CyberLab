@@ -7,7 +7,7 @@ using WebApi.Services;
 namespace WebApi.Controllers;
 
 /// <summary>
-/// API controller for managing user lab results.
+///     API controller for managing user lab results.
 /// </summary>
 [Route("/api/user-lab-result")]
 [ApiController]
@@ -16,7 +16,7 @@ public class UserLabResultsController : ControllerBase
     private readonly UserLabResultsService userLabResultsService;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="UserLabResultsController"/> class.
+    ///     Initializes a new instance of the <see cref="UserLabResultsController" /> class.
     /// </summary>
     /// <param name="userLabResultsService">The service to manage user lab results.</param>
     public UserLabResultsController(UserLabResultsService userLabResultsService)
@@ -25,10 +25,10 @@ public class UserLabResultsController : ControllerBase
     }
 
     /// <summary>
-    /// Creates a new user lab result.
+    ///     Creates a new user lab result.
     /// </summary>
     /// <param name="creationRequest">The request object containing details of the user lab result to be created.</param>
-    /// <returns>An <see cref="ActionResult"/> indicating the result of the operation.</returns>
+    /// <returns>An <see cref="ActionResult" /> indicating the result of the operation.</returns>
     /// <response code="201">Indicates that the user lab result was successfully created.</response>
     /// <response code="500">Indicates that an internal server error occurred.</response>
     [Authorize(Roles = "Admin, Teacher")]
@@ -39,8 +39,8 @@ public class UserLabResultsController : ControllerBase
     public async Task<ActionResult> Create(CreateUserLabResultRequest creationRequest)
     {
         try
-        {   
-            var userLabResult = new UserLabResult()
+        {
+            var userLabResult = new UserLabResult
             {
                 CurrentStep = creationRequest.CurrentStep,
                 IsFinished = creationRequest.IsFinished,
@@ -55,12 +55,12 @@ public class UserLabResultsController : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    
+
     /// <summary>
-    /// Updates an existing user lab result.
+    ///     Updates an existing user lab result.
     /// </summary>
     /// <param name="updateRequest">The request object containing updated details of the user lab result.</param>
-    /// <returns>An <see cref="ActionResult"/> indicating the result of the operation.</returns>
+    /// <returns>An <see cref="ActionResult" /> indicating the result of the operation.</returns>
     /// <response code="200">Indicates that the user lab result was successfully updated.</response>
     /// <response code="500">Indicates that an internal server error occurred.</response>
     [Authorize(Roles = "Admin, Teacher")]
@@ -72,7 +72,7 @@ public class UserLabResultsController : ControllerBase
     {
         try
         {
-            var userLabResult = new UserLabResult()
+            var userLabResult = new UserLabResult
             {
                 CurrentStep = updateRequest.CurrentStep,
                 IsFinished = updateRequest.IsFinished,
@@ -88,19 +88,19 @@ public class UserLabResultsController : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    
+
     /// <summary>
-    /// Retrieves a user lab result by its identifier.
+    ///     Retrieves a user lab result by its identifier.
     /// </summary>
     /// <param name="id">The identifier of the user lab result.</param>
-    /// <returns>An <see cref="ActionResult{T}"/> containing the user lab result.</returns>
+    /// <returns>An <see cref="ActionResult{T}" /> containing the user lab result.</returns>
     /// <response code="200">Indicates that the user lab result was successfully retrieved.</response>
     /// <response code="500">Indicates that an internal server error occurred.</response>
     [HttpGet("get/{id}", Name = nameof(Get))]
     [Produces("application/json", "application/xml")]
     [ProducesResponseType(typeof(UserLabResult), 200)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<UserLabResult>> Get([FromRoute]string id)
+    public async Task<ActionResult<UserLabResult>> Get([FromRoute] string id)
     {
         try
         {
@@ -111,19 +111,19 @@ public class UserLabResultsController : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    
+
     /// <summary>
-    /// Retrieves all user lab results for a specific user.
+    ///     Retrieves all user lab results for a specific user.
     /// </summary>
     /// <param name="userId">The identifier of the user.</param>
-    /// <returns>An <see cref="ActionResult{T}"/> containing the list of user lab results.</returns>
+    /// <returns>An <see cref="ActionResult{T}" /> containing the list of user lab results.</returns>
     /// <response code="200">Indicates that the user lab results were successfully retrieved.</response>
     /// <response code="500">Indicates that an internal server error occurred.</response>
     [HttpGet("get-user's/{userId}", Name = nameof(GetUserResults))]
     [Produces("application/json", "application/xml")]
     [ProducesResponseType(typeof(List<UserLabResult>), 200)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<List<UserLabResult>>> GetUserResults([FromRoute]string userId)
+    public async Task<ActionResult<List<UserLabResult>>> GetUserResults([FromRoute] string userId)
     {
         try
         {
@@ -134,9 +134,9 @@ public class UserLabResultsController : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    
+
     /// <summary>
-    /// Retrieves all user lab results.
+    ///     Retrieves all user lab results.
     /// </summary>
     /// <returns>A list of all user lab results.</returns>
     /// <response code="200">Indicates that the user lab results were successfully retrieved.</response>
@@ -147,12 +147,12 @@ public class UserLabResultsController : ControllerBase
     {
         return await userLabResultsService.GetAllAsync();
     }
-    
+
     /// <summary>
-    /// Deletes a user lab result by its identifier.
+    ///     Deletes a user lab result by its identifier.
     /// </summary>
     /// <param name="id">The identifier of the user lab result to delete.</param>
-    /// <returns>An <see cref="IActionResult"/> indicating the result of the operation.</returns>
+    /// <returns>An <see cref="IActionResult" /> indicating the result of the operation.</returns>
     /// <response code="200">Indicates that the user lab result was successfully deleted.</response>
     /// <response code="500">Indicates that an internal server error occurred.</response>
     [Authorize(Roles = "Admin, Teacher")]
@@ -160,7 +160,7 @@ public class UserLabResultsController : ControllerBase
     [Produces("application/json", "application/xml")]
     [ProducesResponseType(typeof(void), 200)]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> Delete([FromRoute]string id)
+    public async Task<IActionResult> Delete([FromRoute] string id)
     {
         try
         {

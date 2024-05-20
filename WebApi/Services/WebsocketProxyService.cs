@@ -4,19 +4,14 @@ using WebApi.Models.WebsocketProxies;
 namespace WebApi.Services;
 
 /// <summary>
-/// Service for managing WebSocket TCP proxies.
+///     Service for managing WebSocket TCP proxies.
 /// </summary>
 public class WebsocketProxyService
 {
     private readonly ConcurrentDictionary<int, WebSocketTcpProxy> proxies;
 
     /// <summary>
-    /// Event raised when a WebSocket TCP proxy is stopped.
-    /// </summary>
-    public event EventHandler<int> WebSocketTcpProxyStopped;
-
-    /// <summary>
-    /// Initializes a new instance of the WebsocketProxyService class.
+    ///     Initializes a new instance of the WebsocketProxyService class.
     /// </summary>
     public WebsocketProxyService()
     {
@@ -24,7 +19,12 @@ public class WebsocketProxyService
     }
 
     /// <summary>
-    /// Starts a WebSocket TCP proxy.
+    ///     Event raised when a WebSocket TCP proxy is stopped.
+    /// </summary>
+    public event EventHandler<int> WebSocketTcpProxyStopped;
+
+    /// <summary>
+    ///     Starts a WebSocket TCP proxy.
     /// </summary>
     /// <param name="webSocketPort">The port number for the WebSocket server.</param>
     /// <param name="tcpHost">The hostname of the TCP server.</param>
@@ -44,7 +44,7 @@ public class WebsocketProxyService
     }
 
     /// <summary>
-    /// Stops a WebSocket TCP proxy.
+    ///     Stops a WebSocket TCP proxy.
     /// </summary>
     /// <param name="webSocketPort">The port number of the WebSocket server.</param>
     public void Stop(int webSocketPort)
