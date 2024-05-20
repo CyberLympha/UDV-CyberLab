@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using VirtualLab.Domain.Entities;
+using VirtualLab.Domain.Entities.Enums;
 using VirtualLab.Infrastructure.DataBase;
 using Vostok.Logging.Abstractions;
 using StatusUserLab = VirtualLab.Domain.Entities.StatusUserLab;
@@ -13,6 +14,10 @@ public static class InizialiaseDataExtension
         var labDbContext = builder.Services.CreateScope().ServiceProvider.GetService<LabDbContext>();
         var log = builder.Services.CreateScope().ServiceProvider.GetService<ILog>();
 
+        
+        
+        
+        
         foreach (var status in typeof(StatusUserLabEnum).GetEnumValues())
         {
             if (!labDbContext.UserLabStatus.Have(status.ToString(), log))
@@ -27,8 +32,7 @@ public static class InizialiaseDataExtension
                     .AsTask()
                     .Wait();
                 labDbContext
-                    .SaveChangesAsync()
-                    .Wait();
+                    .SaveChangesAsync().Wait();
             }
         }
     }
