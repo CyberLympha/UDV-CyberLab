@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using WebApi.Model.AttemptModels;
 using WebApi.Model.Exceptions;
 using WebApi.Model.Repositories;
@@ -65,6 +66,11 @@ public class AttemptService
     public async Task<Attempt> Get(string attemptId)
     {
         return await _attemptRepository.ReadById(attemptId);
+    }
+
+    public async Task<Attempt[]> BatchGet(string[] ids)
+    {
+        return ids.Select(id => _attemptRepository.ReadById(id).Result).Where(x => x != null).ToArray();
     }
     
     public async Task<AttemptResult> GetResult(string attemptId)
