@@ -21,8 +21,8 @@ export class ApiService {
         return this.httpClient.get<Test[]>('/tests')
     }
 
-    public getTest(testId: string) {
-        return this.httpClient.get<Test>(`/tests/${testId}`)
+    public getTest(id : string) {
+        return this.httpClient.get<Test>(`/tests/${id}`)
     }
 
     public postTest(request: {name: string, description: string, questions: string[]}) {
@@ -31,6 +31,17 @@ export class ApiService {
             description: string,
             questions: string[]
         }, void>('/tests', request)
+    }
+
+    public postQuestion(request: {text: string, description: string,
+        questionType: string, correctAnswer: string, questionData: string[]}) {
+        return this.httpClient.post<{
+            text: string,
+            description: string,
+            questionType: string,
+            questionData: string[],
+            correctAnswer: string
+        }, void>('/questions', request)
     }
 
     public getQuestions() {

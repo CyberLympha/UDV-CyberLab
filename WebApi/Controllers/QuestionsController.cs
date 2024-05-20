@@ -21,7 +21,7 @@ public class QuestionsController : ControllerBase
     // [Authorize(Roles = "Admin,User")]
     public async Task<ActionResult<List<Question>>> Get()
     { 
-        return await _questionsService.Get;
+        return (await _questionsService.Get).ToList();
     }
     
     [HttpGet("{id}")]
@@ -29,6 +29,12 @@ public class QuestionsController : ControllerBase
     public async Task<ActionResult<Question>> GetById(string id)
     { 
         return await _questionsService.GetById(id);
+    }
+    
+    [HttpPost("batchGet")]
+    public async Task<Question[]> BatchGet(string[] ids)
+    {
+        return ids.Select(id => _questionsService.GetById(id).Result).Where(x => x != null).ToArray();
     }
     
     [HttpPost]
@@ -40,10 +46,10 @@ public class QuestionsController : ControllerBase
             Description = request.Description,
             Text = request.Text,
             QuestionData = JsonSerializer.Serialize(request.QuestionData),
-            QuestionType = request.QuestionType
+            QuestionType =    request.QuestionType
         };
-        await _questionsService.Create(question);
-        return Ok();
+        var id = await _questionsService.Create(question);
+        return Ok(id);
     }
 
     [HttpPut]

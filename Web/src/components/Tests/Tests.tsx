@@ -2,7 +2,7 @@ import React from "react";
 
 import {Test as TestsItem} from "../../../api"
 import {apiService} from "../../services";
-import {NewTest} from "../NewTest/NewTest"
+import {TestOpen} from "../TestOpen/TestOpen"
 
 import style from "./Tests.module.scss"
 import {Button} from "../Button/Button";
@@ -37,7 +37,9 @@ export function Tests() {
     return (
         <div id={"news"} className={style.container}>
             {addNewItemButton}
-            {tests?.map(newItem => <NewTest key={`${newItem.id}`} {...newItem} />)}
+            <div>
+                {tests?.map(newItem => <TestOpen key={`${newItem.id}`} {...newItem} />)}
+            </div>
         </div>
     )
 }

@@ -1,9 +1,10 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using WebApi.Model.Repositories;
 
 namespace WebApi.Model.QuestionModels;
 
-public class Question
+public class Question : IIdentifiable
 {
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; } = "";

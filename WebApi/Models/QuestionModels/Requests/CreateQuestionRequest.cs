@@ -9,7 +9,7 @@ public class CreateQuestionRequest
     [Required]
     public string Description { get; set; }
     [Required]
-    public QuestionType QuestionType { get; }
+    public QuestionType QuestionType { get; set;}
     [Required]
     public Dictionary<string, object> QuestionData { get; set; }
     [Required]

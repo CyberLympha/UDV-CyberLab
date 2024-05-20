@@ -1,20 +1,60 @@
 import React from "react";
-import style from "../NewTest/NewTest.module.scss";
+import style from "../TestOpen/TestOpen.module.scss";
+import {Question as QuestionsItem, Test as TestsItem} from "../../../api";
+import {useParams} from "react-router-dom";
+import {apiService} from "../../services";
 
-export interface NewItemProps {
-    id?: string;
-    text?: string;
-    description?: string;
-    questionType?: string;
-    correctAnswer?: string;
-    questionData?: string[];
-}
+export function NewQuestion() {
+    const {id} = useParams<{ id: string }>();
+    const [newQuestions, setNewQuestions] = React.useState<QuestionsItem[]>([]);
+    const [test, setTest] = React.useState<TestsItem>();
 
-export function NewQuestion({id, text, description, questionType, correctAnswer, questionData}: NewItemProps) {
+    React.useEffect(() => {
+        const fetch = async () => {
+            if (!id) return;
+
+            const response = await apiService.getTest(id);
+
+            if (response instanceof Error) {
+                return;
+            }
+            setTest(response)
+        }
+        void fetch();
+
+    }, [id]);
+
+    React.useEffect(() => {
+        const copy = Object.assign([], newQuestions);
+
+        const fetchQuestions = async (questionId: string, copy: QuestionsItem[]) => {
+            const response = await apiService.getQuestion(questionId);
+
+            if (response instanceof Error) {
+                return;
+            }
+            copy.push(response);
+            setNewQuestions([...copy]);
+        }
+
+        test?.questions?.map(
+            question =>
+                void fetchQuestions(question, copy)
+        );
+    }, [test]);
+
+    const questions = newQuestions.map((question) => {
+        return question;
+    });
+
     return (
-        <div className={style.container}>
-            <div className={style.title}>{text}</div>
-            <div className={style.text}>{description}</div>
+        <div>
+            {questions.map((question) => (
+                <div className={style.container} key={question.id}>
+                    <div className={style.title}>{question.text}</div>
+                    <div className={style.text}>{question.description}</div>
+                </div>
+            ))}
         </div>
     );
 }

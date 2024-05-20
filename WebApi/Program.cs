@@ -4,6 +4,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using WebApi.Model.QuestionModels;
+using WebApi.Model.Repositories;
+using WebApi.Model.Repositories.MongoDbRepositories;
 using WebApi.Model.TestModels;
 using WebApi.Models;
 using WebApi.Services;
@@ -30,13 +32,15 @@ builder.Services.AddSingleton(new MongoClient("mongodb://localhost:27017").GetDa
 builder.Services.AddSingleton<VmService>();
 builder.Services.AddSingleton<UserService>();
 builder.Services.AddSingleton<NewsService>();
+builder.Services.AddSingleton<QuestionsService>();
+builder.Services.AddSingleton<TestsService>();
 builder.Services.AddSingleton<ProxmoxService>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<LabsService>();
 builder.Services.AddSingleton<LabReservationsService>();
-builder.Services.AddSingleton<TestsService>();
-builder.Services.AddSingleton<QuestionsService>();
 builder.Services.AddSingleton<QuestionValidationService>();
+
+builder.Services.AddSingleton<IRepository<Question>, MongoRepository<Question>>();
 
 builder.Services.AddCors(p => p.AddPolicy("AllowAll",
     b => { b.WithOrigins("http://10.40.229.60:3000","http://localhost:5173").AllowAnyMethod().AllowAnyHeader().AllowCredentials(); }));

@@ -1,47 +1,36 @@
 using System.Text.Json;
-using MongoDB.Driver;
 using WebApi.Model.QuestionModels;
 using WebApi.Model.QuestionModels.Requests;
+using WebApi.Model.Repositories;
 
 namespace WebApi.Services;
 
 public class QuestionsService
 {
-    private readonly IMongoCollection<Question> _questionsCollection;
+    private readonly IRepository<Question> _repository;
     private readonly QuestionValidationService _questionValidationService;
 
-    public QuestionsService(IMongoCollection<Question> questionsCollection,
-        QuestionValidationService questionValidationService)
+    public QuestionsService(QuestionValidationService questionValidationService, IRepository<Question> repository)
     {
-        _questionsCollection = questionsCollection;
         _questionValidationService = questionValidationService;
-    }
-    //
-    // public QuestionsService(IMongoCollection<Question> questionsCollection)
-    // {
-    //     _questionsCollection = questionsCollection;
-    // }
-
-    public Task<List<Question>> Get
-    {
-        get { return _questionsCollection.Find(_ => true).ToListAsync(); }
+        _repository = repository;
     }
 
-    public Task<Question> GetById(string id)
-    {
-        return _questionsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
-    }
+    public Task<IEnumerable<Question>> Get => _repository.ReadAll();
+
+    public Task<Question> GetById(string id) => _repository.ReadById(id);
 
     public async Task<string> Create(Question question)
     {
+        Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        var newQuestion = await _repository.Create(question);
         _questionValidationService.EnsureValid(question);
-        await _questionsCollection.InsertOneAsync(question);
-        return question.Id;
+        return newQuestion.Id;
     }
 
     public async Task Update(CreateQuestionRequest question, string id)
     {
-        var n = new Question()
+        var newQuestion = new Question()
         {
             Description = question.Description,
             QuestionData = JsonSerializer.Serialize(question.QuestionData),
@@ -49,11 +38,11 @@ public class QuestionsService
             QuestionType = question.QuestionType,
             Text = question.Text
         };
-        await _questionsCollection.FindOneAndReplaceAsync(x => x.Id == id, n);
+        await _repository.Update(newQuestion);
     }
 
     public async Task Delete(string id)
     {
-        await _questionsCollection.DeleteOneAsync(x => x.Id == id);
+        _repository.Delete(id);
     }
 }

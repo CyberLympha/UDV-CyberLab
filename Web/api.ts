@@ -6,12 +6,12 @@ export interface Test {
 }
 
 export interface Question {
-  id: string;
-  text: string;
-  description: string;
-  questionType: string;
-  correctAnswer: string;
-  questionData: string[];
+  id?: string;
+  text?: string;
+  description?: string;
+  questionType?: string;
+  correctAnswer?: string;
+  questionData?: string[];
 }
 
 export interface BalloonInfoInt {
