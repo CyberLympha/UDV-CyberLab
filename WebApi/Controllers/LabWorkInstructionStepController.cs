@@ -162,11 +162,11 @@ public class LabWorkInstructionStepController : ControllerBase
     /// <param name="creationRequest">The request containing instruction step details.</param>
     /// <returns>A status code indicating the result of the operation.</returns>
     [Authorize(Roles = "Admin, Teacher")]
-    [HttpPost("step/create", Name = nameof(Create))]
+    [HttpPost("step/create", Name = nameof(CreateStep))]
     [Produces("application/json", "application/xml")]
     [ProducesResponseType(typeof(void), 201)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult> Create(CreateInstructionStepRequest creationRequest)
+    public async Task<ActionResult> CreateStep(CreateInstructionStepRequest creationRequest)
     {
         try
         {
@@ -191,11 +191,11 @@ public class LabWorkInstructionStepController : ControllerBase
     /// <param name="updateRequest">The request containing updated instruction step details.</param>
     /// <returns>A status code indicating the result of the operation.</returns>
     [Authorize(Roles = "Admin, Teacher")]
-    [HttpPost("step/update", Name = nameof(Update))]
+    [HttpPost("step/update", Name = nameof(UpdateStep))]
     [Produces("application/json", "application/xml")]
     [ProducesResponseType(typeof(void), 200)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult> Update(UpdateInstructionStepRequest updateRequest)
+    public async Task<ActionResult> UpdateStep(UpdateInstructionStepRequest updateRequest)
     {
         try
         {
@@ -220,11 +220,11 @@ public class LabWorkInstructionStepController : ControllerBase
     /// </summary>
     /// <param name="id">The identifier of the instruction step.</param>
     /// <returns>The requested instruction step.</returns>
-    [HttpGet("step/get/{id}", Name = nameof(Get))]
+    [HttpGet("step/get/{id}", Name = nameof(GetStep))]
     [Produces("application/json", "application/xml")]
     [ProducesResponseType(typeof(InstructionStep), 200)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<InstructionStep>> Get([FromRoute] string id)
+    public async Task<ActionResult<InstructionStep>> GetStep([FromRoute] string id)
     {
         try
         {
@@ -240,10 +240,10 @@ public class LabWorkInstructionStepController : ControllerBase
     ///     Retrieves all instruction steps.
     /// </summary>
     /// <returns>A list of all instruction steps.</returns>
-    [HttpGet("step/get", Name = nameof(GetAll))]
+    [HttpGet("step/get", Name = nameof(GetAllSteps))]
     [Produces("application/json", "application/xml")]
     [ProducesResponseType(typeof(List<InstructionStep>), 200)]
-    public async Task<List<InstructionStep>> GetAll()
+    public async Task<List<InstructionStep>> GetAllSteps()
     {
         return await instructionStepsService.GetAllAsync();
     }
@@ -254,11 +254,11 @@ public class LabWorkInstructionStepController : ControllerBase
     /// <param name="id">The identifier of the instruction step.</param>
     /// <returns>A status code indicating the result of the operation.</returns>
     [Authorize(Roles = "Admin, Teacher")]
-    [HttpPost("step/delete/{id}", Name = nameof(Delete))]
+    [HttpPost("step/delete/{id}", Name = nameof(DeleteStep))]
     [Produces("application/json", "application/xml")]
     [ProducesResponseType(typeof(void), 200)]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> Delete([FromRoute] string id)
+    public async Task<IActionResult> DeleteStep([FromRoute] string id)
     {
         try
         {
