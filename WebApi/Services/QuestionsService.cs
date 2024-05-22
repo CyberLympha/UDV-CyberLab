@@ -22,8 +22,8 @@ public class QuestionsService
 
     public async Task<string> Create(Question question)
     {
-        var newQuestion = await _repository.Create(question);
         _questionValidationService.EnsureValid(question);
+        var newQuestion = await _repository.Create(question);
         return newQuestion.Id;
     }
 
