@@ -63,6 +63,8 @@ public class VirtualDesktopService
         if (vm.LabWorkId != labWorkId)
         {
             await vmService.DeleteAsync(vm.Id);
+            if (!await proxmoxService.DeleteVm(vm.VmId.ToString()))
+                return false;
             if (!await CreateVmForUser(userId, labWorkId))
                 return false;
             user = await userService.GetAsyncById(userId);

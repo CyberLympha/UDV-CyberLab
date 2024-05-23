@@ -9,7 +9,7 @@
   "Role": 2,
   "Labs": "65880b9c5de6bd5d3b5101eb",
   "IsApproved": true,
-  "VmId": "66292f8343226c0a540915c5"
+  "VmId": ""
 },
 {
   "_id": {
@@ -22,5 +22,5 @@
   "Role": 1,
   "Labs": "65880b9c5de6bd5d3b5101eb",
   "IsApproved": true,
-  "VmId": "6645e111261d68db63c6ffc4"
+  "VmId": ""
 }]
