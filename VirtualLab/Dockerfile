@@ -1,24 +1,15 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
+﻿FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
 
+COPY *.csproj .
+RUN dotnet restore
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release 
-WORKDIR /src
-COPY ["./VirtualLab.csproj", "VirtualLab/"]
-RUN dotnet restore "VirtualLab/VirtualLab.csproj"
 COPY . .
-WORKDIR "/src/VirtualLab"
-RUN dotnet build -c $BUILD_CONFIGURATION -o /app/build
-# swagger на deve поэтому не Release
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Development
-RUN dotnet publish "VirtualLab.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish -c Development -o out
 
-FROM base AS final
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build-env /app/out .
+
+# Set the entrypoint for the application
 ENTRYPOINT ["dotnet", "VirtualLab.dll"]

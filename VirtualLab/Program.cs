@@ -29,7 +29,6 @@ builder.Services.AddScoped<IUserLabRepository, UserLabsRepository>();
 builder.Services.AddScoped<IUserLabProvider, UserLabProviderService>();
 //конец))
 // самый важный класс
-
 builder.Services.AddScoped<ILabConfigure, LabConfigure>();
 builder.Services.AddScoped<ILabEntryPointRepository, LabEntryPointRepository>();
 builder.Services.AddScoped<ILabManager, LabManager>();

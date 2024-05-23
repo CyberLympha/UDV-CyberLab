@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  virtual_lab:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    image:
+      deviilboi99/virtual_lab:v1
+    ports:
+      - "8080:8080"

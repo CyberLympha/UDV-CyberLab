@@ -31,6 +31,16 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="out\web.config" />
+      <_ContentIncludedByDefault Remove="out\appsettings.Development.json" />
+      <_ContentIncludedByDefault Remove="out\appsettings.json" />
+      <_ContentIncludedByDefault Remove="out\templateLabNew.json" />
+      <_ContentIncludedByDefault Remove="out\templateLabOldExample.json" />
+      <_ContentIncludedByDefault Remove="out\VirtualLab.deps.json" />
+      <_ContentIncludedByDefault Remove="out\VirtualLab.runtimeconfig.json" />
+    </ItemGroup>
+
 
 
 

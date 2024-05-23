@@ -15,13 +15,16 @@ public static class ResultExtensions
         value = result.Value;
         return result.IsSuccess;
     }
-    
+
     public static bool TryGetValue<Tvalue>(this IResult<Tvalue> result, out Tvalue value)
     {
         value = result.Value;
         return result.IsSuccess;
     }
+
+    public static bool  IsFailedWithErrors(this Result result, out List<IError> errors)
+    {
+        errors = result.Errors;
+        return result.IsFailed;
+    }
 }
-
-
-

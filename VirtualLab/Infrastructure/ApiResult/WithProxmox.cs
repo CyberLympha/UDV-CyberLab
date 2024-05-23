@@ -5,13 +5,11 @@ namespace VirtualLab.Infrastructure.ApiResult;
 public class WithProxmox
 {
     public NetworkApiResult Network { get; } = new NetworkApiResult();
-    
-    public string VmStartFailure(string error, LaunchVm request) => $"vm {request} not start Because {error}";
-    public string ChangeIntefaceFailure(string error, UpdateInterfaceForVm updateInterfaceForVm) => $"vm {updateInterfaceForVm}, not changed because: {error}";
+    public VmApiResult Vm { get; } = new VmApiResult();
+  
+    public string ChangeInterfaceFailure(string error, string node, int qemu) => $"On node {node} not changed interfaces qemu {qemu} because: {error}";
     public  string CreateCloneFailure(string error) => $"Clone Not Make Because: {error}";
     // это ошибки связанные с Network
-    public string NetworkCreateError(string error, string node) => $"Node: {node} not created network because: {error}";
-
     public string NetworkDeleteFailure(string error, string node) =>
         $"Node : {node} not delete network because: {error}";
 

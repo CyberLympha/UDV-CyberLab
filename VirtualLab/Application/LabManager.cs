@@ -58,8 +58,7 @@ public class LabManager : ILabManager
                 virtualMachineInfo.Password,
                 vm.Id
             );
-            await _virtualMachineDataHandler
-                .AddCredential(credential); // по сути, можно разделить на два интерфейса ICre и I Vm. а нужно ли 
+            await _virtualMachineDataHandler.AddCredential(credential); // по сути, можно разделить на два интерфейса ICre и I Vm. а нужно ли 
 
             result.Add(credential);
         }

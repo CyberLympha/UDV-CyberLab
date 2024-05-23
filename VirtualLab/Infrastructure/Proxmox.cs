@@ -1,16 +1,9 @@
-using System.Net.NetworkInformation;
-using System.Text.Json;
 using Corsinvest.ProxmoxVE.Api;
 using FluentResults;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Interfaces.Proxmox;
-using VirtualLab.Domain.Value_Objects;
 using VirtualLab.Domain.Value_Objects.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox.Requests;
-using VirtualLab.Infrastructure;
 using VirtualLab.Infrastructure.ApiResult;
 using VirtualLab.Infrastructure.Extensions;
 using Vostok.Logging.Abstractions;
@@ -40,31 +33,27 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
             ApiResultError.WithProxmox.CreateCloneFailure);
     }
 
-    public async Task<Result> GetAllNetworksBridgeByVm(string node)
-    {
-        var result = await _client.Nodes[node].Network.Index("bridge");
-
-        throw new NotImplementedException();
-    }
 
     public async Task<Result<NetCollection>> GetAllNetworksBridgeByVm(int vmId, string node)
     {
         var response = await _client.Nodes[node].Qemu[vmId].Config.VmConfig();
-        
+
         var listNet = response.Response.data;
 
         var result = new NetCollection();
-        
-            // здесь ужасная реализация
+
+        // здесь ужасная реализация
         foreach (var Dnets in listNet)
         {
             var net = (Dnets is KeyValuePair<string, object> ? (KeyValuePair<string, object>)Dnets : default);
             if (!net.Key.StartsWith("net")) continue;
             var netSettings = net.Value as string;
+            
+            // что-то страшное ответ : virtio=vaef,bridge=vmbr4.
             var data = netSettings.Split(",");
             var type = data[0].Split("=")[0];
             var iFace = data[1].Split('=')[1];
-            
+
             result.Add(new NetSettings()
             {
                 Bridge = iFace,
@@ -75,7 +64,7 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
         return result;
     }
 
-    public async Task<Result> CreateInterface(string node , Net net)
+    public async Task<Result> Create(string node, Net net)
     {
         var result = await _client.Nodes[node].Network
             .CreateNetwork(net.Bridge, net.Type, autostart: true);
@@ -88,7 +77,7 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
     }
 
 
-    public async Task<Result> RemoveInterface(string node, Net net)
+    public async Task<Result> Remove(string node, Net net)
     {
         var result = await _client.Nodes[node].Network[net.Bridge].DeleteNetwork();
 
@@ -110,16 +99,16 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
         );
     }
 
-    public async Task<Result> UpdateDeviceInterface(UpdateInterfaceForVm request)
+    public async Task<Result> UpdateDeviceInterface(string node, int qemu, NetCollection nets)
     {
-        var nets = new Dictionary<int, string>(request.Nets.Value);
-        var result = await _client.Nodes[request.Node].Qemu[request.Qemu].Config.UpdateVmAsync(netN: nets);
+        var netN = new Dictionary<int, string>(nets.Value);
+        var result = await _client.Nodes[node].Qemu[qemu].Config.UpdateVmAsync(netN: netN);
 
 
         return result.Match(
             Result.Ok,
-            reasonPhrases => ApiResultError.WithProxmox.ChangeIntefaceFailure(reasonPhrases, request),
-            errors => ApiResultError.WithProxmox.ChangeIntefaceFailure(errors, request)
+            reasonPhrases => ApiResultError.WithProxmox.ChangeInterfaceFailure(reasonPhrases, node,qemu),
+            errors => ApiResultError.WithProxmox.ChangeInterfaceFailure(errors, node,qemu)
         );
     }
 
@@ -130,24 +119,24 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
         {
             return Result.Fail(result.ReasonPhrase);
         }
-        
+
         var status = result.Response.data.qmpstatus as string;
 
-        return Enum.Parse<ProxmoxVmStatus>(status);
+        return Enum.Parse<ProxmoxVmStatus>(status.ToUpFirst());
     }
 
-    public async Task<Result> StartVm(LaunchVm request)
+    public async Task<Result> Start(string node, int qemu)
     {
-        var result = await _client.Nodes[request.Node].Qemu[request.Qemu].Status.Start.VmStart();
+        var result = await _client.Nodes[node].Qemu[qemu].Status.Start.VmStart();
 
         return result.Match(
             Result.Ok, // todo возможно, что данные в какой node ошибка прописываеется в ответе от proxmox.
-            reasonPhrases => ApiResultError.WithProxmox.VmStartFailure(reasonPhrases, request),
-            errors => ApiResultError.WithProxmox.VmStartFailure(errors, request)
+            reasonPhrases => ApiResultError.WithProxmox.Vm.Start(reasonPhrases, node, qemu),
+            errors => ApiResultError.WithProxmox.Vm.Start(errors, node, qemu)
         );
     }
 
-    public async Task<Result> Delete(string node, int qemu)
+    public async Task<Result> Destroy(string node, int qemu)
     {
         var response = await _client.Nodes[node].Qemu[qemu].DestroyVm();
 
@@ -156,17 +145,20 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
             return Result.Fail(response.ReasonPhrase);
         }
 
-        return Result.Ok();
+        return response.Match(
+            Result.Ok,
+            responseError => ApiResultError.WithProxmox.Vm.Delete(node, qemu, responseError),
+            errors => ApiResultError.WithProxmox.Vm.Delete(node, qemu, errors));
     }
 
-    public async Task<Result> StopVm(string node, int qemu)
+    public async Task<Result> Stop(string node, int qemu)
     {
         var result = await _client.Nodes[node].Qemu[qemu].Status.Stop.VmStop();
 
         return result.Match(
             Result.Ok,
             rp => ApiResultError.WithProxmox.VmStopFailure(rp, node, qemu),
-             errors => ApiResultError.WithProxmox.VmStopFailure(errors, node,qemu));
+            errors => ApiResultError.WithProxmox.VmStopFailure(errors, node, qemu));
     }
 
 
@@ -185,7 +177,9 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
         {
             foreach (var ipAddresses in iFace)
             {
-                var ipAddressPair = ipAddresses is KeyValuePair<string, object> ? (KeyValuePair<string, object>)ipAddresses : default; 
+                var ipAddressPair = ipAddresses is KeyValuePair<string, object>
+                    ? (KeyValuePair<string, object>)ipAddresses
+                    : default;
                 if (ipAddressPair.Key != "ip-addresses") continue;
                 var ipAddress = ipAddressPair.Value as List<dynamic>;
                 foreach (var ipsD in ipAddress)
@@ -196,16 +190,15 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
                         if (ipPair.Key != "ip-address") continue;
 
                         var ip = ipPair.Value as string;
-                        if (!string.IsNullOrEmpty(ip) && ip.StartsWith(ProxmoxData.NetworkIdGlobalNetwork))
+                        if (!string.IsNullOrEmpty(ip) && ip.StartsWith(ProxmoxSetting.NetworkIdGlobalNetwork))
                         {
                             return new Ip() { IpV4 = ipPair.Value as string };
                         }
                     }
                 }
-              
             }
         }
-        
+
 
         return Result.Fail("не нашлось");
     }

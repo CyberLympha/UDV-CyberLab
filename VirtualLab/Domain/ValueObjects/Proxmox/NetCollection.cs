@@ -16,9 +16,6 @@ public class NetCollection : IEnumerable<Net>
         _nets.Add(Tail, net);
     }
     
-    
-    
-
     public IEnumerator<Net> GetEnumerator()
     {
         for (var i = 0; i < _nets.Count; i++)
@@ -31,4 +28,6 @@ public class NetCollection : IEnumerable<Net>
     {
         return GetEnumerator();
     }
+
+    
 }
