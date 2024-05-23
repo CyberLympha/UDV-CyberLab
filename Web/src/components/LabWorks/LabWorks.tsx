@@ -24,7 +24,6 @@ export const LabWorks = observer(() => {
             if (resp instanceof Error) {
                 return;
             }
-            // @ts-ignore
             setLabs(resp)
         }
         void getF();
@@ -59,29 +58,27 @@ export const LabWorks = observer(() => {
         setIsLoading(false);
     }
 
-    return (<div className={style.container} style={{padding: "24px"}}>
-        <div>
-
-            <div className={style.labItem}>
-                <div>
-                    <div>{labs?.[0].title}</div>
-                    <div className={style.labDescription}>
-                        {labs?.[0].shortDescription}
+    return (
+        <div className={style.container} style={{padding: "24px"}}>
+            {labs?.map((lab) => (
+                <div className={style.labItem} key={lab.id}>
+                    <div>
+                        <div>{lab.title}</div>
+                        <div className={style.labDescription}>
+                            {lab.shortDescription}
+                        </div>
+                    </div>
+                    <div style={{flexShrink: 0}}>
+                        {!!userStore.user?.labs ?
+                            <Button rightIcon={<AiOutlineArrowRight size={"20px"}/>}
+                                    onClick={() => {
+                                        navigate(`/labs/${lab.id}/${userStore.user?.id}`, {replace: true});
+                                    }}>Перейти</Button> :
+                            <Button rightIcon={<AiOutlinePlus size={"20px"}/>} isLoading={isLoading} onClick={() => startLabWork(userStore.user?.id, lab.id)}>Начать выполнение</Button>
+                        }
                     </div>
                 </div>
-                <div style={{flexShrink: 0}}>
-                    {!!userStore.user?.labs ?
-                        <Button rightIcon={<AiOutlineArrowRight size={"20px"}/>}
-                                onClick={() => {
-                                    navigate(`/labs/${labs?.[0].id}/${userStore.user?.id}`, {replace: true});
-                                }}>Перейти</Button> :
-                        <Button rightIcon={<AiOutlinePlus size={"20px"}/>} isLoading={isLoading} onClick={()=>startLabWork(userStore.user?.id, labs?.[0].id)}>Начать
-                            выполение
-                        </Button>
-                    }
-                </div>
-            </div>
+            ))}
         </div>
-
-    </div>)
+    );
 })
