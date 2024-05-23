@@ -56,7 +56,8 @@ public class WebSocketTcpProxy
     public void Stop()
     {
         cancellationTokenSource.Cancel();
-        httpListener.Stop();
+        if (httpListener is not null)
+            httpListener.Stop();
     }
 
     private async Task StartAsync(CancellationToken cancellationToken)
