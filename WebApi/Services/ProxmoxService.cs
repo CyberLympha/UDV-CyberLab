@@ -519,4 +519,16 @@ public class ProxmoxService
             return false;
         }
     }
+
+    /// <summary>
+    /// Deletes a virtual machine by its ID.
+    /// </summary>
+    /// <param name="vmId">The ID of the virtual machine to delete.</param>
+    /// <returns>A task that represents the asynchronous operation, containing a boolean value indicating whether the deletion was successful.</returns>
+    public async Task<bool> DeleteVm(string vmId)
+    {
+        var res = await proxmoxClient.Nodes[nodeName].Qemu[vmId].DestroyVm();
+        
+        return res.IsSuccessStatusCode;
+    }
 }
