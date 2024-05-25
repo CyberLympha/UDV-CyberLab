@@ -21,7 +21,11 @@ public class LabDbContext : DbContext
         modelBuilder.Entity<StatusUserLab>()
             .Property(e => e.Name)
             .HasConversion<string>();
-        
+
+        modelBuilder.Entity<UserLab>()
+            .HasOne(ul => ul.Report)
+            .WithOne(r => r.UserLab)
+            .HasForeignKey<Report>(r => r.UserLabId);
         
         base.OnModelCreating(modelBuilder);
     }

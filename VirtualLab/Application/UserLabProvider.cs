@@ -1,8 +1,12 @@
 using FluentResults;
+using System.Diagnostics;
+using System.Net.Http.Json;
+using System.Text.Json;
 using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Entities;
 using VirtualLab.Domain.Interfaces.Repositories;
 using VirtualLab.Domain.Value_Objects;
+using VirtualLab.Domain.ValueObjects;
 
 namespace VirtualLab.Application;
 
@@ -96,6 +100,51 @@ public class UserLabProviderService : IUserLabProvider
             }
         }
 
+        return answer;
+    }
+
+    public async Task<Result<IReadOnlyCollection<AttemptShortInfo>>> GetAllCompletedByLabId(Guid labId)
+    {
+        var userLabsResult = await _userLabs.GetAllCompletedByLabId(labId);
+        if (userLabsResult.IsFailed)
+            return Result.Fail(userLabsResult.Errors);
+        var answer = new List<AttemptShortInfo>();
+        foreach (var userLab in userLabsResult.Value)
+        {
+            var userInfo = await GetUserInfo(userLab.UserId.ToString());
+            answer.Add(AttemptShortInfo.From(userInfo, userLab));
+        }
+        return answer;
+    }
+
+    private async Task<UserInfo> GetUserInfo(string userId)
+    {
+        HttpResponseMessage response;
+        using (var httpClient = new HttpClient())
+        {
+            httpClient.BaseAddress = new Uri("https://localhost:7182");
+            response = await httpClient.GetAsync($"api/auth/users/{userId}");
+        }
+        response.EnsureSuccessStatusCode();
+        var contentStream = await response.Content.ReadAsStreamAsync();
+        var options = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+        var userResponse = await JsonSerializer.DeserializeAsync<UserInfo>(contentStream, options);
+        return userResponse;
+    }
+
+    public async Task<Result<IReadOnlyCollection<TeacherLabShortInfo>>> GetTeacherLabs(Guid teacherId)
+    {
+        var labsResult = await _labs.GetAllByCreatorId(teacherId);
+        if (labsResult.IsFailed)
+            return Result.Fail(labsResult.Errors);
+        var answer = new List<TeacherLabShortInfo>();
+        foreach (var lab in labsResult.Value)
+        {
+            answer.Add(TeacherLabShortInfo.From(lab));
+        }
         return answer;
     }
 }

@@ -11,6 +11,20 @@ using VirtualLab.Infrastructure.Repositories;
 using VirtualLab.MiddleWare;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy =>
+        {
+            policy
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+});
+
 builder.Logging.ClearProviders();
 builder.AddLogVostokWithConfig();
 
@@ -50,8 +64,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseUserLabStatuses();
+//app.UseUserLabStatuses();
 app.UseHttpsRedirection();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthorization();
 

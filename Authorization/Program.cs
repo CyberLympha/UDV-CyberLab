@@ -74,6 +74,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 await RolesConfig.CreateRoles(app.Services);
-await RolesConfig.CreateAdmin(app.Services);
+await RolesConfig.CreateTeacher(app.Services);
 
 app.Run();

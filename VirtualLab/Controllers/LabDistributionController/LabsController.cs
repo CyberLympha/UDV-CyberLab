@@ -5,6 +5,7 @@ using VirtualLab.Application.Interfaces;
 using VirtualLab.Controllers.LabCreationService.Dto;
 using VirtualLab.Domain.Entities;
 using VirtualLab.Domain.Value_Objects;
+using VirtualLab.Domain.ValueObjects;
 
 namespace VirtualLab.Controllers.LabDistributionController;
 
@@ -45,6 +46,26 @@ public class LabsController : ControllerBase
         
         return labs.Match(
             v => Ok(v),
+            e => NotFound(e));
+    }
+
+    [HttpGet("teacher/{teacherId:guid}")]
+    public async Task<ActionResult<IReadOnlyCollection<TeacherLabShortInfo>>> GetTeacherLabs(Guid teacherId)
+    {
+        var labs = await _userLabProvider.GetTeacherLabs(teacherId);
+
+        return labs.Match(
+            l => Ok(l),
+            e => NotFound(e));
+    }
+
+    [HttpGet("{labId:guid}/userLabs")]
+    public async Task<ActionResult<IReadOnlyCollection<AttemptShortInfo>>> GetAttemptsPerLab(Guid labId)
+    {
+        var attempts = await _userLabProvider.GetAllCompletedByLabId(labId);
+
+        return attempts.Match(
+            a => Ok(a),
             e => NotFound(e));
     }
     

@@ -21,4 +21,13 @@ public class UserLabsRepository : RepositoryBase<UserLab, Guid> ,IUserLabReposit
 
         return Result.Ok(userLabs);
     }
+
+    //TODO: добавить фильтрацию по завершенным лабам
+    public async Task<Result<UserLab[]>> GetAllCompletedByLabId(Guid labId)
+    {
+        var userLabs = await _dbContext.Set<UserLab>()
+            .Where(ul => ul.LabId == labId)
+            .ToArrayAsync();
+        return Result.Ok(userLabs);
+    }
 }

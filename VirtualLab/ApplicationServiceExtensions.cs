@@ -17,6 +17,7 @@ namespace Authorization
             })
             .AddJwtBearer(options =>
             {
+                //TODO: убрать, тут уже header, а не cookies
                 options.Events = new JwtBearerEvents
                 {
                     OnMessageReceived = context =>

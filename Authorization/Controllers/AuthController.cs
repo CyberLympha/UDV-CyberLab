@@ -84,6 +84,15 @@ namespace Authorization.Controllers
             return Ok(new { firstName = user.FirstName, secondName = user.SecondName });
         }
 
+        [HttpGet("users/{userId}")]
+        public async Task<IActionResult> GetNames(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return BadRequest();
+            return Ok(new { firstName = user.FirstName, secondName = user.SecondName });
+        }
+
         private JwtSecurityToken CreateAccessToken(List<Claim> userClaims)
         {
             var authSigningKey = AuthOptions.GetSymmetricSecurityKey();

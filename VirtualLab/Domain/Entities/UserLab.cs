@@ -9,6 +9,7 @@ public class UserLab : IEntity<Guid>
     public Guid StatusId { get; set; } // нужна таблица с statusId
     public int Rate { get; set; } // 
     // и другие данные, которые отображаются для пользователя.
+    public Report? Report { get; set; }
 
     public static UserLab From(User user, Lab guid)
     {

@@ -20,7 +20,7 @@ namespace Authorization
             }
         }
 
-        public static async Task CreateAdmin(IServiceProvider serviceProvider)
+        public static async Task CreateTeacher(IServiceProvider serviceProvider)
         {
             using (var serviceScope = serviceProvider.GetRequiredService<IServiceScopeFactory>()
                         .CreateScope())
@@ -28,23 +28,22 @@ namespace Authorization
                 var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<User>>();
                 var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
                 
-                var superUser = new User
+                var teacher = new User
                 {
                     Id = new Guid().ToString(),
-                    UserName = "Super",
-                    FirstName = "Super",
-                    SecondName = "Super",
-                    Email = "super@email.com"
+                    UserName = "teacher",
+                    FirstName = "Teacher",
+                    SecondName = "Teacher",
+                    Email = "teacher@email.com"
                 };
-                var password = "super123";
-                var foundUser = userManager.FindByEmailAsync(superUser.Email);
-
+                var password = "teacher123";
+                var foundUser = await userManager.FindByEmailAsync(teacher.Email);
                 if (foundUser == null)
                 {
-                    var creationUserResult = await userManager.CreateAsync(superUser, password);
+                    var creationUserResult = await userManager.CreateAsync(teacher, password);
                     if (creationUserResult.Succeeded
-                        && await roleManager.RoleExistsAsync(UserRole.Admin))
-                        await userManager.AddToRoleAsync(superUser, UserRole.Admin);
+                        && await roleManager.RoleExistsAsync(UserRole.Teacher))
+                        await userManager.AddToRoleAsync(teacher, UserRole.Teacher);
                 }
             }
         }
