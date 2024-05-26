@@ -41,6 +41,8 @@ builder.Services.AddScoped<ILabCreationService, LabCreationService>();
 builder.Services.AddScoped<ILabRepository, LabRepository>();
 builder.Services.AddScoped<IUserLabRepository, UserLabsRepository>();
 builder.Services.AddScoped<IUserLabProvider, UserLabProviderService>();
+builder.Services.AddScoped<ILabProvider, LabProvider>();
+builder.Services.AddScoped<IUserHttpService, UserHttpService>();
 //конец))
 // самый важный класс
 

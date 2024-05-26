@@ -14,11 +14,15 @@ public class UserLabProviderService : IUserLabProvider
 {
     private readonly ILabRepository _labs;
     private readonly IUserLabRepository _userLabs;
+    private readonly IUserHttpService _userHttpService;
 
-    public UserLabProviderService(ILabRepository labs, IUserLabRepository userLabs)
+    public UserLabProviderService(ILabRepository labs, 
+        IUserLabRepository userLabs, 
+        IUserHttpService userHttpService)
     {
         _labs = labs;
         _userLabs = userLabs;
+        _userHttpService = userHttpService;
     }
 
     //Todo: сделать норм реализацию. здесь как минимум можно сделать один sql запрос, который будет решать половину логики. сейчас это кринж, и очень медленно. слишком медленно
@@ -111,39 +115,8 @@ public class UserLabProviderService : IUserLabProvider
         var answer = new List<AttemptShortInfo>();
         foreach (var userLab in userLabsResult.Value)
         {
-            var userInfo = await GetUserInfo(userLab.UserId.ToString());
+            var userInfo = await _userHttpService.GetUserInfo(userLab.UserId.ToString());
             answer.Add(AttemptShortInfo.From(userInfo, userLab));
-        }
-        return answer;
-    }
-
-    private async Task<UserInfo> GetUserInfo(string userId)
-    {
-        HttpResponseMessage response;
-        using (var httpClient = new HttpClient())
-        {
-            httpClient.BaseAddress = new Uri("https://localhost:7182");
-            response = await httpClient.GetAsync($"api/auth/users/{userId}");
-        }
-        response.EnsureSuccessStatusCode();
-        var contentStream = await response.Content.ReadAsStreamAsync();
-        var options = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
-        var userResponse = await JsonSerializer.DeserializeAsync<UserInfo>(contentStream, options);
-        return userResponse;
-    }
-
-    public async Task<Result<IReadOnlyCollection<TeacherLabShortInfo>>> GetTeacherLabs(Guid teacherId)
-    {
-        var labsResult = await _labs.GetAllByCreatorId(teacherId);
-        if (labsResult.IsFailed)
-            return Result.Fail(labsResult.Errors);
-        var answer = new List<TeacherLabShortInfo>();
-        foreach (var lab in labsResult.Value)
-        {
-            answer.Add(TeacherLabShortInfo.From(lab));
         }
         return answer;
     }

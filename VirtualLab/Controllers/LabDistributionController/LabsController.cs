@@ -14,17 +14,20 @@ namespace VirtualLab.Controllers.LabDistributionController;
 public class LabsController : ControllerBase
 {
     private readonly IUserLabProvider _userLabProvider;
+    private readonly ILabProvider _labProvider;
     private readonly ILabCreationService _labCreationService;
     private readonly ILabManager _labManager;
 
     public LabsController(
         IUserLabProvider userLabProvider,
-        ILabCreationService labCreationService, 
-        ILabManager labManager)
+        ILabCreationService labCreationService,
+        ILabManager labManager,
+        ILabProvider labProvider)
     {
         _userLabProvider = userLabProvider;
         _labCreationService = labCreationService;
         _labManager = labManager;
+        _labProvider = labProvider;
     }
 
     [HttpPost()]
@@ -52,7 +55,7 @@ public class LabsController : ControllerBase
     [HttpGet("teacher/{teacherId:guid}")]
     public async Task<ActionResult<IReadOnlyCollection<TeacherLabShortInfo>>> GetTeacherLabs(Guid teacherId)
     {
-        var labs = await _userLabProvider.GetTeacherLabs(teacherId);
+        var labs = await _labProvider.GetTeacherLabs(teacherId);
 
         return labs.Match(
             l => Ok(l),
