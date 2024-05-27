@@ -325,8 +325,7 @@ public class ProxmoxService
         var vmRef = proxmoxClient.Nodes[nodeName].Qemu[vmId];
 
         return (await vmRef.Status.Suspend.VmSuspend()).IsSuccessStatusCode
-               && (await vmRef.Status.Stop.VmStop()).IsSuccessStatusCode
-               && (await vmRef.Status.Suspend.VmSuspend()).IsSuccessStatusCode;
+               && (await vmRef.Status.Stop.VmStop()).IsSuccessStatusCode;
     }
 
     /// <summary>
