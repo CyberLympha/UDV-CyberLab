@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -17,15 +18,6 @@ namespace Authorization
             })
             .AddJwtBearer(options =>
             {
-                //TODO: убрать, тут уже header, а не cookies
-                options.Events = new JwtBearerEvents
-                {
-                    OnMessageReceived = context =>
-                    {
-                        context.Token = context.Request.Cookies["access_token"];
-                        return Task.CompletedTask;
-                    }
-                };
                 options.SaveToken = true;
                 options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new TokenValidationParameters()
@@ -38,6 +30,22 @@ namespace Authorization
                     IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey()
                 };
             });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Teacher", new AuthorizationPolicyBuilder()
+                    .RequireRole("Teacher")
+                    .RequireAuthenticatedUser()
+                    .Build());
+                options.AddPolicy("Student", new AuthorizationPolicyBuilder()
+                    .RequireRole("Student")
+                    .RequireAuthenticatedUser()
+                    .Build());
+                options.AddPolicy("Authenticated", new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build());
+            }
+);
         }
     }
 }

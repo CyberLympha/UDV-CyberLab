@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProxmoxApi;
 using VirtualLab.Application.Interfaces;
@@ -54,6 +55,7 @@ public class LabsController : ControllerBase
     }
 
     [HttpGet("teacher/{teacherId:guid}")]
+    [Authorize(Policy = "Teacher")]
     public async Task<ActionResult<IReadOnlyCollection<TeacherLabShortInfo>>> GetTeacherLabs(Guid teacherId)
     {
         var labs = await _labProvider.GetTeacherLabs(teacherId);
@@ -64,6 +66,7 @@ public class LabsController : ControllerBase
     }
 
     [HttpGet("{labId:guid}/userLabs")]
+    [Authorize(Policy = "Teacher")]
     public async Task<ActionResult<IReadOnlyCollection<AttemptShortInfo>>> GetAttemptsPerLab(Guid labId)
     {
         var attempts = await _userLabProvider.GetAllCompletedByLabId(labId);
@@ -74,6 +77,7 @@ public class LabsController : ControllerBase
     }
 
     [HttpGet("attempts/{userLabId:guid}")]
+    [Authorize(Policy = "Teacher")]
     public async Task<ActionResult<AttemptFullInfo>> GetAttempt(Guid userLabId)
     {
         var attemptResult = await _userLabProvider.GetAttempt(userLabId);
@@ -84,6 +88,7 @@ public class LabsController : ControllerBase
     }
 
     [HttpPatch("attempts/{userLabId:guid}")]
+    [Authorize(Policy = "Teacher")]
     public async Task<ActionResult<AttemptFullInfo>> UpdateUserLabRate(Guid userLabId, [FromBody]RateUpdateRequest request)
     {
         var attemptResult = await _userLabProvider.UpdateUserLabRate(userLabId, request.NewRate);
