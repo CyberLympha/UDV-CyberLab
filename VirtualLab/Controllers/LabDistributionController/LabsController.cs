@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProxmoxApi;
 using VirtualLab.Application.Interfaces;
 using VirtualLab.Controllers.LabCreationService.Dto;
+using VirtualLab.Controllers.LabDistributionController.Dto;
 using VirtualLab.Domain.Entities;
 using VirtualLab.Domain.Value_Objects;
 using VirtualLab.Domain.ValueObjects;
@@ -71,7 +72,27 @@ public class LabsController : ControllerBase
             a => Ok(a),
             e => NotFound(e));
     }
-    
+
+    [HttpGet("attempts/{userLabId:guid}")]
+    public async Task<ActionResult<AttemptFullInfo>> GetAttempt(Guid userLabId)
+    {
+        var attemptResult = await _userLabProvider.GetAttempt(userLabId);
+
+        return attemptResult.Match(
+            a => Ok(a),
+            e => NotFound(e));
+    }
+
+    [HttpPatch("attempts/{userLabId:guid}")]
+    public async Task<ActionResult<AttemptFullInfo>> UpdateUserLabRate(Guid userLabId, [FromBody]RateUpdateRequest request)
+    {
+        var attemptResult = await _userLabProvider.UpdateUserLabRate(userLabId, request.NewRate);
+
+        return attemptResult.Match(
+            a => Ok(a),
+            e => NotFound(e));
+    }
+
     [HttpGet("{labId:guid}/start")] 
     public async Task<ActionResult<ReadOnlyCollection<Credential>>> Start(Guid labId)
     {

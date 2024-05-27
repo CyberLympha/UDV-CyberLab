@@ -11,4 +11,6 @@ public interface IUserLabProvider
     public Task<Result<IReadOnlyCollection<UserLabInfo>>> GetInfoAll(User user); // todo: по guid. а не User.
     public Task<Result<UserLabInfo>> GetUserLab(Guid userId, Guid labId);
     public Task<Result<IReadOnlyCollection<AttemptShortInfo>>> GetAllCompletedByLabId(Guid labId);
+    public Task<Result<AttemptFullInfo>> GetAttempt(Guid userLabId);
+    public Task<Result<AttemptFullInfo>> UpdateUserLabRate(Guid userLabId, int newRate);
 }

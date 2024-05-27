@@ -120,4 +120,26 @@ public class UserLabProviderService : IUserLabProvider
         }
         return answer;
     }
+
+    public async Task<Result<AttemptFullInfo>> GetAttempt(Guid userLabId)
+    {
+        var userLabResult = await _userLabs.Get(userLabId);
+        if (userLabResult.IsFailed)
+            return Result.Fail(userLabResult.Errors);
+
+        var userLab = userLabResult.Value;
+        var userInfo = await _userHttpService.GetUserInfo(userLab.UserId.ToString());
+        return Result.Ok(AttemptFullInfo.From(userInfo, userLab));
+    }
+
+    public async Task<Result<AttemptFullInfo>> UpdateUserLabRate(Guid userLabId, int newRate)
+    {
+        var userLabResult = await _userLabs.UpdateRate(userLabId, newRate);
+        if (userLabResult.IsFailed)
+            return Result.Fail(userLabResult.Errors);
+
+        var userLab = userLabResult.Value;
+        var userInfo = await _userHttpService.GetUserInfo(userLab.UserId.ToString());
+        return Result.Ok(AttemptFullInfo.From(userInfo, userLab));
+    }
 }

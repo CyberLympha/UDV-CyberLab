@@ -30,4 +30,20 @@ public class UserLabsRepository : RepositoryBase<UserLab, Guid> ,IUserLabReposit
             .ToArrayAsync();
         return Result.Ok(userLabs);
     }
+
+    public async Task<Result<UserLab>> UpdateRate(Guid userLabId, int newRate)
+    {
+        var userLabResult = await Get(userLabId);
+        if (userLabResult.IsFailed)
+            return Result.Fail(userLabResult.Errors);
+
+        var userLab = userLabResult.Value;
+
+        userLab.Rate = newRate;
+        await _dbContext.SaveChangesAsync();
+
+        var updatedEntityEntry = _dbContext.Entry(userLab);
+        var updatedEntity = updatedEntityEntry.Entity;
+        return Result.Ok(updatedEntity);
+    }
 }
