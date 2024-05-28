@@ -1,32 +1,91 @@
-import React from "react";
+import React, {useState} from "react";
 import  "../TestsAdd/TestsAdd.css";
-import {Question} from "../../../api";
-import {apiService} from "../../services";
-import {Button} from "../Button/Button";
+import {Question, QuestionData} from "../../../api";
+import {VariantAdd} from "../VariantAdd/VariantAdd";
 
 
-export function QuestionAdd({id, text, description, questionType, questionData, correctAnswer} : Question) {
-    const [localName, setLocalName] = React.useState(text);
-    const [localDescription, setLocalDescription] = React.useState(description);
+export function QuestionAdd({ onChangeQuestion, id } : any, { text, questionType, questionData } : Question) {
+    const [localNameQuestion, setLocalNameQuestion] = React.useState(text);
+    const [localQuestionType, setLocalQuestionType] = React.useState("Radio");
+    // const [localCorrectAnswer, setLocalCorrectAnswer] = React.useState(correctAnswer);
+    const [localQuestionData, setLocalQuestionData] = React.useState<QuestionData>(questionData);
 
-    // const qwe = async () => {
-    //
-    //     const response = await apiService.postQuestion({
-    //         text: "localName",
-    //         description: "localDescription",
-    //         questionType: "questionType",
-    //         questionData: [],
-    //         correctAnswer: "correctAnswer"
-    //     });
-    //
-    //     if (response instanceof Error) {
-    //         return;
-    //     }
+    const variant : QuestionData = {
+        variants: []
+    };
+
+    const [dictVariants, setDictVariants] = useState({});
+    const [localVariant, setLocalVariant] = useState<string[]>([]);
+    const [question, setQuestion] = useState<Question>({
+        text: "",
+        description: "delete",
+        questionType: "Radio",
+        correctAnswer: "a",
+        questionData: variant
+    });
+    const [value] = useState<string>('');
+
+    React.useEffect(() => {
+        variant.variants = Object.values(dictVariants);
+
+        setQuestion({
+            ...question,
+            text: localNameQuestion,
+            questionType: localQuestionType,
+            questionData: variant
+        });
+
+    }, [localNameQuestion, localQuestionType, dictVariants])
+
+    React.useEffect(() => {
+        console.log(question);
+        sendQuestion();
+
+    }, [question])
+
+    const sendQuestion = () => {
+        onChangeQuestion(question, id);
+    };
+
+    const handleTextChanged = (event : any) => {
+        setLocalNameQuestion(event.target.value);
+    };
+
+    const handleTypeChanged = (event : any) => {
+        setLocalQuestionType(event.target.value);
+    };
+
+    // const handleAnswerChanged = (event : any) => {
+    //     question.correctAnswer = event.target.value;
+    //     sendQuestion();
     // };
+
+    const addNewVariant = () => {
+        setLocalVariant([...localVariant, value]);
+    };
+
+    const handleVariantChange = (currentVariant : string, index : number) => {
+        setDictVariants(prevDictionary => ({
+            ...prevDictionary,
+            [index]: currentVariant
+        }));
+    };
+
+    const variants = localVariant.map((element, index) => {
+        return <VariantAdd
+            key={`${index}`}
+            onChangeVariant={handleVariantChange}
+            id={`${index}`}
+        />;
+    });
+
+    const questionTypes = [
+        {label: "Один из списка", value: "Radio"},
+        {label: "Несколько из списка", value: "CheckBox"}
+    ];
 
     return (
         <div className="test__body">
-            {/*<Button onClick={qwe}>Отправить вопрос</Button>*/}
             <ul className="list__questions">
                 <li className="question">
                     <div className="ellipsis">
@@ -38,17 +97,17 @@ export function QuestionAdd({id, text, description, questionType, questionData, 
                     </div>
                     <nav className="question-type-nav">
                         <div className="question__title">
-                            <input type="text" className="question__title" placeholder="Новый заголовок"/>
+                            <input type="text" className="question__title" placeholder="Новый заголовок"
+                                   onChange={handleTextChanged}/>
                         </div>
                         <img src="./img/image.png"/>
 
-                        <select className="question__type">
-                            <option selected>
-                                Один из списка
-                            </option>
-                            <option>
-                                Несколько из списка
-                            </option>
+                        <select onChange={handleTypeChanged} className="question__type">
+                            {questionTypes.map((type, index) => (
+                                <option key={index} value={type.value}>
+                                    {type.label}
+                                </option>
+                            ))}
                         </select>
                     </nav>
                     <nav className="question-nav">
@@ -76,29 +135,18 @@ export function QuestionAdd({id, text, description, questionType, questionData, 
                         </ul>
                     </nav>
                     <ul className="list__answers">
+                        {variants}
                         <li className="answer">
-                                <span className="answer__prepend radio">
-                                    <input type="radio" name="radio"/>
-                                </span>
+                            <span className="answer__prepend radio">
+                                <input type="radio" name="radio"/>
+                            </span>
                             <div className="answer__title">
-                                <input type="text" className="answer__title" placeholder="Новый заголовок"/>
+                                <input onClick={addNewVariant} className="answer__title" placeholder="Добавить вариант"/>
                             </div>
-                            <span className="answer__append">
-                                    <img src="./img/image.png"/>
-                                    <img src="./img/delete.png"/>
-                                </span>
-                        </li>
-                        <li className="answer">
-                                <span className="answer__prepend radio">
-                                    <input type="radio" name="radio"/>
-                                </span>
-                            <div className="answer__title">
-                                <input type="text" className="answer__title" placeholder="Добавить вариант"/>
-                            </div>
-                            <span className="answer__append">
-                                    <img src="./img/image.png"/>
-                                    <img src="./img/delete.png"/>
-                                </span>
+                            {/*<span className="answer__append">*/}
+                            {/*        <img src="./img/image.png"/>*/}
+                            {/*        <img src="./img/delete.png"/>*/}
+                            {/*</span>*/}
                         </li>
                     </ul>
                     <footer className="test__footer">

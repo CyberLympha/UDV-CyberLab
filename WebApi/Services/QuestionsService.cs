@@ -12,6 +12,8 @@ public class QuestionsService
 
     public QuestionsService(QuestionValidationService questionValidationService, IRepository<Question> repository)
     {
+        Console.WriteLine("15");
+        
         _questionValidationService = questionValidationService;
         _repository = repository;
     }
@@ -22,14 +24,17 @@ public class QuestionsService
 
     public async Task<string> Create(Question question)
     {
-        Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        Console.WriteLine("27");
+        
         var newQuestion = await _repository.Create(question);
-        _questionValidationService.EnsureValid(question);
+        // _questionValidationService.EnsureValid(question);
         return newQuestion.Id;
     }
 
     public async Task Update(CreateQuestionRequest question, string id)
     {
+        Console.WriteLine("36");
+        
         var newQuestion = new Question()
         {
             Description = question.Description,
@@ -43,6 +48,8 @@ public class QuestionsService
 
     public async Task Delete(string id)
     {
+        Console.WriteLine("51");
+        
         _repository.Delete(id);
     }
 }

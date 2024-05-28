@@ -2,16 +2,41 @@ export interface Test {
   id: string;
   name: string;
   description: string;
-  questions: string[];
+  questions: Question[];
 }
 
 export interface Question {
-  id?: string;
+  // id: string;
   text?: string;
+  description: string,
+  questionType: string;
+  correctAnswer: string;
+  questionData: QuestionData;
+}
+
+export interface QuestionData {
+  // id?: string;
+  variants: string[];
+}
+
+export interface CreateLabReservationRequest {
+  timeStart: number;
+  timeEnd: number;
+  /** @minLength 1 */
+  theme: string;
+  /** @minLength 1 */
+  description: string;
+  reservorId: string|undefined;
+  lab: Lab|null;
+}
+
+export interface Lab {
+  /** @minLength 1 */
+  id: string;
+  title?: string;
+  shortDescription?: string;
   description?: string;
-  questionType?: string;
-  correctAnswer?: string;
-  questionData?: string[];
+  labsEntitys?: string[];
 }
 
 export interface BalloonInfoInt {
@@ -110,15 +135,6 @@ export interface Ip {
   ipAddress?: string | null;
   /** @format int32 */
   prefix?: number;
-}
-
-export interface Lab {
-  /** @minLength 1 */
-  id: string;
-  title?: string;
-  shortDescription?: string;
-  description?: string;
-  labsEntitys?: string[];
 }
 
 export interface LoginRequest {
@@ -342,17 +358,6 @@ export interface LabReservation {
   description: string;
   reservor: User;
   lab: Lab;
-}
-
-export interface CreateLabReservationRequest {
-  timeStart: number;
-  timeEnd: number;
-  /** @minLength 1 */
-  theme: string;
-  /** @minLength 1 */
-  description: string;
-  reservorId: string|undefined;
-  lab: Lab|null;
 }
 
 export interface UpdateLabReservationRequest {

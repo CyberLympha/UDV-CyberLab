@@ -25,30 +25,20 @@ export class ApiService {
         return this.httpClient.get<Test>(`/tests/${id}`)
     }
 
-    public postTest(request: {name: string, description: string, questions: string[]}) {
-        return this.httpClient.post<{
-            name: string,
-            description: string,
-            questions: string[]
-        }, void>('/tests', request)
+    public postTest(request: Test) {
+        console.log(JSON.stringify(request));
+        return this.httpClient.post<Test , void>('/tests', request)
     }
 
-    public postQuestion(request: {text: string, description: string,
-        questionType: string, correctAnswer: string, questionData: string[]}) {
-        return this.httpClient.post<{
-            text: string,
-            description: string,
-            questionType: string,
-            questionData: string[],
-            correctAnswer: string
-        }, void>('/questions', request)
+    public createLabReservation(request: CreateLabReservationRequest) {
+        return this.httpClient.post<CreateLabReservationRequest, void>('/schedule/create', request)
     }
 
     public getQuestions() {
         return this.httpClient.get<Question[]>(`/Questions`)
     }
 
-    public getQuestion(questionId: string) {
+    public getQuestion(questionId: Question) {
         return this.httpClient.get<Question>(`/Questions/${questionId}`)
     }
 
@@ -142,10 +132,6 @@ export class ApiService {
 
     public getNewItem(request: { id: string }) {
         return this.httpClient.get<News>('/news/item', request)
-    }
-
-    public createLabReservation(request: CreateLabReservationRequest) {
-        return this.httpClient.post<CreateLabReservationRequest, void>('/schedule/create', request)
     }
 
     public getLabReservation(id: string) {

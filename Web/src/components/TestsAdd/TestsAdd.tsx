@@ -4,30 +4,32 @@ import {Button} from "../Button/Button";
 import {QuestionAdd} from "../QuestionAdd/QuestionAdd";
 import {apiService} from "../../services";
 import {useNavigate} from "react-router-dom";
-import {Question} from "../../../api";
+import {Question, Test} from "../../../api";
 
-interface TestsAddProps {
-    id?: string;
-    name?: string;
-    description?: string;
-    questions?: Question;
-}
 
-export function TestsAdd({id, name, description, questions} : TestsAddProps) {
+export function TestsAdd({id, name, description, questions} : Test) {
     const [localName, setLocalName] = React.useState(name);
     const [localDescription, setLocalDescription] = React.useState(description);
-    const [localQuestion, setLocalQuestion] = useState<string[]>([]);
+    const [localQuestion, setLocalQuestion] = React.useState<string[]>([]);
+    const [dictQuestions, setDictQuestions] = useState({});
     const [value] = useState<string>('');
     const navigate = useNavigate();
 
     const addNewTest = async () => {
         if (!localName || !localDescription) return;
 
-        const response = await apiService.postTest({
+        const questions : Question[] = Object.values(dictQuestions);
+
+        const newTest : Test = {
+            id: id,
             name: localName,
             description: localDescription,
-            questions: []
-        });
+            questions: questions
+        };
+
+        console.log(newTest);
+
+        const response = await apiService.postTest(newTest);
         if (response instanceof Error) {
             return;
         }
@@ -35,25 +37,19 @@ export function TestsAdd({id, name, description, questions} : TestsAddProps) {
         navigate("/tests")
     };
 
-    // const qwe = async () => {
-    //
-    //     const response = await apiService.postQuestion({
-    //         text: "",
-    //         description: "",
-    //         questionType: "",
-    //         questionData: [],
-    //         correctAnswer: ""
-    //     });
-    //
-    //     if (response instanceof Error) {
-    //         return;
-    //     }
-    //
-    //     navigate("/tests")
-    // };
+    const handleQuestionChange = (currentQuestion : Question, index : number) => {
+        setDictQuestions(prevDictionary => ({
+            ...prevDictionary,
+            [index]: currentQuestion
+        }));
+    };
 
-    const question = localQuestion.map((element, index) => {
-        return <QuestionAdd key={`${index}`} />;
+    const questionElements = localQuestion.map((element, index) => {
+        return <QuestionAdd
+            key={index}
+            onChangeQuestion={handleQuestionChange}
+            id={`${index}`}
+        />
     });
 
     const addNewQuestion = () => {
@@ -97,11 +93,10 @@ export function TestsAdd({id, name, description, questions} : TestsAddProps) {
                                onChange={e => setLocalDescription(e.target.value)}/>
                     </div>
                 </div>
-                {question}
+                {questionElements}
             </div>
             <Button onClick={addNewQuestion}>Добавить вопрос</Button>
             <Button onClick={addNewTest}>Создать тест</Button>
-            {/*<Button onClick={qwe}>Отправить вопрос</Button>*/}
         </body>
     )
 }

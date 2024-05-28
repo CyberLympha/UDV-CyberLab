@@ -13,6 +13,7 @@ import {LabSchedule} from "../LabSchedule/LabSchedule";
 import {Tests} from "../Tests/Tests";
 import {TestsAdd} from "../TestsAdd/TestsAdd";
 import {NewQuestion} from "../NewQuestion/NewQuestion";
+import {TestOpen} from "../TestOpen/TestOpen";
 
 
 const Protected = observer(({children}: { children: JSX.Element }) => {

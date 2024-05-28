@@ -14,6 +14,8 @@ public class QuestionsController : ControllerBase
 
     public QuestionsController(QuestionsService questionsService)
     {
+        Console.WriteLine("17");
+        
         _questionsService = questionsService;
     }
     
@@ -21,6 +23,8 @@ public class QuestionsController : ControllerBase
     // [Authorize(Roles = "Admin,User")]
     public async Task<ActionResult<List<Question>>> Get()
     { 
+        Console.WriteLine("26");
+
         return (await _questionsService.Get).ToList();
     }
     
@@ -28,12 +32,16 @@ public class QuestionsController : ControllerBase
     // [Authorize(Roles = "Admin,User")]
     public async Task<ActionResult<Question>> GetById(string id)
     { 
+        Console.WriteLine("35");
+
         return await _questionsService.GetById(id);
     }
     
     [HttpPost("batchGet")]
     public async Task<Question[]> BatchGet(string[] ids)
     {
+        Console.WriteLine("43");
+
         return ids.Select(id => _questionsService.GetById(id).Result).Where(x => x != null).ToArray();
     }
     
@@ -41,6 +49,8 @@ public class QuestionsController : ControllerBase
     // [Authorize(Roles = "Admin,User")]
     public async Task<IActionResult> Post(CreateQuestionRequest request)
     {
+        Console.WriteLine("52");
+
         var question = new Question()
         {
             Description = request.Description,
@@ -55,6 +65,8 @@ public class QuestionsController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Put(CreateQuestionRequest request, string id)
     {
+        Console.WriteLine("68");
+
         await _questionsService.Update(request, id);
         return Ok();
     }
@@ -62,6 +74,8 @@ public class QuestionsController : ControllerBase
     [HttpDelete]
     public async Task<IActionResult> Delete(string id)
     {
+        Console.WriteLine("77");
+
         await _questionsService.Delete(id);
         return Ok();
     }
