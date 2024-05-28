@@ -1,13 +1,11 @@
 import React from "react";
-
 import {Test as TestsItem} from "../../../api"
 import {apiService} from "../../services";
-import {TestOpen} from "../TestOpen/TestOpen"
-
 import style from "./Tests.module.scss"
 import {Button} from "../Button/Button";
 import {AiOutlinePlus} from "react-icons/all";
 import {useNavigate} from "react-router-dom";
+import { TestItem } from "./TestItem";
 
 
 export function Tests() {
@@ -35,11 +33,24 @@ export function Tests() {
     </div>
 
     return (
-        <div id={"news"} className={style.container}>
-            {addNewItemButton}
-            <div>
-                {tests?.map(newItem => <TestOpen key={`${newItem.id}`} {...newItem} />)}
-            </div>
-        </div>
+    <div>
+        <table className="test_table">
+        <thead>
+        <tr>
+        <th>Имя теста</th>
+        <th>Описание теста</th>
+        <th>Владелец теста</th>
+        <th className="head_sort">
+            <img className="test_order" src="public/img/order.png" />
+            <img className="test_title" src="public/img/sort.png" />
+        </th>
+        </tr>
+        </thead>
+        <tbody>
+            {tests.map(test => <TestItem key={test.id } {...test} ></TestItem>)}
+        </tbody>
+        </table>
+        {addNewItemButton}
+    </div>
     )
 }
