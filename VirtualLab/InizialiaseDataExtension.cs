@@ -14,10 +14,7 @@ public static class InizialiaseDataExtension
         var labDbContext = builder.Services.CreateScope().ServiceProvider.GetService<LabDbContext>();
         var log = builder.Services.CreateScope().ServiceProvider.GetService<ILog>();
 
-        
-        
-        
-        
+
         foreach (var status in typeof(StatusUserLabEnum).GetEnumValues())
         {
             if (!labDbContext.UserLabStatus.Have(status.ToString(), log))

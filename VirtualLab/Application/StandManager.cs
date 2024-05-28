@@ -89,7 +89,7 @@ public class StandManager : IStandManager
                     standRemoveConfig.VmsData[0].Node, x), // todo: кринж с array
             standRemoveConfig.GetAllNetsInterfaces());
 
-        await _proxmoxNetworkDevice.Apply("pve");
+        await _proxmoxNetworkDevice.Apply(standRemoveConfig.VmsData[0].Node); // тоже самое
 
         return Result.Ok();
     }
