@@ -2,6 +2,7 @@ using Corsinvest.ProxmoxVE.Api;
 using VirtualLab.Application;
 using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Interfaces.Proxmox;
+using VirtualLab.Infrastructure;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Console;
 using Vostok.Logging.Microsoft;
@@ -26,9 +27,11 @@ public static class ServiceCollectionExtension
 
     public static void AddPveClient(this IServiceCollection services)
     {
-        var client = new PveClient("10.40.229.10");
-        //todo: в будущем реализовать класс, который будет брать из переменных окружения токен.
-        client.ApiToken = "root@pam!devil=e094061e-e909-4415-9a57-f353a81a9eed";
+        var authData = ProxmoxAuthData.FromEnv();
+        var client = new PveClient(authData.Ip.Value)
+        {
+            ApiToken = authData.Token
+        };
 
         services.AddSingleton<IProxmoxNetwork, Proxmox>();
         services.AddSingleton<IProxmoxVm, Proxmox>();
@@ -36,5 +39,6 @@ public static class ServiceCollectionExtension
         services.AddSingleton<IStandManager, StandManager>();
         services.AddScoped<ILabConfigure, LabConfigure>();
         services.AddSingleton(client);
+        services.AddSingleton(authData);
     }
 }

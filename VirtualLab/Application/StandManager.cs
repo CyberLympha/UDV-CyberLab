@@ -70,7 +70,7 @@ public class StandManager : IStandManager
                     Password = cloneVmConfig.Template.Password,
                     Username = cloneVmConfig.Template.Name,
                     Node = standCreateConfig.Node,
-                    Ip = getIp.Value.IpV4
+                    Ip = getIp.Value.Value
                 });
             }
         }

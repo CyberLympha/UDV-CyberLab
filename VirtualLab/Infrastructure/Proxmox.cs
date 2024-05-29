@@ -4,6 +4,7 @@ using VirtualLab.Domain.Interfaces.Proxmox;
 using VirtualLab.Domain.Value_Objects.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox.Requests;
+using VirtualLab.Infrastructure;
 using VirtualLab.Infrastructure.ApiResult;
 using VirtualLab.Infrastructure.Extensions;
 using Vostok.Logging.Abstractions;
@@ -14,12 +15,14 @@ namespace VirtualLab.Application;
 public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итоге это будет два отдельных класса)
 {
     private readonly PveClient _client;
-    private ILog _log;
-
-    public Proxmox(PveClient client, ILog log)
+    private readonly ILog _log;
+    private readonly ProxmoxAuthData proxmoxData;
+    public Proxmox(PveClient client, ILog log, ProxmoxAuthData proxmoxData)
     {
         _client = client;
         _log = log;
+        proxmoxData = proxmoxData;
+
     }
 
     public async Task<Result> Clone(CloneVmConfig vmConfig, string node)
@@ -190,9 +193,9 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
                         if (ipPair.Key != "ip-address") continue;
 
                         var ip = ipPair.Value as string;
-                        if (!string.IsNullOrEmpty(ip) && ip.StartsWith(ProxmoxSetting.NetworkIdGlobalNetwork))
+                        if (!string.IsNullOrEmpty(ip) && ip.StartsWith(proxmoxData.Ip.GetIdNetwork()))
                         {
-                            return new Ip() { IpV4 = ipPair.Value as string };
+                            return new Ip() { Value = ipPair.Value as string };
                         }
                     }
                 }
