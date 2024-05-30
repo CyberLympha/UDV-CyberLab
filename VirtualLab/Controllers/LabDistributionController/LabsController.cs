@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProxmoxApi;
@@ -44,9 +45,11 @@ public class LabsController : ControllerBase
     }
 
     [HttpGet] // ограничение на роли
+    [Authorize(Policy = "Student")]
     public async Task<ActionResult<IReadOnlyCollection<UserLabInfo>>> Get()
     {
-        var user = new User();
+        var id = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
+        var user = new User { Id = Guid.Parse(id) };
         var labs = await _userLabProvider.GetInfoAll(user);
         
         return labs.Match(
