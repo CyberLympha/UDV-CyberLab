@@ -1,22 +1,22 @@
 ﻿using System.Text.Json;
-using WebApi.Model.Exceptions;
+using WebApi.Helpers;
 using WebApi.Model.QuestionModels;
 
 namespace WebApi.Services;
 
 public class QuestionValidationService
 {
-    public void EnsureValid(Question question)
+    public ApiOperationResult EnsureValid(Question question)
     {
-        if (question.QuestionType == QuestionType.Radio)
-            IsRadioQuestionValid(question);
-        if (question.QuestionType == QuestionType.CheckBox)
-            IsCheckBoxQuestionValid(question);
-        if (question.QuestionType == QuestionType.Text)
-            return;
+        return question.QuestionType switch
+        {
+            QuestionType.Radio => IsRadioQuestionValid(question),
+            QuestionType.CheckBox => IsCheckBoxQuestionValid(question),
+            _ => ApiOperationResult.Success()
+        };
     }
 
-    private void IsCheckBoxQuestionValid(Question question)
+    private ApiOperationResult IsCheckBoxQuestionValid(Question question)
     {
         Dictionary<string, string>? data;
         try
@@ -25,7 +25,7 @@ public class QuestionValidationService
         }
         catch
         {
-            throw new IncorrectDataException("Поле QuestionData должно являться Dictionary<string, string>");
+            return Error.BadRequest("Поле QuestionData должно являться Dictionary<string, string>");
         }
 
         try
@@ -34,7 +34,7 @@ public class QuestionValidationService
         }
         catch
         {
-            throw new IncorrectDataException("В QuestionData должно должно быть поле Variants");
+            return Error.BadRequest("В QuestionData должно должно быть поле Variants");
         }
 
         try
@@ -43,11 +43,13 @@ public class QuestionValidationService
         }
         catch
         {
-            throw new IncorrectDataException("CorrectAnswer должен иметь вид List<string>");
+            return Error.BadRequest("CorrectAnswer должен иметь вид List<string>");
         }
+
+        return ApiOperationResult.Success();
     }
 
-    private void IsRadioQuestionValid(Question question)
+    private ApiOperationResult IsRadioQuestionValid(Question question)
     {
         Dictionary<string, string>? data;
         try
@@ -56,7 +58,7 @@ public class QuestionValidationService
         }
         catch
         {
-            throw new IncorrectDataException("Поле QuestionData должно являться Dictionary<string, string>");
+            return Error.BadRequest("Поле QuestionData должно являться Dictionary<string, string>");
         }
 
         try
@@ -65,7 +67,9 @@ public class QuestionValidationService
         }
         catch
         {
-            throw new IncorrectDataException("В QuestionData должно должно быть поле Variants");
+            return Error.BadRequest("В QuestionData должно должно быть поле Variants");
         }
+
+        return ApiOperationResult.Success();
     }
 }

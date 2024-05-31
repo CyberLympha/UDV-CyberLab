@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using WebApi.Helpers;
 
 namespace WebApi.Model.Repositories.MongoDbRepositories;
 
@@ -34,8 +35,11 @@ public class MongoRepository<T> : IRepository<T> where T : IIdentifiable
         return updatedItem;
     }
 
-    public async void Delete(string id)
+    public async Task<ApiOperationResult> Delete(string id)
     {
-        await _collection.DeleteOneAsync(x => x.Id == id);
+        var deleteResult = await _collection.DeleteOneAsync(x => x.Id == id);
+        return deleteResult.DeletedCount == 0
+            ? Error.NotFound("Не удалось удалить вопрос с данным id")
+            : ApiOperationResult.Success();
     }
 }

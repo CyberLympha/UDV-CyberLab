@@ -1,6 +1,8 @@
-﻿namespace WebApi.Model.Repositories;
+﻿using WebApi.Helpers;
 
-public interface IRepository<T>
+namespace WebApi.Model.Repositories;
+
+public interface IRepository<T> where T: IIdentifiable
 {
     Task<T> Create(T itemToCreate);
 
@@ -12,5 +14,5 @@ public interface IRepository<T>
 
     Task<T> Update(T itemToUpdate);
 
-    void Delete(string id);
+    Task<ApiOperationResult> Delete(string id);
 }

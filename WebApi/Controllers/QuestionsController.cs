@@ -16,47 +16,49 @@ public class QuestionsController : ControllerBase
     {
         _questionsService = questionsService;
     }
-    
+
     [HttpGet]
     // [Authorize(Roles = "Admin,User")]
     public async Task<ActionResult<List<Question>>> Get()
-    { 
-        return (await _questionsService.Get).ToList();
+    {
+        return (await _questionsService.Get.ConfigureAwait(false)).ToList();
     }
-    
+
     [HttpGet("{id}")]
     // [Authorize(Roles = "Admin,User")]
     public async Task<ActionResult<Question>> GetById(string id)
-    { 
-        return await _questionsService.GetById(id);
+    {
+        var result = await _questionsService.GetById(id).ConfigureAwait(false);
+        return result.ToActionResult();
     }
-    
+
+
     [HttpPost("batchGet")]
     public async Task<Question[]> BatchGet(string[] ids)
     {
-        return ids.Select(id => _questionsService.GetById(id).Result).Where(x => x != null).ToArray();
+        return ids.Select(id => _questionsService.GetById(id).Result.Result).Where(x => x != null).ToArray();
     }
-    
+
     [HttpPost]
     // [Authorize(Roles = "Admin,User")]
-    public async Task<IActionResult> Post(CreateQuestionRequest request)
+    public async Task<ActionResult<string>> Post(CreateQuestionRequest request)
     {
-            var question = new Question()
+        var question = new Question
         {
             Description = request.Description,
             Text = request.Text,
             QuestionData = JsonSerializer.Serialize(request.QuestionData),
-            QuestionType =    request.QuestionType
+            QuestionType = request.QuestionType
         };
-        var id = await _questionsService.Create(question);
-        return Ok(id);
+        var result = await _questionsService.Create(question).ConfigureAwait(false);
+        return result.ToActionResult();
     }
 
     [HttpPut]
     public async Task<IActionResult> Put(CreateQuestionRequest request, string id)
     {
-        await _questionsService.Update(request, id);
-        return Ok();
+        var result = await _questionsService.Update(request, id).ConfigureAwait(false);
+        return result.ToActionResult();
     }
 
     [HttpDelete]

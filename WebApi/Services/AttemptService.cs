@@ -1,7 +1,5 @@
-﻿using MongoDB.Driver;
-using MongoDB.Driver.Linq;
+using WebApi.Helpers;
 using WebApi.Model.AttemptModels;
-using WebApi.Model.Exceptions;
 using WebApi.Model.Repositories;
 
 namespace WebApi.Services;
@@ -12,23 +10,35 @@ public class AttemptService
     private readonly IRepository<Attempt> _attemptRepository;
     private readonly TestsService _testsService;
     private readonly QuestionsService _questionsService;
+    private readonly IdValidationHelper _idValidationHelper;
 
     public AttemptService(
-        TestsService testsService, 
-        AnswerVerifyService answerVerifyService, 
-        QuestionsService questionsService, 
-        IRepository<Attempt> attemptRepository
-        )
+        TestsService testsService,
+        AnswerVerifyService answerVerifyService,
+        QuestionsService questionsService,
+        IRepository<Attempt> attemptRepository,
+        IdValidationHelper idValidationHelper)
     {
         _testsService = testsService;
         _answerVerifyService = answerVerifyService;
         _questionsService = questionsService;
         _attemptRepository = attemptRepository;
+        _idValidationHelper = idValidationHelper;
     }
 
-    public async Task<string> Start(NewAttemptRequest newAttemptRequest)
+    public async Task<ApiOperationResult<string>> Start(NewAttemptRequest newAttemptRequest)
     {
-        var attempt = new Attempt()
+        var examineeIdValidationResult =
+            _idValidationHelper.EnsureValidId(newAttemptRequest.ExamineeId, "Неверный формат ExamineeId");
+        if (!examineeIdValidationResult.IsSuccess)
+            return examineeIdValidationResult.Error;
+
+        var testIdValidationResult =
+            _idValidationHelper.EnsureValidId(newAttemptRequest.TestId, "Неверный формат TestId");
+        if (!testIdValidationResult.IsSuccess)
+            return testIdValidationResult.Error;
+
+        var attempt = new Attempt
         {
             ExamineeId = newAttemptRequest.ExamineeId,
             TestId = newAttemptRequest.TestId,
@@ -36,69 +46,105 @@ public class AttemptService
             StartTime = DateTime.Now,
             Results = new Dictionary<string, string>()
         };
-        return (await _attemptRepository.Create(attempt)).Id;
+        return (await _attemptRepository.Create(attempt).ConfigureAwait(false)).Id;
     }
 
-    public async Task GiveTheAnswer(GiveOrChangeTheAnswerAction request)
+    public async Task<ApiOperationResult> GiveOrChangeTheAnswer(GiveOrChangeTheAnswerAction request)
     {
-        var attempt = await _attemptRepository.ReadById(request.AttemptId);
-        EnsureAllowed(attempt);
-        attempt.Results.Add(request.QuestionId, request.Answer);
-        await _attemptRepository.Update(attempt);
-    }
-    
-    public async Task ChangeTheAnswer(GiveOrChangeTheAnswerAction request)
-    {
-        var attempt = await _attemptRepository.ReadById(request.AttemptId);
-        EnsureAllowed(attempt);
-        attempt.Results[request.QuestionId] = request.Answer;
-        await _attemptRepository.Update(attempt);
+        var attemptIdValidationResult =
+            _idValidationHelper.EnsureValidId(request.AttemptId, "Неверный формат AttemptId");
+        if (!attemptIdValidationResult.IsSuccess)
+            return attemptIdValidationResult.Error;
+
+        var questionIdValidationResult =
+            _idValidationHelper.EnsureValidId(request.QuestionId, "Неверный формат QuestionId");
+        if (!questionIdValidationResult.IsSuccess)
+            return questionIdValidationResult.Error;
+
+        var attempt = await _attemptRepository.ReadById(request.AttemptId).ConfigureAwait(false);
+        if (attempt is null)
+            return Error.NotFound("Attempt с таким id не существует");
+
+        var ensureAllowedResult = EnsureAllowed(attempt);
+        if (!ensureAllowedResult.IsSuccess)
+            return ensureAllowedResult.Error;
+
+        if (attempt.Results.ContainsKey(request.QuestionId))
+            attempt.Results[request.QuestionId] = request.Answer;
+        else
+            attempt.Results.Add(request.QuestionId, request.Answer);
+
+        await _attemptRepository.Update(attempt).ConfigureAwait(false);
+        return ApiOperationResult.Success();
     }
 
-    public async Task End(string id)
+    public async Task<ApiOperationResult> End(string id)
     {
-        var attempt = await _attemptRepository.ReadById(id);
+        var idValidationResult = _idValidationHelper.EnsureValidId(id);
+        if (!idValidationResult.IsSuccess)
+            return idValidationResult.Error;
+
+        var attempt = await _attemptRepository.ReadById(id).ConfigureAwait(false);
+        if (attempt is null)
+            return Error.NotFound("Attempt с таким id не существует");
+
         attempt.Status = AttemptStatus.Ended;
         attempt.EndTime = DateTime.Now;
-        await _attemptRepository.Update(attempt);
+        await _attemptRepository.Update(attempt).ConfigureAwait(false);
+        return ApiOperationResult.Success();
     }
 
-    public async Task<Attempt> Get(string attemptId)
+    public async Task<ApiOperationResult<Attempt>> Get(string attemptId)
     {
-        return await _attemptRepository.ReadById(attemptId);
+        var idValidationResult = _idValidationHelper.EnsureValidId(attemptId);
+        if (!idValidationResult.IsSuccess)
+            return idValidationResult.Error;
+
+        return await _attemptRepository.ReadById(attemptId).ConfigureAwait(false);
     }
 
     public async Task<Attempt[]> BatchGet(string[] ids)
     {
         return ids.Select(id => _attemptRepository.ReadById(id).Result).Where(x => x != null).ToArray();
     }
-    
-    public async Task<AttemptResult> GetResult(string attemptId)
+
+    public async Task<ApiOperationResult<AttemptResult>> GetResult(string attemptId)
     {
-        var attempt = await _attemptRepository.ReadById(attemptId);;
-        var test = (await _testsService.GetById(attempt.TestId));
-        var result = new AttemptResult()
+        var idValidationResult = _idValidationHelper.EnsureValidId(attemptId);
+        if (!idValidationResult.IsSuccess)
+            return idValidationResult.Error;
+
+        var attempt = await _attemptRepository.ReadById(attemptId).ConfigureAwait(false);
+        if (attempt is null)
+            return Error.NotFound("Attempt с таким id не существует");
+
+        var test = await _testsService.GetById(attempt.TestId).ConfigureAwait(false);
+        var result = new AttemptResult
         {
             Results = new Dictionary<string, string>()
         };
         var correctAnswers = 0;
-        foreach (var questionId in test.Questions)
+        foreach (var questionId in test.Result.Questions)
         {
-            var question = await _questionsService.GetById(questionId);
-            var isCorrect = await _answerVerifyService.IsCorrect(question, attempt.Results[questionId]);
+            var question = await _questionsService.GetById(questionId).ConfigureAwait(false);
+            var isCorrect = await _answerVerifyService.IsCorrect(question.Result, attempt.Results[questionId])
+                .ConfigureAwait(false);
+            if (!isCorrect.IsSuccess)
+                return isCorrect.Error;
+
             result.Results.Add(questionId, $"isCorrect: {isCorrect}");
-            if (isCorrect)
+            if (isCorrect.Result)
                 correctAnswers++;
         }
 
-        result.TotalScore = $"Result: {correctAnswers}/{test.Questions.Count}";
-
+        result.TotalScore = $"Result: {correctAnswers}/{test.Result.Questions.Count}";
         return result;
     }
 
-    private void EnsureAllowed(Attempt attempt)
+    private static ApiOperationResult EnsureAllowed(Attempt attempt)
     {
-        if (attempt.Status == AttemptStatus.Ended)
-            throw new AttemptException("Attempt is ended");
+        return attempt.Status == AttemptStatus.Ended
+            ? Error.BadRequest("Attempt is ended")
+            : ApiOperationResult.Success();
     }
 }
