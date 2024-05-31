@@ -43,12 +43,12 @@ builder.Services.AddPveClient();
 var app = builder.Build();
 app.UseMiddleware<ExceptionHandlerMiddleware>();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseUserLabStatuses();
 app.UseHttpsRedirection();
 
