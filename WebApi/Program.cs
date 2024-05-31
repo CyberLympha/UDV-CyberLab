@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
+using WebApi.Helpers;
 using WebApi.Model.AttemptModels;
 using WebApi.Model.AuthModels;
 using WebApi.Model.LabModels;
@@ -56,14 +57,21 @@ builder.Services.AddSingleton<AnswerVerifyService>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddSingleton<LabsService>();
 builder.Services.AddSingleton<LabReservationsService>();
-builder.Services.AddSingleton<QuestionValidationService>();
 
 builder.Services.AddSingleton<IRepository<Test>, MongoRepository<Test>>();
 builder.Services.AddSingleton<IRepository<Question>, MongoRepository<Question>>();
 builder.Services.AddSingleton<IRepository<Attempt>, MongoRepository<Attempt>>();
+builder.Services.AddSingleton<TestsService>();
+builder.Services.AddSingleton<QuestionsService>();
+builder.Services.AddSingleton<QuestionValidationService>();
+builder.Services.AddSingleton<IdValidationHelper>();
 
 builder.Services.AddCors(p => p.AddPolicy("AllowAll",
-    b => { b.WithOrigins("http://10.40.229.60:3000","http://localhost:5173").AllowAnyMethod().AllowAnyHeader().AllowCredentials(); }));
+    b =>
+    {
+        b.WithOrigins("http://10.40.229.60:3000", "http://localhost:5173").AllowAnyMethod().AllowAnyHeader()
+            .AllowCredentials();
+    }));
 
 builder.Services.AddControllers();
 

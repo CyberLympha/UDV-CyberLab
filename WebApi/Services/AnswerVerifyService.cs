@@ -1,11 +1,13 @@
-﻿using System.Text.Json;
+﻿using System.Net;
+using System.Text.Json;
+using WebApi.Helpers;
 using WebApi.Model.QuestionModels;
 
 namespace WebApi.Services;
 
 public class AnswerVerifyService
 {
-    public async Task<bool> IsCorrect(Question question, string answer)
+    public async Task<ApiOperationResult<bool>> IsCorrect(Question question, string answer)
     {
         switch (question.QuestionType)
         {
@@ -22,7 +24,7 @@ public class AnswerVerifyService
             case QuestionType.Text:
                 return answer == question.CorrectAnswer;
             default:
-                throw new Exception();
+                return ApiOperationResult<bool>.Failure(HttpStatusCode.InternalServerError, "Неизвестный QuestionType");
         }
     }
 }

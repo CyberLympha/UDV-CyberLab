@@ -24,42 +24,45 @@ public class TestsController : ControllerBase
     [HttpGet]
     // [Authorize(Roles = "Admin,User")]
     public async Task<ActionResult<List<Test>>> Get()
-    { 
-        return (await _testsService.Get).ToList();
+    {
+        return (await _testsService.Get.ConfigureAwait(false)).ToList();
     }
-    
+
     [HttpGet("{id}")]
     // [Authorize(Roles = "Admin,User")]
     public async Task<ActionResult<Test>> GetById(string id)
     {
-        return await _testsService.GetById(id);
+        var result = await _testsService.GetById(id).ConfigureAwait(false);
+        return result.ToActionResult();
     }
-    
+
     [HttpPost]
     // [Authorize(Roles = "Admin,User")]
-    public async Task<IActionResult> Post(CreateTestRequest request)
+    public async Task<ActionResult<string>> Post(CreateTestRequest request)
     {
-        var test = new Test()
+        var test = new Test
         {
             Description = request.Description,
             Name = request.Name,
             Questions = new List<string>()
         };
-        
+
         foreach (var question in request.Questions)
         {
-            var newQuestion = new Question()
+            var newQuestion = new Question
             {
                 Description = question.Description,
                 Text = question.Text,
                 QuestionData = JsonSerializer.Serialize(question.QuestionData),
                 QuestionType = question.QuestionType
             };
-            var questionId = await _questionsService.Create(newQuestion);
-            test.Questions.Add(questionId);
+            var questionIdResult = await _questionsService.Create(newQuestion).ConfigureAwait(false);
+            if (!questionIdResult.IsSuccess)
+                return questionIdResult.ToActionResult();
+            test.Questions.Add(questionIdResult.Result);
         }
 
-        var testId = await _testsService.Create(test);
-        return Ok(testId);
+        var testId = await _testsService.Create(test).ConfigureAwait(false);
+        return testId.ToActionResult();
     }
 }

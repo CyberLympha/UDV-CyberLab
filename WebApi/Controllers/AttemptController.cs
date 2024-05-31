@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebApi.Model.AttemptModels;
-using WebApi.Model.Exceptions;
 using WebApi.Services;
 
 namespace WebApi.Controllers;
@@ -15,66 +14,44 @@ public class AttemptController : ControllerBase
     }
 
     [HttpPost("start")]
-    public async Task<IActionResult> Start(NewAttemptRequest request)
+    public async Task<ActionResult<string>> Start(NewAttemptRequest request)
     {
-        var attemptId = await _attemptService.Start(request);
-        return Ok(attemptId);
+        var attemptStartResult = await _attemptService.Start(request).ConfigureAwait(false);
+        return attemptStartResult.ToActionResult();
     }
-    
+
     [HttpPost("{id}/give_the_answer")]
-    public async Task<IActionResult> GiveTheAnswer(GiveOrChangeTheAnswerRequest request, string id)
-    {
-        try
-        {
-            var giveTheAnswerAction = new GiveOrChangeTheAnswerAction()
-            {
-                AttemptId = id,
-                QuestionId = request.QuestionId,
-                Answer = request.Answer
-            };
-            await _attemptService.GiveTheAnswer(giveTheAnswerAction);
-            return Ok();
-        }
-        catch (AttemptException e)
-        {
-            return BadRequest(e);
-        }
-    }
     [HttpPost("{id}/change_the_answer")]
-    public async Task<IActionResult> ChangeTheAnswer(GiveOrChangeTheAnswerRequest request, string id)
+    public async Task<IActionResult> GiveOrChangeTheAnswer(GiveOrChangeTheAnswerRequest request, string id)
     {
-        try
+        var giveTheAnswerAction = new GiveOrChangeTheAnswerAction
         {
-            var changeTheAnswerAction = new GiveOrChangeTheAnswerAction()
-            {
-                AttemptId = id,
-                QuestionId = request.QuestionId,
-                Answer = request.Answer
-            };
-            await _attemptService.ChangeTheAnswer(changeTheAnswerAction);
-            return Ok();
-        }
-        catch (AttemptException e)
-        {
-            return BadRequest(e);
-        }
+            AttemptId = id,
+            QuestionId = request.QuestionId,
+            Answer = request.Answer
+        };
+        var result = await _attemptService.GiveOrChangeTheAnswer(giveTheAnswerAction).ConfigureAwait(false);
+        return result.ToActionResult();
     }
+
     [HttpPost("end")]
     public async Task<IActionResult> End(string id)
     {
-        await _attemptService.End(id);
-        return Ok();
+        var result = await _attemptService.End(id).ConfigureAwait(false);
+        return result.ToActionResult();
     }
-    
+
     [HttpGet("{id}")]
-    public async Task<IActionResult> Get(string id)
+    public async Task<ActionResult<Attempt>> Get(string id)
     {
-        return Ok(await _attemptService.Get(id));
+        var result = await _attemptService.Get(id).ConfigureAwait(false);
+        return result.ToActionResult();
     }
 
     [HttpGet("{id}/result")]
-    public async Task<IActionResult> GetResult(string id)
+    public async Task<ActionResult<AttemptResult>> GetResult(string id)
     {
-        return Ok(await _attemptService.GetResult(id));
+        var result = await _attemptService.GetResult(id).ConfigureAwait(false);
+        return result.ToActionResult();
     }
 }
