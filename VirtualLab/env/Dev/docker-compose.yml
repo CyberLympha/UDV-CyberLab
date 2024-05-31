@@ -3,7 +3,9 @@ version: "3.8"
 services:
   virtual_lab:
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Development,
+      - IP_PROXMOX=10.40.229.10,
+      - PROXMOX_TOKEN=root@pam!devil=e094061e-e909-4415-9a57-f353a81a9eed
     build:
       context: ./../../
       dockerfile: Dockerfile
