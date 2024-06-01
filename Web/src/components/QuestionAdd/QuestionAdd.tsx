@@ -7,35 +7,46 @@ import {VariantAdd} from "../VariantAdd/VariantAdd";
 export function QuestionAdd({ onChangeQuestion, id } : any, { text, questionType, questionData } : Question) {
     const [localNameQuestion, setLocalNameQuestion] = React.useState(text);
     const [localQuestionType, setLocalQuestionType] = React.useState("Radio");
-    // const [localCorrectAnswer, setLocalCorrectAnswer] = React.useState(correctAnswer);
-    const [localQuestionData, setLocalQuestionData] = React.useState<QuestionData>(questionData);
 
     const variant : QuestionData = {
-        variants: []
+        Variants: ""
     };
 
+    const [indexesAnswers, setIndexesAnswers] = useState<Set<number>>(new Set<number>());
     const [dictVariants, setDictVariants] = useState({});
     const [localVariant, setLocalVariant] = useState<string[]>([]);
     const [question, setQuestion] = useState<Question>({
         text: "",
         description: "delete",
         questionType: "Radio",
-        correctAnswer: "a",
+        correctAnswer: "",
         questionData: variant
     });
     const [value] = useState<string>('');
 
+    const questionTypes = [
+        {label: "Один из списка", value: "Radio"},
+        {label: "Несколько из списка", value: "CheckBox"}
+    ];
+
     React.useEffect(() => {
-        variant.variants = Object.values(dictVariants);
+        variant.Variants = `[${Object.values(dictVariants)}]`;
+
+        const answers : string[] = [];
+        indexesAnswers.forEach((index) => {
+            answers.push((dictVariants as never)[index]);
+        });
+        console.log(`ANSWERS: ${answers}`);
 
         setQuestion({
             ...question,
             text: localNameQuestion,
             questionType: localQuestionType,
-            questionData: variant
+            questionData: variant,
+            correctAnswer: `[${answers}]`
         });
 
-    }, [localNameQuestion, localQuestionType, dictVariants])
+    }, [localNameQuestion, localQuestionType, dictVariants, indexesAnswers])
 
     React.useEffect(() => {
         console.log(question);
@@ -53,12 +64,8 @@ export function QuestionAdd({ onChangeQuestion, id } : any, { text, questionType
 
     const handleTypeChanged = (event : any) => {
         setLocalQuestionType(event.target.value);
+        setIndexesAnswers(new Set<number>());
     };
-
-    // const handleAnswerChanged = (event : any) => {
-    //     question.correctAnswer = event.target.value;
-    //     sendQuestion();
-    // };
 
     const addNewVariant = () => {
         setLocalVariant([...localVariant, value]);
@@ -67,22 +74,33 @@ export function QuestionAdd({ onChangeQuestion, id } : any, { text, questionType
     const handleVariantChange = (currentVariant : string, index : number) => {
         setDictVariants(prevDictionary => ({
             ...prevDictionary,
-            [index]: currentVariant
+            [index]: `"${currentVariant}"`
         }));
+    };
+
+    const handleAnswerChange = (index : number) => {
+        if (localQuestionType == "Radio") {
+            setIndexesAnswers(new Set<number>([index]));
+        } else {
+            if (!indexesAnswers.has(index)) {
+                setIndexesAnswers(prevSet => new Set<number>([...prevSet, index]));
+            } else {
+                indexesAnswers.delete(index);
+                setIndexesAnswers(indexesAnswers);
+            }
+        }
     };
 
     const variants = localVariant.map((element, index) => {
         return <VariantAdd
             key={`${index}`}
             onChangeVariant={handleVariantChange}
-            id={`${index}`}
+            onChangeAnswer={handleAnswerChange}
+            variantId={`${index}`}
+            questionId={`${id}`}
+            variantsType={`${localQuestionType}`}
         />;
     });
-
-    const questionTypes = [
-        {label: "Один из списка", value: "Radio"},
-        {label: "Несколько из списка", value: "CheckBox"}
-    ];
 
     return (
         <div className="test__body">
@@ -137,16 +155,9 @@ export function QuestionAdd({ onChangeQuestion, id } : any, { text, questionType
                     <ul className="list__answers">
                         {variants}
                         <li className="answer">
-                            <span className="answer__prepend radio">
-                                <input type="radio" name="radio"/>
-                            </span>
                             <div className="answer__title">
                                 <input onClick={addNewVariant} className="answer__title" placeholder="Добавить вариант"/>
                             </div>
-                            {/*<span className="answer__append">*/}
-                            {/*        <img src="./img/image.png"/>*/}
-                            {/*        <img src="./img/delete.png"/>*/}
-                            {/*</span>*/}
                         </li>
                     </ul>
                     <footer className="test__footer">

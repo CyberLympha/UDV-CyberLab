@@ -3,7 +3,8 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using WebApi.Models;
+using WebApi.Model.AuthModels;
+using WebApi.Model.AuthModels.Requests;
 using WebApi.Services;
 
 namespace WebApi.Controllers
@@ -31,10 +32,10 @@ namespace WebApi.Controllers
             {
                 Email = request.Email,
                 Password = passwordHash,
-                Role = UserRole.Admin,
+                Role = UserRole.User,
                 FirstName = request.FirstName,
                 SecondName = request.SecondName,
-                IsApproved = true,
+                IsApproved = true
             };
             try
             {

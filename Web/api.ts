@@ -16,7 +16,7 @@ export interface Question {
 
 export interface QuestionData {
   // id?: string;
-  variants: string[];
+  Variants: string;
 }
 
 export interface CreateLabReservationRequest {

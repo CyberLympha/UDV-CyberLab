@@ -1,16 +1,21 @@
 import  "../TestsAdd/TestsAdd.css";
+import React, {useState} from "react";
 
 
-export function VariantAdd({ onChangeVariant, id } : any) {
-
+export function VariantAdd({ onChangeVariant, onChangeAnswer, variantId, questionId, variantsType } : any) {
+    // console.log(variantsType);
     const changeVariant = (event : any) => {
-        onChangeVariant(event.target.value, id);
+        onChangeVariant(event.target.value, variantId);
+    };
+
+    const changeAnswer = () => {
+        onChangeAnswer(variantId);
     };
 
     return (
         <li className="answer">
             <span className="answer__prepend radio">
-                <input type="radio" name="radio"/>
+                <input type={variantsType} name={`${questionId}`} onClick={changeAnswer}/>
             </span>
             <div className="answer__title">
                 <input onChange={changeVariant}
