@@ -3,6 +3,7 @@ import style from "../TestOpen/TestOpen.module.scss";
 import {Question, Test} from "../../../api";
 import {useParams} from "react-router-dom";
 import {apiService} from "../../services";
+import { Variants } from "./Variants";
 
 export function TestPass() {
     const {id} = useParams<{ id: string }>();
@@ -43,15 +44,37 @@ export function TestPass() {
     }, [test]);
 
     const questions = newQuestions.map((question) => {
+        // let decoder = new TextDecoder([label], [options]);
+        // let str = decoder.decode([question.questionData], [options]);
+        // console.log(new TextDecoder().decode(question.questionData));
         console.log(question.questionData);
         return question;
     });
 
+    const variants = < Variants
+        variantsType={"Radio"}
+     />;
+
     return (
         <div>
             {questions.map((question, index) => (
-                <div className={style.container} key={index}>
-                    <div className={style.title}>{question.text}</div>
+                <div className="test__body" key={index}>
+                    <ul className="list__questions">
+                        <li className="question">
+                            <nav className="question-type-nav">
+                                <div className="question__title">
+                                    <div className="question__title"> 
+                                        { question.text }
+                                    </div>
+                                </div>
+                            </nav>
+                            <ul className="list__answers">
+                                { question.questionType }
+                                { question.questionData }
+                                {/* { variants } */}
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
             ))}
         </div>
