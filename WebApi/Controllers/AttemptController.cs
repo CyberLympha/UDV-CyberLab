@@ -49,9 +49,10 @@ public class AttemptController : ControllerBase
     }
 
     [HttpPost("batchGet")]
-    public async Task<IActionResult> BatchGet([FromBody] string[] ids)
+    public async Task<ActionResult<List<Attempt>>> BatchGet([FromBody] string[] ids)
     {
-        return Ok(await _attemptService.BatchGet(ids));
+        var result = await _attemptService.BatchGet(ids).ConfigureAwait(false);
+        return result.ToActionResult();
     }
 
     [HttpGet("{id}/result")]

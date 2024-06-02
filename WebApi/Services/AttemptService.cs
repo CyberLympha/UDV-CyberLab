@@ -103,9 +103,21 @@ public class AttemptService
         return await _attemptRepository.ReadById(attemptId).ConfigureAwait(false);
     }
 
-    public async Task<Attempt[]> BatchGet(string[] ids)
+    public async Task<ApiOperationResult<List<Attempt>>> BatchGet(IEnumerable<string> ids)
     {
-        return ids.Select(id => _attemptRepository.ReadById(id).Result).Where(x => x != null).ToArray();
+        var questions = new List<Attempt>();
+        foreach (var id in ids)
+        {
+            var idValidationResult = _idValidationHelper.EnsureValidId(id);
+            if (!idValidationResult.IsSuccess)
+                continue;
+
+            var question = await _attemptRepository.ReadById(id).ConfigureAwait(false);
+            if (question is not null)
+                questions.Add(question);
+        }
+
+        return questions;
     }
 
     public async Task<ApiOperationResult<AttemptResult>> GetResult(string attemptId)
@@ -119,6 +131,9 @@ public class AttemptService
             return Error.NotFound("Attempt с таким id не существует");
 
         var test = await _testsService.GetById(attempt.TestId).ConfigureAwait(false);
+        if (!test.IsSuccess || test.Result is null)
+            return Error.NotFound("Test с таким id не существует");
+
         var result = new AttemptResult
         {
             Results = new Dictionary<string, string>()
@@ -127,8 +142,10 @@ public class AttemptService
         foreach (var questionId in test.Result.Questions)
         {
             var question = await _questionsService.GetById(questionId).ConfigureAwait(false);
-            var isCorrect = await _answerVerifyService.IsCorrect(question.Result, attempt.Results[questionId])
-                .ConfigureAwait(false);
+            if (!question.IsSuccess || question.Result is null || !attempt.Results.TryGetValue(questionId, out var answer))
+                continue;
+            
+            var isCorrect = await _answerVerifyService.IsCorrect(question.Result, answer).ConfigureAwait(false);
             if (!isCorrect.IsSuccess)
                 return isCorrect.Error;
 
