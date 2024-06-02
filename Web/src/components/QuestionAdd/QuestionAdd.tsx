@@ -168,7 +168,6 @@ export function QuestionAdd({ onChangeQuestion, id } : any, { text, questionType
                             <div className="action delete">
                                 <img src="./img/trash.png"/>
                             </div>
-                            <div className="vertical"></div>
                             <div className="required">
                                 Обязательный вопрос
                             </div>

@@ -4,7 +4,7 @@ import {Question, Test} from "../../../api";
 import {useParams} from "react-router-dom";
 import {apiService} from "../../services";
 
-export function NewQuestion() {
+export function TestPass() {
     const {id} = useParams<{ id: string }>();
     const [newQuestions, setNewQuestions] = React.useState<Question[]>([]);
     const [test, setTest] = React.useState<Test>();

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Test } from "../../../api";
-import  "./list_test.css";
+import  "./TestItem.css";
 import { useEffect, useState } from "react";
 
 const DELAY = 100;

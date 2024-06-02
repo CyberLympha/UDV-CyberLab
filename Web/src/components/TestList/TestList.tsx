@@ -1,14 +1,14 @@
 import React from "react";
 import {Test as TestsItem} from "../../../api"
 import {apiService} from "../../services";
-import style from "./Tests.module.scss"
+import style from "./TestList.module.scss"
 import {Button} from "../Button/Button";
 import {AiOutlinePlus} from "react-icons/all";
 import {useNavigate} from "react-router-dom";
 import { TestItem } from "./TestItem";
 
 
-export function Tests() {
+export function TestList() {
     const [tests, setTests] = React.useState<TestsItem[]>([]);
     const navigate = useNavigate();
 

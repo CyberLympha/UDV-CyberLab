@@ -10,9 +10,9 @@ import { NewsAdd } from "../NewsAdd/NewsAdd";
 import {NewsEdit} from "../NewsEdit/NewsEdit";
 import {Admin} from "../Admin/Admin";
 import {LabSchedule} from "../LabSchedule/LabSchedule";
-import {Tests} from "../Tests/Tests";
+import {TestList} from "../TestList/TestList";
 import {TestsAdd} from "../TestsAdd/TestsAdd";
-import {NewQuestion} from "../NewQuestion/NewQuestion";
+import {TestPass} from "../TestPass/TestPass";
 import {TestOpen} from "../TestOpen/TestOpen";
 
 
@@ -36,9 +36,9 @@ export function AppRoutes() {
                 <Route path={"/labs/:labId/:id"} element={<Protected><Lab/></Protected>}/>
                 <Route path={"/admin"} element={<Protected><Admin/></Protected>}/>
                 <Route path={"/schedule"} element={<Protected><LabSchedule/></Protected>}/>
-                <Route path={"/tests"} element={<Protected><Tests/></Protected>}/>
+                <Route path={"/tests"} element={<Protected><TestList/></Protected>}/>
                 <Route path={"/tests/add"} element={<Protected><TestsAdd/></Protected>}/>
-                <Route path="/tests/:id/questions" element={<Protected><NewQuestion/></Protected>}/>
+                <Route path="/tests/:id/questions" element={<Protected><TestPass/></Protected>}/>
                 <Route path="*" element={<Navigate to={"/news"} replace/>}/>
             </Route>
 
