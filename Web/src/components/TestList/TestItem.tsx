@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
-import { Test } from "../../../api";
+import { StartTestRequest, Test } from "../../../api";
 import  "./TestItem.css";
 import { useEffect, useState } from "react";
+import { apiService } from "../../services";
+import { UserStore } from "../../stores/userStore";
+import { userStore } from "../../stores";
 
 const DELAY = 100;
 
@@ -11,12 +14,27 @@ export function TestItem({id, name, description, questions}: Test){
         setActive(!isActive);
     };
 
+    const startTest = async () => {
+        const testInfo : StartTestRequest = {
+            testId: id,
+            examineeId: userStore.user?.id
+        };
+
+        const response = await apiService.startTest(testInfo);
+
+        console.log(`Start test: ${response}`);
+ 
+        if (response instanceof Error) {
+            return;
+        }
+    }
+
     return (
         <tr className="test_item">
         <td className="test_item_info">
         <img className="test_item_img" src="public/img/test.png" />
         <div className="test_item_name">
-            <Link to={`/tests/${id}/questions`}>
+            <Link to={`/tests/${id}/questions`} onClick={startTest}>
                 {name}
             </Link>
         </div>

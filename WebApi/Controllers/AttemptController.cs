@@ -4,6 +4,8 @@ using WebApi.Services;
 
 namespace WebApi.Controllers;
 
+[Route("/api/[controller]")]
+[ApiController]
 public class AttemptController : ControllerBase
 {
     private readonly AttemptService _attemptService;

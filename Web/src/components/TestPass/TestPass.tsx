@@ -1,14 +1,19 @@
 import React from "react";
 import style from "../TestOpen/TestOpen.module.scss";
 import {Question, Test} from "../../../api";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {apiService} from "../../services";
 import { Variants } from "./Variants";
+import { Button } from "../Button/Button";
+import { userStore } from "../../stores";
 
 export function TestPass() {
     const {id} = useParams<{ id: string }>();
     const [newQuestions, setNewQuestions] = React.useState<Question[]>([]);
     const [test, setTest] = React.useState<Test>();
+    const [answers, setAnswers] = React.useState<{[index: string]: string[]}>({});
+    const [answerLoaded, setAnswerLoaded] = React.useState<boolean>(true);
+    const navigate = useNavigate();
 
     React.useEffect(() => {
         const fetch = async () => {
@@ -44,17 +49,74 @@ export function TestPass() {
     }, [test]);
 
     const questions = newQuestions.map((question) => {
-        // let decoder = new TextDecoder([label], [options]);
-        // let str = decoder.decode([question.questionData], [options]);
-        // console.log(new TextDecoder().decode(question.questionData));
-        console.log(question.questionData);
         return question;
     });
 
-    const variants = < Variants
-        variantsType={"Radio"}
-     />;
+    const parseVariants = (question : Question) => {
+        const variants = `${question.questionData}`.substring(14).slice(0, -3).split(",");
 
+        const variantsJSX = variants.map((v, index) => {
+            return < Variants
+            key={index}
+            variantsType={`${question.questionType}`}
+            variant={`${v.substring(6).slice(0, -6)}`}
+            questionId={`${question.id}`}
+            variantId={`${index}`}
+            onChangeAnswer={writeAnswers}
+            />
+        });
+        
+        return variantsJSX;
+    };
+
+    
+    React.useEffect(() => {
+        console.log(answers);
+        setAnswerLoaded(false);
+
+    }, [answers])
+
+    const writeAnswers = (variant : string, questionId : string, variantsType : string) => {
+
+        if (variantsType == "Radio") {
+            setAnswers(prevDictionary => ({
+                ...prevDictionary,
+                [questionId]: [variant]
+            }));
+        } else {
+            if (!answers.hasOwnProperty(questionId)) {
+                setAnswers(prevDictionary => ({
+                    ...prevDictionary,
+                    [questionId]: [variant]
+                }));
+            } else {
+                if (answers[questionId].find((string) => string === `${variant}`) === undefined) {
+                    setAnswers(prevDictionary => ({
+                        ...prevDictionary,
+                        [questionId]: [...prevDictionary[`${questionId}`], variant]
+                    }));
+                } else {
+                    const newAnswers = answers[questionId].filter(item => item !== `${variant}`);
+                    setAnswers(prevDictionary => ({
+                        ...prevDictionary,
+                        [questionId]: [...newAnswers]
+                    }));
+                }
+            }
+        }
+    };
+    
+    const sendAnswer = (questionId : string) => {
+        answers[questionId]?.map(variants => {
+            console.log(`sendAnswer: ${variants}`);
+        });
+    };
+
+    const sendTest = () => {
+        console.log("sendTest");
+        navigate("/tests");
+    };
+    
     return (
         <div>
             {questions.map((question, index) => (
@@ -69,14 +131,15 @@ export function TestPass() {
                                 </div>
                             </nav>
                             <ul className="list__answers">
-                                { question.questionType }
-                                { question.questionData }
-                                {/* { variants } */}
+                                { parseVariants(question) }
                             </ul>
+                            <Button isLoading={answerLoaded}
+                            onClick={() => sendAnswer(question.id)}>Сохранить ответ</Button>
                         </li>
                     </ul>
                 </div>
             ))}
+            <Button onClick={sendTest}>Закончить тест</Button>
         </div>
     );
 }

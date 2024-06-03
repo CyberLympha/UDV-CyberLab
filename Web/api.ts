@@ -1,3 +1,8 @@
+export interface StartTestRequest {
+  testId: string;
+  examineeId?: string;
+}
+
 export interface Test {
   id: string;
   name: string;
@@ -6,17 +11,12 @@ export interface Test {
 }
 
 export interface Question {
-  // id: string;
+  id: string;
   text?: string;
   description: string,
   questionType: string;
   correctAnswer: string;
-  questionData: QuestionData;
-}
-
-export interface QuestionData {
-  // id?: string;
-  Variants: string;
+  questionData: {"Variants" : string};
 }
 
 export interface CreateLabReservationRequest {

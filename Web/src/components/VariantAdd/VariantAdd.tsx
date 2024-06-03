@@ -3,7 +3,7 @@ import React, {useState} from "react";
 
 
 export function VariantAdd({ onChangeVariant, onChangeAnswer, variantId, questionId, variantsType } : any) {
-    // console.log(variantsType);
+
     const changeVariant = (event : any) => {
         onChangeVariant(event.target.value, variantId);
     };

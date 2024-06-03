@@ -1,26 +1,23 @@
 import React, {useState} from "react";
 import  "../TestsAdd/TestsAdd.css";
-import {Question, QuestionData} from "../../../api";
+import {Question} from "../../../api";
 import {VariantAdd} from "../VariantAdd/VariantAdd";
+import { Variants } from "../TestPass/Variants";
 
 
 export function QuestionAdd({ onChangeQuestion, id } : any, { text, questionType, questionData } : Question) {
     const [localNameQuestion, setLocalNameQuestion] = React.useState(text);
     const [localQuestionType, setLocalQuestionType] = React.useState("Radio");
-
-    const variant : QuestionData = {
-        Variants: ""
-    };
-
     const [indexesAnswers, setIndexesAnswers] = useState<Set<number>>(new Set<number>());
     const [dictVariants, setDictVariants] = useState({});
     const [localVariant, setLocalVariant] = useState<string[]>([]);
     const [question, setQuestion] = useState<Question>({
+        id: "",
         text: "",
         description: "delete",
         questionType: "Radio",
         correctAnswer: "",
-        questionData: variant
+        questionData: {Variants : ""}
     });
     const [value] = useState<string>('');
 
@@ -30,19 +27,19 @@ export function QuestionAdd({ onChangeQuestion, id } : any, { text, questionType
     ];
 
     React.useEffect(() => {
-        variant.Variants = `[${Object.values(dictVariants)}]`;
+        const tempVariants = {"Variants" : ""};
+        tempVariants.Variants = `[${Object.values(dictVariants)}]`;
 
         const answers : string[] = [];
         indexesAnswers.forEach((index) => {
             answers.push((dictVariants as never)[index]);
         });
-        console.log(`ANSWERS: ${answers}`);
-
+        
         setQuestion({
             ...question,
             text: localNameQuestion,
             questionType: localQuestionType,
-            questionData: variant,
+            questionData: tempVariants,
             correctAnswer: `[${answers}]`
         });
 
@@ -156,7 +153,9 @@ export function QuestionAdd({ onChangeQuestion, id } : any, { text, questionType
                         {variants}
                         <li className="answer">
                             <div className="answer__title">
-                                <input onClick={addNewVariant} className="answer__title" placeholder="Добавить вариант"/>
+                                <button onClick={addNewVariant} className="answer__append">
+                                    Добавить вариант
+                                </button>
                             </div>
                         </li>
                     </ul>
