@@ -25,9 +25,8 @@ export class ApiService {
         return this.httpClient.post<{questionId : string, answer : string}, void>(`/Attempt/${id}/change_the_answer`, request);
     }
 
-    public endAttempt(request : {id : string}){
-        console.log(JSON.stringify(request));
-        return this.httpClient.post<{id : string}, void>('/Attempt/end', request);
+    public endAttempt(id : string){
+        return this.httpClient.post<string, void>(`/Attempt/${id}/end`, id);
     }
 
     public getAttemptResult(id : string){

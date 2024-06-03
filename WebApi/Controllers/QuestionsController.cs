@@ -34,9 +34,10 @@ public class QuestionsController : ControllerBase
 
 
     [HttpPost("batchGet")]
-    public async Task<Question[]> BatchGet(string[] ids)
+    public async Task<ActionResult<List<Question>>> BatchGet(string[] ids)
     {
-        return ids.Select(id => _questionsService.GetById(id).Result.Result).Where(x => x != null).ToArray();
+        var result = await _questionsService.BatchGet(ids).ConfigureAwait(false);
+        return result.ToActionResult();
     }
 
     [HttpPost]
@@ -64,7 +65,7 @@ public class QuestionsController : ControllerBase
     [HttpDelete]
     public async Task<IActionResult> Delete(string id)
     {
-        await _questionsService.Delete(id);
-        return Ok();
+        var result = await _questionsService.Delete(id).ConfigureAwait(false);
+        return result.ToActionResult();
     }
 }

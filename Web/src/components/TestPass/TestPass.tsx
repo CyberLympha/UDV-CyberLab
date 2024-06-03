@@ -68,7 +68,6 @@ export function TestPass() {
         
         return variantsJSX;
     };
-
     
     React.useEffect(() => {
         console.log(answers);
@@ -120,8 +119,8 @@ export function TestPass() {
     const sendTest = async () => {
         console.log(`sendTest: ${userStore.user?.tests}`);
 
-        const response = await apiService.endAttempt({id : `${userStore.user?.tests}`});
-        
+        const response = await apiService.endAttempt(`${userStore.user?.tests}`);
+
         if (response instanceof Error) {
             return;
         }

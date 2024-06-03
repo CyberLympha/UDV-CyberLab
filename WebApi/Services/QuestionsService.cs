@@ -25,6 +25,23 @@ public class QuestionsService
 
     public Task<IEnumerable<Question>> Get => _repository.ReadAll();
 
+    public async Task<ApiOperationResult<List<Question>>> BatchGet(IEnumerable<string> ids)
+    {
+        var questions = new List<Question>();
+        foreach (var id in ids)
+        {
+            var idValidationResult = _idValidationHelper.EnsureValidId(id);
+            if (!idValidationResult.IsSuccess)
+                continue;
+
+            var question = await GetById(id).ConfigureAwait(false);
+            if (question is { IsSuccess: true, Result: { } })
+                questions.Add(question.Result);
+        }
+
+        return questions;
+    }
+
     public async Task<ApiOperationResult<Question>> GetById(string id)
     {
         var idValidationResult = _idValidationHelper.EnsureValidId(id);

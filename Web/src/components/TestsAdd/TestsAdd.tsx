@@ -1,13 +1,17 @@
 import React, {useState} from "react";
-import  "./TestsAdd.css";
+
+import {useNavigate} from "react-router-dom";
+
+import {Question, Test} from "../../../api";
+
 import {Button} from "../Button/Button";
 import {QuestionAdd} from "../QuestionAdd/QuestionAdd";
 import {apiService} from "../../services";
-import {useNavigate} from "react-router-dom";
-import {Question, Test} from "../../../api";
+
+import  "./TestsAdd.css";
 
 
-export function TestsAdd({id, name, description, questions} : Test) {
+export function TestsAdd({id, name, description} : Test) {
     const [localName, setLocalName] = React.useState(name);
     const [localDescription, setLocalDescription] = React.useState(description);
     const [localQuestion, setLocalQuestion] = React.useState<string[]>([]);
