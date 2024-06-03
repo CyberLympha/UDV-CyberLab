@@ -13,7 +13,7 @@ public class LabDbContext : DbContext
     
     public LabDbContext(DbContextOptions<LabDbContext> options) : base(options)
     {
-      
+       
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

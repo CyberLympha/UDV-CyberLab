@@ -15,6 +15,7 @@
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.3" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.28" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.28" />
+        <PackageReference Include="MongoDB.Driver" Version="2.25.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
         <PackageReference Include="Vostok.Configuration.Microsoft" Version="1.0.5-pre000016" />
         <PackageReference Include="Vostok.Logging.Abstractions" Version="1.0.33-pre000073" />

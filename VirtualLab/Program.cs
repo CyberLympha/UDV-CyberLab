@@ -7,6 +7,7 @@ using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Interfaces.Repositories;
 using VirtualLab.Infrastructure;
 using VirtualLab.Infrastructure.DataBase;
+using VirtualLab.Infrastructure.Options;
 using VirtualLab.Infrastructure.Repositories;
 using VirtualLab.MiddleWare;
 
@@ -35,6 +36,8 @@ builder.Services.AddScoped<ILabManager, LabManager>();
 builder.Services.AddScoped<IVirtualMachineDataHandler, VirtualMachineDataHandler>();
 builder.Services.AddScoped<IVirtualMachineRepository, VirtualMachineRepository>();
 builder.Services.AddScoped<ICredentialRepository, CredentialRepository>();
+
+builder.Services.Configure<ConfMongoDb>(builder.Configuration.GetSection("MongoDbConf"));
 
 builder.Services.AddConfigureAuthentication();
 builder.Services.AddPveClient();

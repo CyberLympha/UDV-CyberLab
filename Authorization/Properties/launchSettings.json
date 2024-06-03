@@ -17,6 +17,12 @@
       "applicationUrl": "http://localhost:5298",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "MongoDbConf": {
+        "userName": "root",
+        "password": "example",
+        "port": 28017,
+        "dataBase": "admin"
       }
     },
     "https": {
