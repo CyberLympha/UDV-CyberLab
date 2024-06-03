@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Text.Json;
+﻿using System.Text.Json;
 using WebApi.Helpers;
 using WebApi.Model.QuestionModels;
 
@@ -15,16 +14,23 @@ public class AnswerVerifyService
                 return answer == question.CorrectAnswer;
             case QuestionType.CheckBox:
             {
-                var correctAnswer =
-                    JsonSerializer.Deserialize<List<string>>(question.CorrectAnswer)!.ToHashSet();
-                var currentAnswer =
-                    JsonSerializer.Deserialize<List<string>>(answer)!.ToHashSet();
-                return currentAnswer.Equals(correctAnswer);
+                try
+                {
+                    var correctAnswer =
+                        JsonSerializer.Deserialize<List<string>>(question.CorrectAnswer)!.ToHashSet();
+                    var currentAnswer =
+                        JsonSerializer.Deserialize<List<string>>(answer)!.ToHashSet();
+                    return currentAnswer.Equals(correctAnswer);
+                }
+                catch
+                {
+                    return Error.InternalError("Ошибка при десериализации ответа");
+                }
             }
             case QuestionType.Text:
                 return answer == question.CorrectAnswer;
             default:
-                return ApiOperationResult<bool>.Failure(HttpStatusCode.InternalServerError, "Неизвестный QuestionType");
+                return Error.InternalError("Неизвестный QuestionType");
         }
     }
 }

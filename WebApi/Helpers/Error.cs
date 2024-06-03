@@ -8,6 +8,7 @@ public sealed class Error
 {
     public static Error BadRequest(string message) => new(HttpStatusCode.BadRequest, message);
     public static Error NotFound(string message) => new(HttpStatusCode.NotFound, message);
+    public static Error InternalError(string message) => new(HttpStatusCode.InternalServerError, message);
 
     [JsonProperty("statusCode")] public HttpStatusCode StatusCode { get; }
 
@@ -25,7 +26,7 @@ public sealed class Error
                                             StringComparison.InvariantCultureIgnoreCase);
 
     public override int GetHashCode() => Message.GetHashCode() ^ (int)StatusCode;
-    
+
     public ErrorResponse ToErrorResponse() =>
         new()
         {
