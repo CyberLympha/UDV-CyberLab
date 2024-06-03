@@ -15,7 +15,6 @@ export class UserStore {
         makeAutoObservable(this)
     }
 
-
     setUser = (user: User) => {
         this.user = user;
     }
@@ -24,9 +23,12 @@ export class UserStore {
         this.user!.labs = lab;
     }
 
+    setTest = (tests: string) =>{
+        this.user!.tests = tests;
+    }
+
     deleteUser = () => {
         this.user = null;
-
     }
 
     get isLogined() {

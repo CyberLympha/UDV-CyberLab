@@ -16,7 +16,7 @@ export function TestPass() {
     const navigate = useNavigate();
 
     React.useEffect(() => {
-        const fetch = async () => {
+        const fetchTest = async () => {
             if (!id) return;
 
             const response = await apiService.getTest(id);
@@ -26,7 +26,7 @@ export function TestPass() {
             }
             setTest(response)
         }
-        void fetch();
+        void fetchTest();
 
     }, [id]);
 
@@ -106,14 +106,26 @@ export function TestPass() {
         }
     };
     
-    const sendAnswer = (questionId : string) => {
-        answers[questionId]?.map(variants => {
-            console.log(`sendAnswer: ${variants}`);
-        });
+    const sendAnswer = async (questionId : string) => {
+        
+        const response = apiService.giveAnswerAttempt(
+            {questionId : `${questionId}`, answer : `${answers[questionId]}`},
+            `${userStore.user?.tests}`);
+
+        if (response instanceof Error) {
+            return;
+        }
     };
 
-    const sendTest = () => {
-        console.log("sendTest");
+    const sendTest = async () => {
+        console.log(`sendTest: ${userStore.user?.tests}`);
+
+        const response = await apiService.endAttempt({id : `${userStore.user?.tests}`});
+        
+        if (response instanceof Error) {
+            return;
+        }
+
         navigate("/tests");
     };
     

@@ -1,7 +1,7 @@
-export interface StartTestRequest {
-  testId: string;
-  examineeId?: string;
-}
+// export interface StartTestRequest {
+//   testId?: string;
+//   examineeId?: string;
+// }
 
 export interface Test {
   id: string;
@@ -277,6 +277,7 @@ export interface User {
   role: UserRole;
   /** @minLength 1 */
   labs: string;
+  tests: string;
   isApproved: boolean;
 }
 

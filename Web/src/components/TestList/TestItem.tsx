@@ -1,32 +1,46 @@
 import { Link } from "react-router-dom";
-import { StartTestRequest, Test } from "../../../api";
+import { Test } from "../../../api";
 import  "./TestItem.css";
 import { useEffect, useState } from "react";
 import { apiService } from "../../services";
-import { UserStore } from "../../stores/userStore";
 import { userStore } from "../../stores";
 
 const DELAY = 100;
 
-export function TestItem({id, name, description, questions}: Test){
+export function TestItem({id, name, description}: Test){
     const [isActive, setActive] = useState(false);
+    const [resultTest, setResultTest] = useState<string>("");
     const handleClick = () => {
         setActive(!isActive);
     };
 
+    useEffect(() => {
+        const fetchTestResult = async () => {
+
+            const response = await apiService.getAttemptResult(`${userStore.user?.tests}`);
+
+            if (response instanceof Error) {
+                setResultTest("Тест не пройден");
+                return;
+            }
+            console.log(response);
+
+            setResultTest(`${response}`);
+        }
+        void fetchTestResult();
+
+    }, [])
+
     const startTest = async () => {
-        const testInfo : StartTestRequest = {
-            testId: id,
-            examineeId: userStore.user?.id
-        };
-
-        const response = await apiService.startTest(testInfo);
-
-        console.log(`Start test: ${response}`);
+        const response = await apiService.startAttempt({testId: id, 
+            examineeId: userStore.user!.id});
  
         if (response instanceof Error) {
             return;
         }
+
+        console.log(`Start test: ${response}`);
+        userStore.setTest(`${response}`);
     }
 
     return (
@@ -40,7 +54,7 @@ export function TestItem({id, name, description, questions}: Test){
         </div>
         </td>
         <td className="test_item_owner">{description}</td>
-        <td className="test_item_date_view">{name}</td>
+        <td className="test_item_date_view">{resultTest}</td>
         <td className="test_item_other">
             <div className="dropdown">
                 <button className="test_item_other_button" type="button" onClick={handleClick}>

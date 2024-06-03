@@ -39,7 +39,7 @@ export function TestList() {
         <tr>
         <th>Имя теста</th>
         <th>Описание теста</th>
-        <th>Владелец теста</th>
+        <th>Результат теста</th>
         <th className="head_sort">
             <img className="test_order" src="public/img/order.png" />
             <img className="test_title" src="public/img/sort.png" />
