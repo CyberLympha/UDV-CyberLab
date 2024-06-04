@@ -1,7 +1,7 @@
 namespace VirtualLab.Domain.Entities;
 
-public class ConfigTemplate
+public class TemplateConfig
 {
     public int TemplateId { get; set; }
-    public string Net { get; set; } 
+    public List<int> Nets { get; set; } 
 }

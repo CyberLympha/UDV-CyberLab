@@ -12,7 +12,7 @@ public class LabConfigMongoDb : IMongoContext
     private IClientSessionHandle _session;
     private ConfMongoDb _confMongoDb;
     private readonly List<Func<Task>> _commands;
-
+    
     public LabConfigMongoDb(
         IOptions<ConfMongoDb> confMongoDb
         )
@@ -21,6 +21,8 @@ public class LabConfigMongoDb : IMongoContext
         _confMongoDb = confMongoDb.Value;
         _database = _client.GetDatabase(confMongoDb.Value.Database);
     }
+    
+    
 
     public void Dispose()
     {

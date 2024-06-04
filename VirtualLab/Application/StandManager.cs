@@ -115,10 +115,10 @@ public class StandManager : IStandManager
     {
         foreach (var vmInfo in vmsInfo)
         {
-            var vmStopped = await _proxmoxVm.Stop(vmInfo.Node, vmInfo.ProxmoxId);
+            var vmStopped = await _proxmoxVm.Stop(vmInfo.Node, vmInfo.ProxmoxVmId);
             if (vmStopped.IsFailed) return vmStopped;
 
-            var getStatus = await _proxmoxVm.GetStatus(vmInfo.Node, vmInfo.ProxmoxId);
+            var getStatus = await _proxmoxVm.GetStatus(vmInfo.Node, vmInfo.ProxmoxVmId);
             if (!getStatus.TryGetValue(out var curVmStatus))
             {
                 return Result.Fail(getStatus.Errors);
@@ -127,14 +127,14 @@ public class StandManager : IStandManager
             while (curVmStatus == ProxmoxVmStatus.Running)
             {
                 Thread.Sleep(1000);
-                getStatus = await _proxmoxVm.GetStatus(vmInfo.Node, vmInfo.ProxmoxId);
+                getStatus = await _proxmoxVm.GetStatus(vmInfo.Node, vmInfo.ProxmoxVmId);
                 if (!getStatus.TryGetValue(out curVmStatus))
                 {
                     return Result.Fail(getStatus.Errors);
                 }
             }
 
-            var vmDeleted = await _proxmoxVm.Destroy(vmInfo.Node, vmInfo.ProxmoxId);
+            var vmDeleted = await _proxmoxVm.Destroy(vmInfo.Node, vmInfo.ProxmoxVmId);
             if (vmDeleted.IsFailed) return vmDeleted;
         }
 

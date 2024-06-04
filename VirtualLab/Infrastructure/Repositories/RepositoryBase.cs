@@ -28,7 +28,7 @@ public abstract class RepositoryBase<TEntity, TId> : IRepositoryBase<TEntity, TI
         return Result.Ok();
     }
 
-    public async Task<Result<TEntity[]>> GetAll()
+    public async Task<Result<IReadOnlyCollection<TEntity>>> GetAll()
     {
         var entities = await _dbContext.Set<TEntity>().ToArrayAsync();
 

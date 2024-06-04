@@ -8,6 +8,6 @@ public class StandConfig : IEntity<Guid>
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     public Guid Id { get; set; }
-    public List<ConfigTemplate> ConfigTemplate { get; set; }
+    public List<TemplateConfig> TemplateConfig { get; set; }
     
 }

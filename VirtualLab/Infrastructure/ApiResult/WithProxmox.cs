@@ -1,5 +1,3 @@
-using VirtualLab.Domain.Value_Objects.Proxmox;
-
 namespace VirtualLab.Infrastructure.ApiResult;
 
 public class WithProxmox

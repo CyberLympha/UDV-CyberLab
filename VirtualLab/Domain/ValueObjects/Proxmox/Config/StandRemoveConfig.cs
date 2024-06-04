@@ -4,7 +4,7 @@ namespace VirtualLab.Domain.ValueObjects.Proxmox.Config;
 
 public class StandRemoveConfig
 {
-    public List<VmInfo> VmsData { get; set; } = new List<VmInfo>();
+    public List<VmInfo> VmsData { get; set; } = new();
     
     
     //todo дубликаты в обоих конфигах

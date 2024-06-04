@@ -8,20 +8,8 @@ public static class ProxmoxResultExtensions
         Func<Result> success,
         Func<string, string> notSuccess)
     {
-        var answer = new Result();
-        // наверное это отвечает за запросы с ошибкой на уровне api
-        if (!result.IsSuccessStatusCode)
-        {
-            answer = Result.Fail(notSuccess(result.ReasonPhrase));
-        }
-
-        // наверное это отвечает за ошибки уже внутри proxmox при попытки уже что-то сделать.
-        if (result.ResponseInError)
-        {
-            answer.WithError(result.GetError());
-            return answer;
-        }
-        
-        return success();
+        return !result.IsSuccessStatusCode
+            ? Result.Fail(notSuccess(result.ReasonPhrase)).WithError(result.GetError())
+            : success();
     }
 }

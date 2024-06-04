@@ -1,5 +1,5 @@
 namespace VirtualLab.Domain.Interfaces.MongoRepository;
 
-public interface IConfigStandCreateRepository
+public interface IConfigStandRepository
 {
 }
