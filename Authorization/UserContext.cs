@@ -7,6 +7,7 @@ namespace Authorization
     {
         public UserContext(DbContextOptions options) : base(options)
         {
+            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -16,8 +17,8 @@ namespace Authorization
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //optionsBuilder.UseNpgsql("Host=localhost; Port=5432; Database=auth; User ID=postgres; Password=12345");
-            optionsBuilder.UseInMemoryDatabase("AuthFakeContext");
+            optionsBuilder.UseNpgsql("Host=158.160.91.137; Port=5433; Database=UdvLab; User ID=dev; Password=123123");
+            //optionsBuilder.UseInMemoryDatabase("AuthFakeContext");
         }
     }
 }

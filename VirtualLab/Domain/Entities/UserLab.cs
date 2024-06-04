@@ -10,6 +10,7 @@ public class UserLab : IEntity<Guid>
     public int Rate { get; set; } // 
     // и другие данные, которые отображаются для пользователя.
     public Report? Report { get; set; }
+    public Lab Lab { get; set; }
 
     public static UserLab From(User user, Lab guid)
     {
@@ -19,7 +20,8 @@ public class UserLab : IEntity<Guid>
             Rate = 0,
             LabId = guid.Id,
             StatusId = new Guid("52059edd-dcb0-49f8-9f37-86fd36649228"), // пока это часть ваще не реализованна.
-            UserId = user.Id
+            UserId = user.Id,
+            Lab = guid
         };
     }
 }
