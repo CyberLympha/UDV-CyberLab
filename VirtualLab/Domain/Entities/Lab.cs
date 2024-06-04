@@ -8,9 +8,12 @@ public class Lab : IEntity<Guid>
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
-    public string Goal { get; set; }
-    public string Manual { get; set; }
+    public string Description { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime DeadLine { get; set; }
     public Guid CreatedBy { get; set; }
+    public string Manual { get; set; }
+    public bool IsOpened { get; set; }
 
     public List<UserLab> UserLabs { get; set; }
 
@@ -18,7 +21,7 @@ public class Lab : IEntity<Guid>
     {
         return new Lab()
         {
-            Goal = request.Goal,
+            Description= request.Goal,
             Id = Guid.NewGuid(),
             Manual = request.Manual,
             Name = request.Name,

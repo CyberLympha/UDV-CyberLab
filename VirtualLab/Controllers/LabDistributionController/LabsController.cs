@@ -62,7 +62,7 @@ public class LabsController : ControllerBase
     [Authorize(Policy = "Teacher")] //todo: брать id из claims
     public async Task<ActionResult<IReadOnlyCollection<TeacherLabShortInfo>>> GetTeacherLabs(Guid teacherId)
     {
-        var labs = await _labProvider.GetAllByUserId(teacherId);
+        var labs = await _labProvider.GetTeacherLabs(teacherId);
         
         return labs.Match(
             l => Ok(l),
