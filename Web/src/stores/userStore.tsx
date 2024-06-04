@@ -2,7 +2,7 @@ import {makeAutoObservable} from "mobx"
 import {fromPromise,} from "mobx-utils";
 import type {IPromiseBasedObservable} from "mobx-utils"
 
-import {User, UserRole} from "../../api";
+import {TestAttempt, User, UserRole} from "../../api";
 import {apiService} from "../services";
 
 
@@ -23,8 +23,8 @@ export class UserStore {
         this.user!.labs = lab;
     }
 
-    setTest = (tests: string) =>{
-        this.user!.tests = tests;
+    setAttempt = (currentTestAttempt : TestAttempt) =>{
+        this.user!.testAttempt = currentTestAttempt;
     }
 
     deleteUser = () => {

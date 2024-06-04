@@ -16,16 +16,19 @@ export function TestItem({id, name, description}: Test){
 
     useEffect(() => {
         const fetchTestResult = async () => {
+            if (userStore.user?.testAttempt === undefined ||
+                userStore.user?.testAttempt.idTest !== id) {
+                    setResultTest("Тест не пройден");
+                    return;
+            }
 
-            const response = await apiService.getAttemptResult(`${userStore.user?.tests}`);
+            const response = await apiService.getAttemptResult(`${userStore.user?.testAttempt.idAttempt}`);
 
             if (response instanceof Error) {
-                setResultTest("Тест не пройден");
                 return;
             }
-            console.log(response);
 
-            setResultTest(`${response}`);
+            setResultTest(`Результат теста: ${response.totalScore.slice(8)}`);
         }
         void fetchTestResult();
 
@@ -40,7 +43,7 @@ export function TestItem({id, name, description}: Test){
         }
 
         console.log(`Start test: ${response}`);
-        userStore.setTest(`${response}`);
+        userStore.setAttempt({idTest: id, idAttempt: response});
     }
 
     return (

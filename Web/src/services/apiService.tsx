@@ -4,7 +4,8 @@ import {
     User,
     LoginRequest,
     News, Test, Lab, VmQemuAgentNetworkGetInterfaces,
-    LabReservation, CreateLabReservationRequest, UpdateLabReservationRequest, Question
+    LabReservation, CreateLabReservationRequest, UpdateLabReservationRequest, Question,
+    AttemptResult
 } from "../../api";
 
 import {HttpClient} from "./httpClient";
@@ -18,7 +19,7 @@ export class ApiService {
     }
 
     public startAttempt(request : {testId : string, examineeId : string}) {
-        return this.httpClient.post<{testId : string, examineeId : string}, void>('/Attempt/start', request);
+        return this.httpClient.post<{testId : string, examineeId : string}, string>('/Attempt/start', request);
     }
 
     public giveAnswerAttempt(request : {questionId : string, answer : string}, id : string){
@@ -30,7 +31,7 @@ export class ApiService {
     }
 
     public getAttemptResult(id : string){
-        return this.httpClient.get<any>(`/Attempt/${id}/result`);
+        return this.httpClient.get<AttemptResult>(`/Attempt/${id}/result`);
     }
 
     public getTests() {

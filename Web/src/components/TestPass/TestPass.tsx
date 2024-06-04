@@ -109,7 +109,7 @@ export function TestPass() {
         
         const response = apiService.giveAnswerAttempt(
             {questionId : `${questionId}`, answer : `${answers[questionId]}`},
-            `${userStore.user?.tests}`);
+            `${userStore.user?.testAttempt}`);
 
         if (response instanceof Error) {
             return;
@@ -117,9 +117,9 @@ export function TestPass() {
     };
 
     const sendTest = async () => {
-        console.log(`sendTest: ${userStore.user?.tests}`);
+        console.log(`sendTest: ${userStore.user?.testAttempt.idAttempt}`);
 
-        const response = await apiService.endAttempt(`${userStore.user?.tests}`);
+        const response = await apiService.endAttempt(`${userStore.user?.testAttempt.idAttempt}`);
 
         if (response instanceof Error) {
             return;

@@ -1,7 +1,12 @@
-// export interface StartTestRequest {
-//   testId?: string;
-//   examineeId?: string;
-// }
+export interface AttemptResult {
+  totalScore: string;
+  results: string[];
+}
+
+export interface TestAttempt {
+  idTest: string;
+  idAttempt: string;
+}
 
 export interface Test {
   id: string;
@@ -277,7 +282,7 @@ export interface User {
   role: UserRole;
   /** @minLength 1 */
   labs: string;
-  tests: string;
+  testAttempt: TestAttempt;
   isApproved: boolean;
 }
 
