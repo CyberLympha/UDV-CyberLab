@@ -69,13 +69,10 @@ export const LabWorks = observer(() => {
                         </div>
                     </div>
                     <div style={{flexShrink: 0}}>
-                        {!!userStore.user?.labs ?
                             <Button rightIcon={<AiOutlineArrowRight size={"20px"}/>}
                                     onClick={() => {
                                         navigate(`/labs/${lab.id}/${userStore.user?.id}`, {replace: true});
-                                    }}>Перейти</Button> :
-                            <Button rightIcon={<AiOutlinePlus size={"20px"}/>} isLoading={isLoading} onClick={() => startLabWork(userStore.user?.id, lab.id)}>Начать выполнение</Button>
-                        }
+                                    }}>Перейти</Button> 
                     </div>
                 </div>
             ))}
