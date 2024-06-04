@@ -77,7 +77,7 @@ public class UserLabProviderService : IUserLabProvider
     {
         return Result.Ok(new UserLabInfo()
         {
-            Goal = "Afd",
+            Description = "Afd",
             Id = labId,
             Name = "dfas",
             Manual = "Dfasdf",

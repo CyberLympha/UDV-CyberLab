@@ -59,11 +59,11 @@ public class LabsController : ControllerBase
     }
 
     [HttpGet("teacher/{teacherId:guid}")]
-    [Authorize(Policy = "Teacher")]
+    [Authorize(Policy = "Teacher")] //todo: брать id из claims
     public async Task<ActionResult<IReadOnlyCollection<TeacherLabShortInfo>>> GetTeacherLabs(Guid teacherId)
     {
-        var labs = await _labProvider.GetTeacherLabs(teacherId);
-
+        var labs = await _labProvider.GetAllByUserId(teacherId);
+        
         return labs.Match(
             l => Ok(l),
             e => NotFound(e));
