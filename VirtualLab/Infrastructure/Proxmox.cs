@@ -16,20 +16,36 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
     private readonly PveClient _client;
     private readonly ILog _log;
     private readonly ProxmoxAuthData _proxmoxData;
+
     public Proxmox(PveClient client, ILog log, ProxmoxAuthData proxmoxData)
     {
         _client = client;
         _log = log;
-        this._proxmoxData = proxmoxData;
+        _proxmoxData = proxmoxData;
     }
 
-    public async Task<Result> GetAllQemu(string node)
+
+    public async Task<Result<List<long>>> GetAllQemu(string node)
     {
         var result = await _client.Nodes[node].Qemu.Vmlist(false);
 
         if (!result.IsSuccessStatusCode) throw new NotImplementedException("api ошибку обработать");
 
-        throw new NotImplementedException();
+
+        var vmids = new List<long>();
+
+        var vmsData = result.Response.data;
+        foreach (var vmData in vmsData)
+        {
+            foreach (var vmElementData in vmData)
+            {
+                if (vmElementData is KeyValuePair<string, object> { Key: "vmid", Value: long id } )
+                    vmids.Add(id);
+            }
+        }
+
+
+        return vmids;
     }
 
     public async Task<Result> Clone(CloneVmConfig vmConfig, string node)
@@ -37,11 +53,10 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
         var result = await _client.Nodes[node].Qemu[vmConfig.Template.Id].Clone.CloneVm(vmConfig.NewId);
 
 
-        
         return result.Match(
             Result.Ok,
             ApiResultError.WithProxmox.CreateCloneFailure
-            );
+        );
     }
 
 
@@ -59,7 +74,7 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
             var net = (dnets is KeyValuePair<string, object> ? (KeyValuePair<string, object>)dnets : default);
             if (!net.Key.StartsWith("net")) continue;
             var netSettings = net.Value as string;
-            
+
             // data ~= virtio=vaef,bridge=vmbr4.
             var data = netSettings.Split(",");
             var type = data[0].Split("=")[0];
@@ -115,7 +130,7 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
 
         return result.Match(
             Result.Ok,
-            reasonPhrases => ApiResultError.WithProxmox.ChangeInterfaceFailure(reasonPhrases, node,qemu)
+            reasonPhrases => ApiResultError.WithProxmox.ChangeInterfaceFailure(reasonPhrases, node, qemu)
         );
     }
 
@@ -154,7 +169,7 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
         return response.Match(
             Result.Ok,
             responseError => ApiResultError.WithProxmox.Vm.Delete(node, qemu, responseError)
-            );
+        );
     }
 
     public async Task<Result> Stop(string node, int qemu)
@@ -164,11 +179,10 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
         return result.Match(
             Result.Ok,
             rp => ApiResultError.WithProxmox.VmStopFailure(rp, node, qemu)
-            );
+        );
     }
 
 
-    
     public async Task<Result<Ip>> GetIp(string node, int qemu)
     {
         var result = await _client.Nodes[node].Qemu[qemu].Agent.NetworkGetInterfaces.NetworkGetInterfaces();
