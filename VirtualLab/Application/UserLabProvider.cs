@@ -28,7 +28,6 @@ public class UserLabProviderService : IUserLabProvider
     //Todo: сделать норм реализацию. здесь как минимум можно сделать один sql запрос, который будет решать половину логики. сейчас это кринж, и очень медленно. слишком медленно
     public async Task<Result<IReadOnlyCollection<UserLabInfo>>> GetInfoAll(User user)
     {
-        // кароче, это кринж.
         // todo: нету проверки на пользователя, и пока не будет, ибо чтоб его найти нужно лазить в бд, которая потенциально может находиться где угодно. на другом сервере, как пример.
         var userLabsResult = await _userLabs.GetAllByUserId(user.Id);
         if (userLabsResult.IsFailed)
@@ -42,7 +41,7 @@ public class UserLabProviderService : IUserLabProvider
             return Result.Fail(labsResult.Errors);
         }
 
-        if (labsResult.Value.Length != userLabsResult.Value.Length)
+        if (labsResult.Value.Count != userLabsResult.Value.Length)
         {
             foreach (var lab in labsResult.Value)
             {
@@ -84,6 +83,7 @@ public class UserLabProviderService : IUserLabProvider
             Manual = "Dfasdf",
             Rate = 234,
             Status = Guid.NewGuid(),
+            
         });
         
         throw new NotImplementedException();

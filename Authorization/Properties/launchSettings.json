@@ -16,7 +16,15 @@
       "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5298",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "IP_PROXMOX": "10.40.229.10",
+        "PROXMOX_TOKEN": "root@pam!devil=e094061e-e909-4415-9a57-f353a81a9eed"
+      },
+      "MongoDbConf": {
+        "userName": "root",
+        "password": "example",
+        "port": 28017,
+        "dataBase": "admin"
       }
     },
     "https": {

@@ -20,6 +20,7 @@ public class LabsController : ControllerBase
     private readonly ILabProvider _labProvider;
     private readonly ILabCreationService _labCreationService;
     private readonly ILabManager _labManager;
+    private readonly Guid UserId = Guid.NewGuid();
 
     public LabsController(
         IUserLabProvider userLabProvider,
@@ -104,7 +105,7 @@ public class LabsController : ControllerBase
     [HttpGet("{labId:guid}/start")] 
     public async Task<ActionResult<ReadOnlyCollection<Credential>>> Start(Guid labId)
     {
-        var createLab = await _labManager.StartNew(labId, Guid.NewGuid());
+        var createLab = await _labManager.StartNew(labId, UserId);
             
         return createLab.Match(
             s => Ok(s),
@@ -114,7 +115,7 @@ public class LabsController : ControllerBase
     [HttpGet("{labId:guid}/end")]
     public async Task<ActionResult> End(Guid labId)
     {
-        var removeLab = await _labManager.End(labId, Guid.NewGuid());
+        var removeLab = await _labManager.End(labId, UserId);
         
         return removeLab.Match(Ok, BadRequest);
     }

@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  virtual_lab:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - IP_PROXMOX=10.40.229.10
+      - PROXMOX_TOKEN=root@pam!devil=e094061e-e909-4415-9a57-f353a81a9eed
+    image:
+      deviilboi99/virtual_lab:v2
+    ports:
+      - "8080:8080"
+  postgres:
+    image: postgres:15
+    container_name: postgres-dev
+    environment:
+      POSTGRES_DB: "Labs"
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: 123123
+    volumes:
+      - ./init/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./data/:var/lib/postgresql/data
+    ports:
+      - "5432:5432"

@@ -6,6 +6,6 @@ namespace VirtualLab.Domain.Entities;
 public class StatusUserLab : IEntity<Guid>
 {
     public Guid Id { get; set; }
-    //public Enums.StatusUserLabEnum Name { get; set; } вернуть, сейчас не работает
+    //public Enums.StatusUserLabEnum Name { get; set; } пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     public string Name { get; set; }
 }

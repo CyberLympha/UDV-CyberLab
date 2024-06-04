@@ -7,13 +7,11 @@ namespace VirtualLab.Domain.ValueObjects.Proxmox.Config;
 // здесь хранится конфиг именно для одной node. потенциальной лабе может быть задействована не одна node
 public record StandCreateConfig // он record здесь мало смысла.
 {
-    public Guid LabId { get; set; }
+    public Guid LabId { get; set; } //todo: это здесь не будет, ибо мы достаётся standConfig, а уже делаем StandCreateConfig.
     public string Node { get; init; } 
     public List<CloneVmConfig> CloneVmConfig { get;  init; } //todo: ваще не нравится это название
-
-
     
-    
+    // вынести
     public IEnumerable<Net> GetAllNetsInterfaces()
     {
         var hashset = new HashSet<string>();

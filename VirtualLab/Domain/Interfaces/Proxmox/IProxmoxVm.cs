@@ -12,17 +12,17 @@ public interface IProxmoxVm
     public Task<Result> Clone(CloneVmConfig vmConfig, string node);
     
     // 4 поставить другой интерфейс
-    public Task<Result> UpdateDeviceInterface(UpdateInterfaceForVm request);
+    public Task<Result> UpdateDeviceInterface(string node, int qemu, NetCollection nets);
 
-
+    public Task<Result<List<long>>> GetAllQemu(string node);
     public Task<Result<ProxmoxVmStatus>> GetStatus(string node, int qemu);
     
     // 5 запуск машни
-    public Task<Result> StartVm(LaunchVm request);
+    public Task<Result> Start(string node, int qemu);
 
-    public Task<Result> Delete(string node, int qemu);
+    public Task<Result> Destroy(string node, int qemu);
 
-    public Task<Result> StopVm(string node, int qemu);
+    public Task<Result> Stop(string node, int qemu);
     public Task<Result<Ip>> GetIp(string node, int qemu); // получим ли мы только ip, пока хз
 }
 

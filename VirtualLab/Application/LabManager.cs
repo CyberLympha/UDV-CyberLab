@@ -58,8 +58,7 @@ public class LabManager : ILabManager
                 virtualMachineInfo.Password,
                 vm.Id
             );
-            await _virtualMachineDataHandler
-                .AddCredential(credential); // по сути, можно разделить на два интерфейса ICre и I Vm. а нужно ли 
+            await _virtualMachineDataHandler.AddCredential(credential); // по сути, можно разделить на два интерфейса ICre и I Vm. а нужно ли 
 
             result.Add(credential);
         }
@@ -70,7 +69,7 @@ public class LabManager : ILabManager
     public async Task<Result> End(Guid labId, Guid userId)
     {
         var getUserLab = await _userLabProvider.GetUserLab(userId, labId);
-        if (getUserLab.TryGetValue(out var userLabInfo))
+        if (!getUserLab.TryGetValue(out var userLabInfo))
         {
             _log.Error($"Not find lab with {labId} for user with id {userId}"); // так бы везде))
             return Result.Fail(getUserLab.Errors);
@@ -83,7 +82,8 @@ public class LabManager : ILabManager
             return Result.Fail($"error {getUserLab.Errors}");
         }
 
-        await _stands.Delete(config);
+        var deletedConfig = await _stands.Delete(config);
+        if (deletedConfig.IsFailed) return deletedConfig;
 
         return await _virtualMachineDataHandler.DeleteAllByUserLabId(userLabInfo.Id);
     }

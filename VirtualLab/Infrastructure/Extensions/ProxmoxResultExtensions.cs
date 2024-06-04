@@ -6,21 +6,10 @@ public static class ProxmoxResultExtensions
 {
     public static Result Match(this Corsinvest.ProxmoxVE.Api.Result result,
         Func<Result> success,
-        Func<string, string> notSuccess,
-        Func<string, string> responseError)
+        Func<string, string> notSuccess)
     {
-        // наверное это отвечает за запросы с ошибкой на уровне api
-        if (!result.IsSuccessStatusCode)
-        {
-            return Result.Fail(notSuccess(result.ReasonPhrase));
-        }
-
-        // наверное это отвечает за ошибки уже внутри proxmox при попытки уже что-то сделать.
-        if (result.ResponseInError)
-        {
-            return Result.Fail(responseError(result.GetError()));
-        }
-
-        return success();
-    } 
+        return !result.IsSuccessStatusCode
+            ? Result.Fail(notSuccess(result.ReasonPhrase)).WithError(result.GetError())
+            : success();
+    }
 }

@@ -6,6 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <AssemblyName>VirtualLab</AssemblyName>
         <RootNamespace>VirtualLab</RootNamespace>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,12 +15,13 @@
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.3" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.28" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.28" />
+        <PackageReference Include="MongoDB.Driver" Version="2.25.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.28">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.22" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
         <PackageReference Include="Vostok.Configuration.Microsoft" Version="1.0.5-pre000016" />
         <PackageReference Include="Vostok.Logging.Abstractions" Version="1.0.33-pre000073" />
         <PackageReference Include="Vostok.Logging.Console" Version="1.0.11-pre000022" />
@@ -27,6 +29,22 @@
         <PackageReference Include="Vostok.Logging.Microsoft" Version="2.0.16-pre000026" />
     
 
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="out\web.config" />
+      <_ContentIncludedByDefault Remove="out\appsettings.Development.json" />
+      <_ContentIncludedByDefault Remove="out\appsettings.json" />
+      <_ContentIncludedByDefault Remove="out\templateLabNew.json" />
+      <_ContentIncludedByDefault Remove="out\templateLabOldExample.json" />
+      <_ContentIncludedByDefault Remove="out\VirtualLab.deps.json" />
+      <_ContentIncludedByDefault Remove="out\VirtualLab.runtimeconfig.json" />
     </ItemGroup>
 
 
