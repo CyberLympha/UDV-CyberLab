@@ -95,11 +95,27 @@ export function LabWorkPage() {
     const startLabWork = async (userId: string | undefined, labWorkId: string | undefined) => {
         setIsLoading(true);
         if (!userId){
+            toast({
+                title: 'Не удалось начать лабораторную работу, повторите попытку',
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+                position: "top"
+            })
+            setLabStarted(false);
             setIsLoading(false);
             return;
         }
         const response = await apiService.startVirtualDesktop(userId, labWorkId!);
         if (response instanceof Error) {
+            toast({
+                title: 'Не удалось начать лабораторную работу, повторите попытку',
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+                position: "top"
+            })
+            setLabStarted(false);
             setIsLoading(false);
             return;
         }
@@ -115,6 +131,21 @@ export function LabWorkPage() {
             setIsLoading(false);
             return;
         }
+
+        const responseWebsocketUrl = await apiService.getWebsocketUrl(userId, labWorkId!);
+        if (responseWebsocketUrl instanceof Error) {
+            toast({
+                title: 'Не удалось начать лабораторную работу, повторите попытку',
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+                position: "top"
+            })
+            setLabStarted(false);
+            setIsLoading(false);
+            return;
+        }
+
         toast({
             title: 'Вы успешно начали выполнение лабораторной работы',
             status: "success",
@@ -122,13 +153,6 @@ export function LabWorkPage() {
             isClosable: true,
             position: "top"
         })
-
-        const responseWebsocketUrl = await apiService.getWebsocketUrl(userId, labWorkId!);
-        if (responseWebsocketUrl instanceof Error) {
-            setIsLoading(false);
-            //TODO
-            return;
-        }
         localStorage.setItem('websocketUrl', responseWebsocketUrl);
         setIsLoading(false);
         setLabStarted(true);
