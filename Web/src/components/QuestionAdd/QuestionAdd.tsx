@@ -115,7 +115,7 @@ export function QuestionAdd({ onChangeQuestion, id } : any, { text, questionType
                             <input type="text" className="question__title" placeholder="Новый заголовок"
                                    onChange={handleTextChanged}/>
                         </div>
-                        <img src="./img/image.png"/>
+                        {/* <img src="./img/image.png"/> */}
 
                         <select onChange={handleTypeChanged} className="question__type">
                             {questionTypes.map((type, index) => (
