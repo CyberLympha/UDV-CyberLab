@@ -22,8 +22,6 @@ public class LabConfigMongoDb : IMongoContext
         _database = _client.GetDatabase(confMongoDb.Value.Database);
     }
     
-    
-
     public void Dispose()
     {
         _session?.Dispose();
@@ -35,7 +33,7 @@ public class LabConfigMongoDb : IMongoContext
         _commands.Add(command);
     }
 
-    public async Task SaveChangeAsync()
+    public async Task<int> SaveChangeAsync()
     {
         using (_session = await _client.StartSessionAsync())
         {
@@ -47,6 +45,8 @@ public class LabConfigMongoDb : IMongoContext
 
             await _session.CommitTransactionAsync();
         }
+
+        return _commands.Count; // по сути каждый новая транзация - это уже новый экзпляр класса(scoped), поэтому мы не очищаем commands. 
     }
 
     public IMongoCollection<TEntity> GetCollection<TEntity>(string name)

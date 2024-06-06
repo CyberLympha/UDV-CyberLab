@@ -33,7 +33,6 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
 
 
         var vmids = new List<long>();
-
         var vmsData = result.Response.data;
         foreach (var vmData in vmsData)
         {

@@ -6,7 +6,7 @@ public interface IMongoContext : IDisposable
 {
     public void AddCommand(Func<Task> command);
     
-    public Task SaveChangeAsync();
+    public Task<int> SaveChangeAsync();
 
     public IMongoCollection<TEntity> GetCollection<TEntity>(string name);
 }

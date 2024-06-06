@@ -1,6 +1,7 @@
 using FluentResults;
 using VirtualLab.Domain.Entities;
 using VirtualLab.Domain.Value_Objects;
+using VirtualLab.Domain.ValueObjects;
 
 namespace VirtualLab.Application.Interfaces;
 

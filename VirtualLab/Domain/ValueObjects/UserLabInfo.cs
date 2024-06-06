@@ -1,6 +1,6 @@
 using VirtualLab.Domain.Entities;
 
-namespace VirtualLab.Domain.Value_Objects;
+namespace VirtualLab.Domain.ValueObjects;
 
 public class UserLabInfo
 {
@@ -17,7 +17,7 @@ public class UserLabInfo
         return new UserLabInfo
         {
             Id = guid.Id,
-            Goal = guid.Goal,
+            Goal = guid.Description,
             Manual = guid.Manual,
             Rate = userLab.Rate,
             Name = guid.Name,

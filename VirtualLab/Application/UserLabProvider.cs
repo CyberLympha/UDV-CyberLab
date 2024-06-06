@@ -3,6 +3,7 @@ using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Entities;
 using VirtualLab.Domain.Interfaces.Repositories;
 using VirtualLab.Domain.Value_Objects;
+using VirtualLab.Domain.ValueObjects;
 
 namespace VirtualLab.Application;
 

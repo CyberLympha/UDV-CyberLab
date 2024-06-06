@@ -5,6 +5,7 @@ using VirtualLab.Application.Interfaces;
 using VirtualLab.Controllers.LabCreationService.Dto;
 using VirtualLab.Domain.Entities;
 using VirtualLab.Domain.Value_Objects;
+using VirtualLab.Domain.ValueObjects;
 
 namespace VirtualLab.Controllers.LabDistributionController;
 
