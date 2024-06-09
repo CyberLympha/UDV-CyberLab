@@ -88,11 +88,9 @@ builder.Services.AddPveClient();
 var app = builder.Build();
 app.UseMiddleware<ExceptionHandlerMiddleware>();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
+
 //app.UseUserLabStatuses();
 app.UseHttpsRedirection();
 

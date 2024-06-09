@@ -6,7 +6,23 @@ namespace VirtualLab.Application
 {
     public class UserHttpService : IUserHttpService
     {
-        private Uri _baseAddress = new Uri("https://localhost:7182");
+        private static Uri GetBaseAddress()
+        {
+            var env = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            if (env == "Development")
+                return new Uri("https://localhost:7182");
+            else if (env == "Docker-Development")
+            {
+                if (OperatingSystem.IsWindows() || OperatingSystem.IsMacOS())
+                    return new Uri("http://host.docker.internal:8081");
+                if (OperatingSystem.IsLinux())
+                    return new Uri("http://172.17.0.1:8081");
+            }            
+            throw new InvalidOperationException($"Unsupported environment. {env} - environment");
+        }
+
+        private Uri _baseAddress = GetBaseAddress();
+
         public async Task<UserInfo> GetUserInfo(string userId)
         {
             HttpResponseMessage response;

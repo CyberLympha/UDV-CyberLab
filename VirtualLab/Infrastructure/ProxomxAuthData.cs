@@ -11,8 +11,8 @@ public class ProxmoxAuthData
 
     public static ProxmoxAuthData FromEnv()
     {
-        var token = Environment.GetEnvironmentVariable(TOKEN) ?? throw new ApplicationException("not token for proxmox");
-        var ip = Environment.GetEnvironmentVariable(IP_PROXMOX) ?? throw new ApplicationException("not ip for proxmox");
+        var token = Environment.GetEnvironmentVariable(TOKEN) ?? "root@pam!devil=e094061e-e909-4415-9a57-f353a81a9eed";//throw new ApplicationException("not token for proxmox")
+        var ip = Environment.GetEnvironmentVariable(IP_PROXMOX) ?? "10.40.229.10";//throw new ApplicationException("not ip for proxmox")
         
         
         return new ProxmoxAuthData()

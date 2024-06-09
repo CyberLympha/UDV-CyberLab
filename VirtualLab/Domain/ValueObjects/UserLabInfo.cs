@@ -17,7 +17,7 @@ public class UserLabInfo
         return new UserLabInfo
         {
             Id = lab.Id,
-            Description = lab.Description,
+            Description = lab.Goal,
             Manual = lab.Manual,
             Rate = userLab.Rate,
             Name = lab.Name,

@@ -58,11 +58,12 @@ public class LabsController : ControllerBase
             e => NotFound(e));
     }
 
-    [HttpGet("teacher/{teacherId:guid}")]
+    [HttpGet("teacher/labs")]
     [Authorize(Policy = "Teacher")] //todo: брать id из claims
-    public async Task<ActionResult<IReadOnlyCollection<TeacherLabShortInfo>>> GetTeacherLabs(Guid teacherId)
+    public async Task<ActionResult<IReadOnlyCollection<TeacherLabShortInfo>>> GetTeacherLabs()
     {
-        var labs = await _labProvider.GetTeacherLabs(teacherId);
+        var id = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
+        var labs = await _labProvider.GetTeacherLabs(Guid.Parse(id));
         
         return labs.Match(
             l => Ok(l),
