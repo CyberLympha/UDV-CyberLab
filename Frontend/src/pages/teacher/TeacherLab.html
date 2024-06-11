@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UDV neo lab</title>
+    <link rel="stylesheet" href="../../styles/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <a class='logo heading' href="../AuthorisedPage.html">UDV neo lab</a>
+        <div class='right-header'>
+            <div class='user-icon'>
+                <a class='user-text'>
+                    <span id="first-name">
+                        
+                    </span> 
+                    <span id="second-name">
+                        
+                    </span>
+                </a>
+                <a class='user-text2'>
+                    <span id="role">
+                        
+                    </span>
+                </a>
+                <script>
+                    window.setShortUserInfo();
+                </script>
+            </div>
+            <a class='right-header-item' onclick="window.logout()">Выйти</a>
+        </div>
+    </header>
+    
+    <main>
+        <a class='heading logo' id="lab-name"></a>
+        <script>
+            document.getElementById("lab-name").innerText = localStorage.getItem("currentLabName");
+        </script>
+        <div class='labs-list lab-page-teacher'>
+            <span class='heading'><span id="second-name-student"></span> <span id="first-name-student"></span></span>
+            <span> Сдано: <span id="last-sent-at"></span></span>
+            <span> Оценка: <span id="last-rate"></span></span>
+            <span>Отчет:</span>
+            <textarea id="report" cols="30" rows="10" readonly></textarea>
+            <br>
+            <input class="input grade" type="number" placeholder="Введите оценку" id="new-rate">
+            <div class='button-block'>
+                <a class="button1 button2" onclick="window.updateUserLabRate()" id="save-btn">Сохранить оценку</a>
+                <a class="button1 button2" href="TeacherLabs.html">Вернуться</a>
+            </div>
+        </div>
+        <script>
+            window.getAttemptInfo();
+        </script>
+    
+    </main>
+</body>
+</html>

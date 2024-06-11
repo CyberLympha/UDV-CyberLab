@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UDV neo lab</title>
+    <link rel="stylesheet" href="../../styles/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<script src="../../auth.bundle.js"></script><script src="../../teacher.bundle.js"></script></head>
+<body>
+    <header>
+        <a class='logo heading' href="../AuthorisedPage.html">UDV neo lab</a>
+        <div class='right-header'>
+            <div class='user-icon'>
+                <a class='user-text'>
+                    <span id="first-name">
+                        
+                    </span> 
+                    <span id="second-name">
+                        
+                    </span>
+                </a>
+                <a class='user-text2'>
+                    <span id="role">
+                        
+                    </span>
+                </a>
+                <script>
+                    window.setShortUserInfo();
+                </script>
+            </div>
+            <a class='right-header-item' onclick="window.logout()">Выйти</a>
+        </div>
+    </header>
+    
+    <main>
+        <a class='heading logo' id="lab-name"></a>
+        <script>
+            document.getElementById("lab-name").innerText = localStorage.getItem("currentLabName");
+        </script>
+        <div class='labs-list'>
+            <!-- <a class='lab-card-mini' href='TeacherLab.html'>
+                <span class='heading'>Имя Фамилия Отчество</span>
+                <span> 09.12.2024 16:35</span>
+                <span> 10/100 баллов</span>
+            </a>
+            <a class='lab-card-mini' href='TeacherLab.html'>
+                <span class='heading'>Имя Фамилия Ооооооотчество</span>
+                <span> 10.12.2024 21:12</span>
+                <span> Не проверено</span>
+            </a> -->
+        </div>
+        <script>
+            window.getUserLabsPerLab(localStorage.getItem("currentLabId"));
+        </script>
+    </main>
+</body>
+</html>

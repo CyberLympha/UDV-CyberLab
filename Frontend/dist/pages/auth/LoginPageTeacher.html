@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UDV neo lab</title>
+    <link rel="stylesheet" href="../../styles/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<script src="../../auth.bundle.js"></script></head>
+<body>
+    <header>
+        <a class='logo heading' href="../../index.html">UDV neo lab</a>
+        <div class='right-header'>
+            <a class='right-header-item' href="RegisterPage.html">Зарегистрироваться</a>
+            <div class='vertical-line right-header-item'></div>
+            <a class='right-header-item' href="LoginPageStudent.html">Войти</a>
+        </div>
+    </header>
+    
+    <main>
+        <div class='login-form'>
+            <a class="heading2">Вход</a>
+            <div class='dumb-switcher'>
+                <a class="switcher-item sw-passive" href="LoginPageStudent.html">Студент</a>
+                <a class="switcher-item sw-active" href="LoginPageTeacher.html">Преподаватель</a>
+            </div>
+            
+            <input class="input" type="text" placeholder="Логин" id="user-name">
+            <input class="input" type="password" placeholder="Пароль" id="password">
+            <a class="button1" onclick="window.login()">Вход</a>
+            <a class='lower-input-text linked-text' href="PasswordRecovery.html">Восстановление пароля</a>
+
+        </div>
+    </main>
+    
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UDV neo lab</title>
+    <link rel="stylesheet" href="../../styles/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <a class='logo heading' href="../../index.html">UDV neo lab</a>
+        <div class='right-header'>
+            <a class='right-header-item' href="RegisterPage.html">Зарегистрироваться</a>
+            <div class='vertical-line right-header-item'></div>
+            <a class='right-header-item' href="LoginPageStudent.html">Войти</a>
+        </div>
+    </header>
+    
+    <main>
+        <div class='login-form' id="registrationForm">
+            <a class="heading2">Регистрация</a>
+            <input class="input" type="text" placeholder="Логин" id="user-name">
+            <input class="input" type="text" placeholder="Имя" id="first-name">
+            <input class="input" type="text" placeholder="Фамилия" id="second-name">
+            <input class="input" type="text" placeholder="Электронная почта" id="email">
+            <input class="input" type="password" placeholder="Пароль" id="password">
+            <input class="input" type="password" placeholder="Пароль" id="repeat-password">
+            <a class="button1" id="reg-btn" onclick="window.register()">Регистрация</a>
+            <span class='lower-input-text'>Уже есть аккаунт? <a class='linked-text' href="LoginPageStudent.html">Войти</a></span>
+        </div>
+    </main>
+    
+</body>
+</html>
