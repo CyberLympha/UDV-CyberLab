@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Model.QuestionModels;
 using WebApi.Model.TestModels;
@@ -22,14 +23,14 @@ public class TestsController : ControllerBase
 
 
     [HttpGet]
-    // [Authorize(Roles = "Admin,User")]
+    [Authorize(Roles = "Admin,Teacher,User")]
     public async Task<ActionResult<List<Test>>> Get()
     {
         return (await _testsService.Get.ConfigureAwait(false)).ToList();
     }
 
     [HttpGet("{id}")]
-    // [Authorize(Roles = "Admin,User")]
+    [Authorize(Roles = "Admin,Teacher,User")]
     public async Task<ActionResult<Test>> GetById(string id)
     {
         var result = await _testsService.GetById(id).ConfigureAwait(false);
@@ -37,7 +38,7 @@ public class TestsController : ControllerBase
     }
 
     [HttpPost]
-    // [Authorize(Roles = "Admin,User")]
+    [Authorize(Roles = "Admin,Teacher")]
     public async Task<ActionResult<string>> Post(CreateTestRequest request)
     {
         var test = new Test
@@ -68,6 +69,7 @@ public class TestsController : ControllerBase
     }
     
     [HttpDelete]
+    [Authorize(Roles = "Admin,Teacher")]
     public async Task<IActionResult> Delete(string id)
     {
         var result = await _testsService.Delete(id).ConfigureAwait(false);
