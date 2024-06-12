@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WebApi.Model.AttemptModels;
 using WebApi.Services;
 
@@ -14,6 +15,7 @@ public class AttemptController : ControllerBase
     }
 
     [HttpPost("start")]
+    [Authorize(Roles = "Admin,Teacher,User")]
     public async Task<ActionResult<string>> Start(NewAttemptRequest request)
     {
         var attemptStartResult = await _attemptService.Start(request).ConfigureAwait(false);
@@ -22,6 +24,7 @@ public class AttemptController : ControllerBase
 
     [HttpPost("{id}/give_the_answer")]
     [HttpPost("{id}/change_the_answer")]
+    [Authorize(Roles = "Admin,Teacher,User")]
     public async Task<IActionResult> GiveOrChangeTheAnswer(GiveOrChangeTheAnswerRequest request, string id)
     {
         var giveTheAnswerAction = new GiveOrChangeTheAnswerAction
@@ -35,6 +38,7 @@ public class AttemptController : ControllerBase
     }
 
     [HttpPost("end")]
+    [Authorize(Roles = "Admin,Teacher,User")]
     public async Task<IActionResult> End(string id)
     {
         var result = await _attemptService.End(id).ConfigureAwait(false);
@@ -42,6 +46,7 @@ public class AttemptController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin,Teacher,User")]
     public async Task<ActionResult<Attempt>> Get(string id)
     {
         var result = await _attemptService.Get(id).ConfigureAwait(false);
@@ -49,6 +54,7 @@ public class AttemptController : ControllerBase
     }
 
     [HttpPost("batchGet")]
+    [Authorize(Roles = "Admin,Teacher,User")]
     public async Task<ActionResult<List<Attempt>>> BatchGet([FromBody] string[] ids)
     {
         var result = await _attemptService.BatchGet(ids).ConfigureAwait(false);
@@ -56,6 +62,7 @@ public class AttemptController : ControllerBase
     }
 
     [HttpGet("{id}/result")]
+    [Authorize(Roles = "Admin,Teacher,User")]
     public async Task<ActionResult<AttemptResult>> GetResult(string id)
     {
         var result = await _attemptService.GetResult(id).ConfigureAwait(false);
