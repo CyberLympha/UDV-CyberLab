@@ -69,6 +69,7 @@ public class TestsController : ControllerBase
     }
     
     [HttpDelete]
+    [Authorize(Roles = "Admin,Teacher")]
     public async Task<IActionResult> Delete(string id)
     {
         var result = await _testsService.Delete(id).ConfigureAwait(false);

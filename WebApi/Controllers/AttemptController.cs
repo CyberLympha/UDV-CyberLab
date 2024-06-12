@@ -70,13 +70,15 @@ public class AttemptController : ControllerBase
     }
 
     [HttpGet("byExamineId/{id}")]
+    [Authorize(Roles = "Admin,Teacher,User")]
     public async Task<ActionResult<List<Attempt>>> GetAttemptsByExamineId(string id)
     {
         var result = await _attemptService.GetByExamineId(id);
         return result.ToActionResult();
     }
-    
+
     [HttpGet("byTestId/{id}")]
+    [Authorize(Roles = "Admin,Teacher")]
     public async Task<ActionResult<List<Attempt>>> GetAttemptsByTestId(string id)
     {
         var result = await _attemptService.GetByTestId(id);
