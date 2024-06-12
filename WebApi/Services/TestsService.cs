@@ -31,4 +31,13 @@ public class TestsService
         var newTest = await _repository.Create(test).ConfigureAwait(false);
         return newTest.Id;
     }
+    
+    public async Task<ApiOperationResult> Delete(string id)
+    {
+        var idValidationResult = _idValidationHelper.EnsureValidId(id);
+        if (!idValidationResult.IsSuccess)
+            return idValidationResult.Error;
+
+        return await _repository.Delete(id).ConfigureAwait(false);
+    }
 }

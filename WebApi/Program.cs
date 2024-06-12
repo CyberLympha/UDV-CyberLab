@@ -11,7 +11,6 @@ using WebApi.Model.LabReservationModels;
 using WebApi.Model.NewsModel;
 using WebApi.Model.QuestionModels;
 using WebApi.Model.Repositories;
-using WebApi.Model.Repositories.MongoDbRepositories;
 using WebApi.Model.TestModels;
 using WebApi.Model.VirtualMachineModels;
 using WebApi.Services;

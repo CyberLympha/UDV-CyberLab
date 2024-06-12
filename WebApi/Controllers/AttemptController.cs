@@ -61,4 +61,18 @@ public class AttemptController : ControllerBase
         var result = await _attemptService.GetResult(id).ConfigureAwait(false);
         return result.ToActionResult();
     }
+
+    [HttpGet("byExamineId/{id}")]
+    public async Task<ActionResult<List<Attempt>>> GetAttemptsByExamineId(string id)
+    {
+        var result = await _attemptService.GetByExamineId(id);
+        return result.ToActionResult();
+    }
+    
+    [HttpGet("byTestId/{id}")]
+    public async Task<ActionResult<List<Attempt>>> GetAttemptsByTestId(string id)
+    {
+        var result = await _attemptService.GetByTestId(id);
+        return result.ToActionResult();
+    }
 }

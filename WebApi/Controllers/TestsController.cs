@@ -66,4 +66,11 @@ public class TestsController : ControllerBase
         var testId = await _testsService.Create(test).ConfigureAwait(false);
         return testId.ToActionResult();
     }
+    
+    [HttpDelete]
+    public async Task<IActionResult> Delete(string id)
+    {
+        var result = await _testsService.Delete(id).ConfigureAwait(false);
+        return result.ToActionResult();
+    }
 }
