@@ -1,7 +1,7 @@
 ﻿using MongoDB.Driver;
 using WebApi.Helpers;
 
-namespace WebApi.Model.Repositories.MongoDbRepositories;
+namespace WebApi.Model.Repositories;
 
 public class MongoRepository<T> : IRepository<T> where T : IIdentifiable
 {
@@ -21,9 +21,12 @@ public class MongoRepository<T> : IRepository<T> where T : IIdentifiable
     public Task<T> ReadById(string id) =>
         _collection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
-    public Task<IEnumerable<T>> ReadByRule(Func<T, bool> rule)
+    public async Task<IEnumerable<T>> ReadByRule(Func<T, bool> rule)
     {
-        throw new NotImplementedException();
+        return _collection
+            .Find(_ => true)
+            .ToEnumerable()
+            .Where(v => rule(v));
     }
 
     public Task<IEnumerable<T>> ReadAll() =>

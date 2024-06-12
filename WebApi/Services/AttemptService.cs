@@ -158,6 +158,24 @@ public class AttemptService
         return result;
     }
 
+    public async Task<ApiOperationResult<List<Attempt>>> GetByExamineId(string id)
+    {
+        var idValidationResult = _idValidationHelper.EnsureValidId(id);
+        if (!idValidationResult.IsSuccess)
+            return idValidationResult.Error;
+
+        return (await _attemptRepository.ReadByRule(a => a.ExamineeId == id)).ToList();
+    }
+    
+    public async Task<ApiOperationResult<List<Attempt>>> GetByTestId(string id)
+    {
+        var idValidationResult = _idValidationHelper.EnsureValidId(id);
+        if (!idValidationResult.IsSuccess)
+            return idValidationResult.Error;
+
+        return (await _attemptRepository.ReadByRule(a => a.TestId == id)).ToList();
+    }
+
     private static ApiOperationResult EnsureAllowed(Attempt attempt)
     {
         return attempt.Status == AttemptStatus.Ended
