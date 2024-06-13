@@ -10,7 +10,7 @@ export function QuestionAdd({ onChangeQuestion, onDeleteQuestion, id } : any, { 
     const [questionType, setQuestionType] = useState<string>("Radio");
     const [indexesAnswers, setIndexesAnswers] = useState<Set<number>>(new Set<number>());
     const [dictVariants, setDictVariants] = useState<{[key: string]: any}>({});
-    const [variantsElements, setVariantsElements] = useState<ReactJSXElement[]>([]);
+    const [variantsElements, setVariantsElements] = useState<React.ReactNode[]>([]);
     const [question, setQuestion] = useState<Question>({
         id: "",
         text: "",
@@ -99,30 +99,30 @@ export function QuestionAdd({ onChangeQuestion, onDeleteQuestion, id } : any, { 
         }
     };
 
+    useEffect(() => {
+        // console.log(variantsElements);
+
+    }, [variantsElements]);
+
     const deleteVariant = (variantId : number) => {
         const tempDict = { ...dictVariants };
         delete tempDict[variantId];
         setDictVariants(tempDict);
 
-        // const updatedVariants : ReactJSXElement[] = variantsElements.filter((item, itemIndex) => itemIndex != variantId); 
-        // console.log(updatedVariants);
-        // setVariantsElements(updatedVariants);
-        const newComponents = [...variantsElements];
-        newComponents.splice(variantId, 1);
-        setVariantsElements(newComponents);
+        setVariantsElements(prevState => prevState.filter((item, itemIndex) => itemIndex != variantId));
     };
 
-    // const variants = variantsElements.map((element, index) => (
-    //     <VariantAdd
-    //         key={`${index}`}
-    //         onChangeVariant={handleVariantChange}
-    //         onChangeAnswer={handleAnswerChange}
-    //         onDeleteVariant={deleteVariant}
-    //         variantId={`${index}`}
-    //         questionId={`${id}`}
-    //         variantsType={`${questionType}`}
-    //     />
-    // ));
+    const variants = variantsElements.map((element, index) => (
+        <VariantAdd
+            key={`${index}`}
+            onChangeVariant={handleVariantChange}
+            onChangeAnswer={handleAnswerChange}
+            onDeleteVariant={deleteVariant}
+            variantId={`${index}`}
+            questionId={`${id}`}
+            variantsType={`${questionType}`}
+        />
+    ));
 
     return (
         <div className="test__body">
@@ -173,17 +173,7 @@ export function QuestionAdd({ onChangeQuestion, onDeleteQuestion, id } : any, { 
                         </ul>
                     </nav>
                     <ul className="list__answers">
-                        {variantsElements.map((element, index) => (
-                            <VariantAdd
-                                key={`${index}`}
-                                onChangeVariant={handleVariantChange}
-                                onChangeAnswer={handleAnswerChange}
-                                onDeleteVariant={deleteVariant}
-                                variantId={`${index}`}
-                                questionId={`${id}`}
-                                variantsType={`${questionType}`}
-                            />
-                        ))}
+                        {variants}
                         <li className="answer">
                             <div className="answer__title">
                                 <button onClick={addNewVariant} className="answer__append">

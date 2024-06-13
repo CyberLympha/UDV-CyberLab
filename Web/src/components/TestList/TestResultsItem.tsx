@@ -3,14 +3,16 @@ import { Attempt } from "../../../api";
 import { apiService } from "../../services";
 import { UserResultItem } from "./UserResultItem";
 import  "./TestResultsItem.css";
+import { useParams } from "react-router-dom";
 
 
-export function TestResultItem({ idTest } : any) {
+export function TestResultItem() {
+    const {id} = useParams<{ id: string }>();
     const [testAttempts, setTestAttempts] = useState<Attempt[]>([]);
 
     useEffect(() => {
         const fetchTestAttempts = async () => {
-            const response = await apiService.getTestAttempts(`${idTest}`);
+            const response = await apiService.getTestAttempts(`${id}`);
 
             if (response instanceof Error) {
                 return;

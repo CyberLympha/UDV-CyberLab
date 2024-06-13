@@ -1,10 +1,9 @@
 import { Link } from "react-router-dom";
 import { Attempt, UserRole } from "../../../../api";
-import  "./TestItem.css";
 import { useEffect, useState } from "react";
 import { apiService } from "../../../services";
 import { userStore } from "../../../stores";
-import { TestResultItem } from "../TestResultsItem";
+import  "./TestItem.css";
 
 const DELAY = 100;
 
@@ -17,15 +16,11 @@ interface ITestItem{
 
 export function TestItem({id, name, description, onDeleteTest }: ITestItem){
     const [isActionActive, setActionActive] = useState(false);
-    const [isResultActive, setResultActive] = useState(false);
     const [resultTest, setResultTest] = useState<string>("");
     const [listAttempts, setListAttempts] = useState<Attempt[]>([]);
     const [idTestsAttempts, setIdTestsAttempts] = useState<{[key: string]: any}>({});
     const openAction = () => {
         setActionActive(!isActionActive);
-    };
-    const openResult = () => {
-        setResultActive(!isResultActive);
     };
 
     useEffect(() => {
@@ -92,10 +87,6 @@ export function TestItem({id, name, description, onDeleteTest }: ITestItem){
         onDeleteTest();
     };
 
-    const listResults = <TestResultItem
-                            idTest={`${id}`}
-                        />;
-
     return (
         <tr className="test_item">
         <td className="test_item_info">
@@ -119,21 +110,20 @@ export function TestItem({id, name, description, onDeleteTest }: ITestItem){
                 }
                 {
                     isActionActive && 
-                    <div id="myDropdown" className="dropdown-actions" onClick={openResult}>
+                    <div id="myDropdown" className="dropdown-actions">
                         <button className="test_item_action rename">
                             <img className="test_action_img" src="public/img/rename.png" />
-                            Результаты
+                            <Link to={`/tests/${id}/results`}>
+                                Результаты
+                            </Link>
                         </button>
+                        
                         <button className="test_item_action delete" onClick={deleteTest}>
                             <img className="test_action_img" src="public/img/delete.png" />
                             Удалить
                         </button>
                     </div>
                 }    
-                {
-                    isResultActive &&
-                    listResults
-                }            
             </div>
         </td>
         </tr>
