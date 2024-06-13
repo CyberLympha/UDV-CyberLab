@@ -20,7 +20,7 @@ public class AnswerVerifyService
                         JsonSerializer.Deserialize<List<string>>(question.CorrectAnswer)!.ToHashSet();
                     var currentAnswer =
                         JsonSerializer.Deserialize<List<string>>(answer)!.ToHashSet();
-                    return currentAnswer.Equals(correctAnswer);
+                    return currentAnswer.SetEquals(correctAnswer);
                 }
                 catch
                 {

@@ -3,7 +3,10 @@ import {
     RegistrationRequest,
     User,
     LoginRequest,
-    News, Lab, VmQemuAgentNetworkGetInterfaces, LabReservation, CreateLabReservationRequest, UpdateLabReservationRequest
+    News, Test, Lab, VmQemuAgentNetworkGetInterfaces,
+    LabReservation, CreateLabReservationRequest, UpdateLabReservationRequest, Question,
+    AttemptResult,
+    Attempt
 } from "../../api";
 
 import {HttpClient} from "./httpClient";
@@ -16,29 +19,88 @@ export class ApiService {
         this.httpClient = httpClient
     }
 
+    public startAttempt(request : {testId : string, examineeId : string}) {
+        return this.httpClient.post<{testId : string, examineeId : string}, string>('/Attempt/start', request);
+    }
+
+    public giveAnswerAttempt(request : {questionId : string, answer : string}, id : string){
+        return this.httpClient.post<{questionId : string, answer : string}, void>(`/Attempt/${id}/change_the_answer`, request);
+    }
+
+    public endAttempt(id : string){
+        return this.httpClient.post<string, void>(`/Attempt/${id}/end`, id);
+    }
+
+    public getAttemptResult(id : string){
+        return this.httpClient.get<AttemptResult>(`/Attempt/${id}/result`);
+    }
+
+    public getUserAttempts(id : string){
+        return this.httpClient.get<Attempt[]>(`/Attempt/byExamineId/${id}`);
+    }
+
+    public getTestAttempts(id : string){
+        return this.httpClient.get<Attempt[]>(`/Attempt/byTestId/${id}`);
+    }
+
+    public getTests() {
+        return this.httpClient.get<Test[]>('/tests');
+    }
+
+    public deleteTest(id : string) {
+        return this.httpClient.delete<void>(`/tests/${id}`);
+    }
+
+    public getTest(id : string) {
+        return this.httpClient.get<Test>(`/tests/${id}`);
+    }
+
+    public postTest(request: Test) {
+        return this.httpClient.post<Test, void>('/tests', request);
+    }
+
+    public createLabReservation(request: CreateLabReservationRequest) {
+        return this.httpClient.post<CreateLabReservationRequest, void>('/schedule/create', request);
+    }
+
+    public getQuestions() {
+        return this.httpClient.get<Question[]>(`/Questions`);
+    }
+
+    public getQuestion(questionId: Question) {
+        return this.httpClient.get<Question>(`/Questions/${questionId}`);
+    }
+
+    public deleteQuestion(questionId: string) {
+        return this.httpClient.delete<string>(`/Questions/delete/${questionId}`);
+    }
+
     public login(request: LoginRequest) {
         return this.httpClient.post<LoginRequest, { user: User, token: string }>('/auth/login', request)
     }
 
     public approveUsers(request: string[]) {
-        return this.httpClient.post<string[], void>('/User/approve', request)
+        return this.httpClient.post<string[], void>('/User/approve', request);
     }
 
     public getCurrentUser() {
         return this.httpClient.get<User>('/User/user');
     }
 
+    public getUserById(id: string) {
+        return this.httpClient.get<User>(`/User/user/${id}`);
+    }
+
     public createLab(id: string) {
-        return this.httpClient.post<{ id: string }, string>('/labs/create', {id})
+        return this.httpClient.post<{ id: string }, string>('/labs/create', {id});
     }
 
     public stopVm(request: { vmid: number }) {
-        return this.httpClient.get<{ uuid: string }>('/vm/stop', request)
+        return this.httpClient.get<{ uuid: string }>('/vm/stop', request);
     }
 
     public getLabs() {
-        return this.httpClient.get<Lab[]>('/labs/get')
-
+        return this.httpClient.get<Lab[]>('/labs/get');
     }
 
     public setPassword(vmid: number, username: string, password: string, ssh: string) {
@@ -103,10 +165,6 @@ export class ApiService {
 
     public getNewItem(request: { id: string }) {
         return this.httpClient.get<News>('/news/item', request)
-    }
-
-    public createLabReservation(request: CreateLabReservationRequest) {
-        return this.httpClient.post<CreateLabReservationRequest, void>('/schedule/create', request)
     }
 
     public getLabReservation(id: string) {

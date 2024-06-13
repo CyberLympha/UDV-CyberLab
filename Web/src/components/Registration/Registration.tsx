@@ -13,13 +13,19 @@ export function Registration() {
     const [password, setPassword] = React.useState<string>('');
     const [firstName, setFirstName] = React.useState<string>('');
     const [secondName, setSecondName] = React.useState<string>('');
+    const [role, setRole] = React.useState<string>(`👨‍🎓 Ученик`);
     const [loading, setLoading] = React.useState(false);
     const navigate = useNavigate();
+
+    const roles = [
+        { value: 'User', label: `👨‍🎓 Ученик` },
+        { value: 'Teacher', label: `👨‍🏫 Учитель` }
+    ];
 
     const handleClickPrimaryButton = async () => {
         setLoading(true);
 
-        const response = await apiService.registration({email, password, firstName, secondName});
+        const response = await apiService.registration({email, password, firstName, secondName, role});
 
         if (response instanceof Error) {
             setLoading(false);
@@ -38,6 +44,10 @@ export function Registration() {
         navigate("/login");
     }
 
+    const chengeSelect = (value : any) => {
+        console.log(value);
+        setRole(value);
+    };
 
     return (
         <Center w={"100%"}>
@@ -70,6 +80,19 @@ export function Registration() {
                     type="password"
                     placeholder='Пароль'
                 />
+                <body>
+                    <div className={"selectdiv"}>
+                        <label>
+                            <select onChange={(e) => chengeSelect(e.target.value)}>                            
+                                {roles.map((type, index) => (
+                                    <option key={index} value={type.value}>
+                                        {type.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                    </div>      
+                </body>
                 <Button isLoading={loading} onClick={handleClickPrimaryButton} colorScheme={"blue"}
                         children={"Зарегистрироваться"}/>
             </VStack>

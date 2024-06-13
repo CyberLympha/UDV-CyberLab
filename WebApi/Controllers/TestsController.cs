@@ -1,10 +1,10 @@
 ﻿using System.Text.Json;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Model.QuestionModels;
 using WebApi.Model.TestModels;
 using WebApi.Model.TestModels.Requests;
 using WebApi.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApi.Controllers;
 
@@ -67,8 +67,8 @@ public class TestsController : ControllerBase
         var testId = await _testsService.Create(test).ConfigureAwait(false);
         return testId.ToActionResult();
     }
-    
-    [HttpDelete]
+
+    [HttpDelete("{id}")]
     [Authorize(Roles = "Admin,Teacher")]
     public async Task<IActionResult> Delete(string id)
     {

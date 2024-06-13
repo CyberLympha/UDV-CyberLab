@@ -5,6 +5,8 @@ using WebApi.Services;
 
 namespace WebApi.Controllers;
 
+[Route("/api/[controller]")]
+[ApiController]
 public class AttemptController : ControllerBase
 {
     private readonly AttemptService _attemptService;
@@ -37,7 +39,7 @@ public class AttemptController : ControllerBase
         return result.ToActionResult();
     }
 
-    [HttpPost("end")]
+    [HttpPost("{id}/end")]
     [Authorize(Roles = "Admin,Teacher,User")]
     public async Task<IActionResult> End(string id)
     {

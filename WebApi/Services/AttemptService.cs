@@ -158,6 +158,13 @@ public class AttemptService
         return result;
     }
 
+    private static ApiOperationResult EnsureAllowed(Attempt attempt)
+    {
+        return attempt.Status == AttemptStatus.Ended
+            ? Error.BadRequest("Attempt is ended")
+            : ApiOperationResult.Success();
+    }
+
     public async Task<ApiOperationResult<List<Attempt>>> GetByExamineId(string id)
     {
         var idValidationResult = _idValidationHelper.EnsureValidId(id);
@@ -166,7 +173,6 @@ public class AttemptService
 
         return (await _attemptRepository.ReadByRule(a => a.ExamineeId == id)).ToList();
     }
-    
     public async Task<ApiOperationResult<List<Attempt>>> GetByTestId(string id)
     {
         var idValidationResult = _idValidationHelper.EnsureValidId(id);
@@ -174,12 +180,5 @@ public class AttemptService
             return idValidationResult.Error;
 
         return (await _attemptRepository.ReadByRule(a => a.TestId == id)).ToList();
-    }
-
-    private static ApiOperationResult EnsureAllowed(Attempt attempt)
-    {
-        return attempt.Status == AttemptStatus.Ended
-            ? Error.BadRequest("Attempt is ended")
-            : ApiOperationResult.Success();
     }
 }

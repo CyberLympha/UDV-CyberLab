@@ -1,3 +1,59 @@
+export interface AttemptResult {
+  totalScore: string;
+  results: string[];
+}
+
+export interface TestAttempt {
+  idTest: string;
+  idAttempt: string;
+}
+
+export interface Attempt {
+  id: string;
+  testId: string;
+  examineeId: string;
+  status: string,
+  startTime: string;
+  endTime: string;
+  results: string[];
+}
+
+export interface Test {
+  id: string;
+  name: string;
+  description: string;
+  questions: Question[];
+}
+
+export interface Question {
+  id: string;
+  text?: string;
+  description: string,
+  questionType: string;
+  correctAnswer: string;
+  questionData: {"Variants" : string};
+}
+
+export interface CreateLabReservationRequest {
+  timeStart: number;
+  timeEnd: number;
+  /** @minLength 1 */
+  theme: string;
+  /** @minLength 1 */
+  description: string;
+  reservorId: string|undefined;
+  lab: Lab|null;
+}
+
+export interface Lab {
+  /** @minLength 1 */
+  id: string;
+  title?: string;
+  shortDescription?: string;
+  description?: string;
+  labsEntitys?: string[];
+}
+
 export interface BalloonInfoInt {
   /** @format int64 */
   actual?: number;
@@ -96,15 +152,6 @@ export interface Ip {
   prefix?: number;
 }
 
-export interface Lab {
-  /** @minLength 1 */
-  id: string;
-  title?: string;
-  shortDescription?: string;
-  description?: string;
-  labsEntitys?: string[];
-}
-
 export interface LoginRequest {
   /** @minLength 1 */
   email: string;
@@ -172,6 +219,8 @@ export interface RegistrationRequest {
   email: string;
   /** @minLength 1 */
   password: string;
+  /** @minLength 1 */
+  role: string;
 }
 
 export interface ResultInt {
@@ -245,6 +294,7 @@ export interface User {
   role: UserRole;
   /** @minLength 1 */
   labs: string;
+  testAttempt: TestAttempt;
   isApproved: boolean;
 }
 
@@ -326,17 +376,6 @@ export interface LabReservation {
   description: string;
   reservor: User;
   lab: Lab;
-}
-
-export interface CreateLabReservationRequest {
-  timeStart: number;
-  timeEnd: number;
-  /** @minLength 1 */
-  theme: string;
-  /** @minLength 1 */
-  description: string;
-  reservorId: string|undefined;
-  lab: Lab|null;
 }
 
 export interface UpdateLabReservationRequest {
