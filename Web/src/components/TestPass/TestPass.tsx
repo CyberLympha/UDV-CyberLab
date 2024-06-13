@@ -58,7 +58,7 @@ export function TestPass() {
             return < Variants
             key={index}
             variantsType={`${question.questionType}`}
-            variant={`${v.substring(6).slice(0, -6)}`}
+            variant={`${JSON.parse(`\"${v}\"`)}`.substring(1).slice(0, -1)}
             questionId={`${question.id}`}
             variantId={`${index}`}
             onChangeAnswer={writeAnswers}
