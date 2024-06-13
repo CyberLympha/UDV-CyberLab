@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import { useEffect, useState } from "react";
 
 import {useNavigate} from "react-router-dom";
 
@@ -7,31 +7,30 @@ import {Question, Test} from "../../../api";
 import {Button} from "../Button/Button";
 import {QuestionAdd} from "../QuestionAdd/QuestionAdd";
 import {apiService} from "../../services";
+import { ReactJSXElement } from "@emotion/react/types/jsx-namespace";
 
 import  "./TestsAdd.css";
 
 
 export function TestsAdd({id, name, description} : Test) {
-    const [localName, setLocalName] = React.useState(name);
-    const [localDescription, setLocalDescription] = React.useState(description);
-    const [localQuestion, setLocalQuestion] = React.useState<string[]>([]);
-    const [dictQuestions, setDictQuestions] = useState({});
-    const [value] = useState<string>('');
+    const [testName, setTestName] = useState<string>(name);
+    const [testDescription, setTestDescription] = useState<string>(description);
+    const [testQuestions, setTestQuestions] = useState<{[key: string]: any}>({});
+
+    const [questionsElements, setQuestionsElements] = useState<ReactJSXElement[]>([]);
     const navigate = useNavigate();
 
     const addNewTest = async () => {
-        if (!localName || !localDescription) return;
+        if (!testName || !testDescription) return;
 
-        const questions : Question[] = Object.values(dictQuestions);
+        const questions : Question[] = Object.values(testQuestions);
 
         const newTest : Test = {
             id: id,
-            name: localName,
-            description: localDescription,
+            name: testName,
+            description: testDescription,
             questions: questions
         };
-
-        console.log(newTest);
 
         const response = await apiService.postTest(newTest);
         if (response instanceof Error) {
@@ -42,22 +41,32 @@ export function TestsAdd({id, name, description} : Test) {
     };
 
     const handleQuestionChange = (currentQuestion : Question, index : number) => {
-        setDictQuestions(prevDictionary => ({
-            ...prevDictionary,
+        setTestQuestions(prevTestQuestions => ({
+            ...prevTestQuestions,
             [index]: currentQuestion
         }));
     };
 
-    const questionElements = localQuestion.map((element, index) => {
+    const deleteQuestion = (questionId : number) =>{
+        const tempDict = { ...testQuestions };
+        delete tempDict[questionId];
+        setTestQuestions(tempDict);
+
+        const updatedVariants : ReactJSXElement[] = questionElements.filter((item, itemIndex) => itemIndex != questionId);
+        setQuestionsElements(updatedVariants);
+    };
+
+    const questionElements = questionsElements.map((element, index) => {
         return <QuestionAdd
             key={index}
             onChangeQuestion={handleQuestionChange}
+            onDeleteQuestion={deleteQuestion}
             id={`${index}`}
         />
     });
 
     const addNewQuestion = () => {
-        setLocalQuestion([...localQuestion, value]);
+        setQuestionsElements([...questionsElements, questionsElements[0]]);
     };
 
     return (
@@ -66,7 +75,7 @@ export function TestsAdd({id, name, description} : Test) {
                 <div className="test__header">
                     <div className="test__title">
                         <input type="text" className="test__title" placeholder="Название"
-                               onChange={e => setLocalName(e.target.value)}/>
+                               onChange={e => setTestName(e.target.value)}/>
                     </div>
                     <nav className="question-nav" aria-label="Main">
                         <ul className="question-nav__list">
@@ -94,7 +103,7 @@ export function TestsAdd({id, name, description} : Test) {
                     </nav>
                     <div className="test__description">
                         <input type="text" className="test__description" placeholder="Описание"
-                               onChange={e => setLocalDescription(e.target.value)}/>
+                               onChange={e => setTestDescription(e.target.value)}/>
                     </div>
                 </div>
                 {questionElements}

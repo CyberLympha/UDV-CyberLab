@@ -16,6 +16,13 @@ namespace WebApi.Controllers
             _userService = userService;
         }
 
+        [HttpGet("user/{id}")]
+        [Authorize(Roles = "Admin,User")]
+        public async Task<ActionResult<User>> GetUserById(string id)
+        {
+            return await _userService.GetAsyncById(id);
+        }
+
         [HttpGet("user")]
         [Authorize(Roles = "Admin,User")]
         public async Task<ActionResult<User>> GetUser()

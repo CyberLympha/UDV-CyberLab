@@ -8,7 +8,7 @@ export class HttpClient {
 
     constructor() {
         // this.client = axios.create({baseURL: "http://10.40.229.60:5220/api/", withCredentials: true});
-        this.client = axios.create({baseURL: "https://localhost:44360/api/", withCredentials: true});
+        this.client = axios.create({baseURL: "http://localhost:5221/api/", withCredentials: true});
 
         this.client.interceptors.request.use(
             config => {

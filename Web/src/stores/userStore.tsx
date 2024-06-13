@@ -1,9 +1,5 @@
 import {makeAutoObservable} from "mobx"
-import {fromPromise,} from "mobx-utils";
-import type {IPromiseBasedObservable} from "mobx-utils"
-
-import {TestAttempt, User, UserRole} from "../../api";
-import {apiService} from "../services";
+import {TestAttempt, User} from "../../api";
 
 
 

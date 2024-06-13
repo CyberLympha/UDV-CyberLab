@@ -1,10 +1,9 @@
-import React from "react";
 import style from "./TestOpen.module.scss"
-import {Test} from "../../../api"
+import { Test } from "../../../api"
 import { Link } from 'react-router-dom'
 
 
-export function TestOpen({id, name, description, questions}: Test) {
+export function TestOpen({id, name, description}: Test) {
     return (
         <div className={style.container}>
             <Link to={`/tests/${id}/questions`}>

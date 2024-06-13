@@ -8,6 +8,16 @@ export interface TestAttempt {
   idAttempt: string;
 }
 
+export interface Attempt {
+  id: string;
+  testId: string;
+  examineeId: string;
+  status: string,
+  startTime: string;
+  endTime: string;
+  results: string[];
+}
+
 export interface Test {
   id: string;
   name: string;
@@ -209,6 +219,8 @@ export interface RegistrationRequest {
   email: string;
   /** @minLength 1 */
   password: string;
+  /** @minLength 1 */
+  role: string;
 }
 
 export interface ResultInt {

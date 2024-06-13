@@ -10,7 +10,7 @@ import { NewsAdd } from "../NewsAdd/NewsAdd";
 import {NewsEdit} from "../NewsEdit/NewsEdit";
 import {Admin} from "../Admin/Admin";
 import {LabSchedule} from "../LabSchedule/LabSchedule";
-import {TestList} from "../TestList/TestList";
+import {TestList} from "../TestList/TestList/TestList";
 import {TestsAdd} from "../TestsAdd/TestsAdd";
 import {TestPass} from "../TestPass/TestPass";
 import {TestOpen} from "../TestOpen/TestOpen";

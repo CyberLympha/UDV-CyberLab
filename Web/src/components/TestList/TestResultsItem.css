@@ -1,0 +1,38 @@
+.teacher_table{
+    padding: 10px;
+    width: 85%;
+    background-color: azure;
+    margin: 0 auto;
+    border-radius: 15px;
+}
+
+tr {
+    text-align: left;
+    vertical-align: middle;
+}
+th, td{
+    padding: 10px;    
+}
+
+.studen_item_info{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.student_item_img{
+    width: 40px;
+    height: 40px;
+}
+
+.student_item_name{
+    font-weight: bold;
+}
+
+.student_item_result{
+    color: #5F6368;
+}
+/* 
+body{
+    background-color: gray;
+} */

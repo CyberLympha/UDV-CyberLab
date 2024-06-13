@@ -1,8 +1,8 @@
 import  "../TestsAdd/TestsAdd.css";
-import React, {useState} from "react";
 
 
-export function VariantAdd({ onChangeVariant, onChangeAnswer, variantId, questionId, variantsType } : any) {
+export function VariantAdd({ onChangeVariant, onChangeAnswer, onDeleteVariant, 
+                            variantId, questionId, variantsType } : any) {
 
     const changeVariant = (event : any) => {
         onChangeVariant(event.target.value, variantId);
@@ -10,6 +10,10 @@ export function VariantAdd({ onChangeVariant, onChangeAnswer, variantId, questio
 
     const changeAnswer = () => {
         onChangeAnswer(variantId);
+    };
+
+    const deleteVariant = () => {
+        onDeleteVariant(variantId);
     };
 
     return (
@@ -23,8 +27,14 @@ export function VariantAdd({ onChangeVariant, onChangeAnswer, variantId, questio
             </div>
             <span className="answer__append">
                 <img src="./img/image.png"/>
-                <img src="./img/delete.png"/>
+                <button onClick={deleteVariant}>
+                    <img src="./img/delete.png"/>
+                </button>
             </span>
         </li>
     )
 }
+
+// export function VariantAdd() {
+//     return (<p>This is a component!</p>)
+//   };

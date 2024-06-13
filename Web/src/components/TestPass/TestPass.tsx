@@ -1,5 +1,4 @@
 import React from "react";
-import style from "../TestOpen/TestOpen.module.scss";
 import {Question, Test} from "../../../api";
 import {useNavigate, useParams} from "react-router-dom";
 import {apiService} from "../../services";
@@ -70,37 +69,29 @@ export function TestPass() {
     };
     
     React.useEffect(() => {
-        console.log(answers);
         setAnswerLoaded(false);
 
     }, [answers])
 
     const writeAnswers = (variant : string, questionId : string, variantsType : string) => {
 
-        if (variantsType == "Radio") {
+        if (variantsType == "Radio" || !answers.hasOwnProperty(questionId)) {
             setAnswers(prevDictionary => ({
                 ...prevDictionary,
-                [questionId]: [variant]
+                [questionId]: [`"${variant}"`]
             }));
         } else {
-            if (!answers.hasOwnProperty(questionId)) {
+            if (answers[questionId].find((string) => string === `"${variant}"`) === undefined) {
                 setAnswers(prevDictionary => ({
                     ...prevDictionary,
-                    [questionId]: [variant]
+                    [questionId]: [...prevDictionary[`${questionId}`], `"${variant}"`]
                 }));
             } else {
-                if (answers[questionId].find((string) => string === `${variant}`) === undefined) {
-                    setAnswers(prevDictionary => ({
-                        ...prevDictionary,
-                        [questionId]: [...prevDictionary[`${questionId}`], variant]
-                    }));
-                } else {
-                    const newAnswers = answers[questionId].filter(item => item !== `${variant}`);
-                    setAnswers(prevDictionary => ({
-                        ...prevDictionary,
-                        [questionId]: [...newAnswers]
-                    }));
-                }
+                const newAnswers = answers[questionId].filter(item => item !== `"${variant}"`);
+                setAnswers(prevDictionary => ({
+                    ...prevDictionary,
+                    [questionId]: [...newAnswers]
+                }));
             }
         }
     };
@@ -108,8 +99,8 @@ export function TestPass() {
     const sendAnswer = async (questionId : string) => {
         
         const response = apiService.giveAnswerAttempt(
-            {questionId : `${questionId}`, answer : `${answers[questionId]}`},
-            `${userStore.user?.testAttempt}`);
+            {questionId : `${questionId}`, answer : `[${answers[questionId]}]`},
+            `${userStore.user?.testAttempt.idAttempt}`);
 
         if (response instanceof Error) {
             return;
@@ -117,8 +108,6 @@ export function TestPass() {
     };
 
     const sendTest = async () => {
-        console.log(`sendTest: ${userStore.user?.testAttempt.idAttempt}`);
-
         const response = await apiService.endAttempt(`${userStore.user?.testAttempt.idAttempt}`);
 
         if (response instanceof Error) {

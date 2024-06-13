@@ -1,16 +1,16 @@
-import React, {useState} from "react";
+import { useEffect, useState } from "react";
 import  "../TestsAdd/TestsAdd.css";
 import {Question} from "../../../api";
 import {VariantAdd} from "../VariantAdd/VariantAdd";
-import { Variants } from "../TestPass/Variants";
+import { ReactJSXElement } from "@emotion/react/types/jsx-namespace";
 
 
-export function QuestionAdd({ onChangeQuestion, id } : any, { text, questionType, questionData } : Question) {
-    const [localNameQuestion, setLocalNameQuestion] = React.useState(text);
-    const [localQuestionType, setLocalQuestionType] = React.useState("Radio");
+export function QuestionAdd({ onChangeQuestion, onDeleteQuestion, id } : any, { text } : Question) {    
+    const [nameQuestion, setNameQuestion] = useState(text);
+    const [questionType, setQuestionType] = useState<string>("Radio");
     const [indexesAnswers, setIndexesAnswers] = useState<Set<number>>(new Set<number>());
-    const [dictVariants, setDictVariants] = useState({});
-    const [localVariant, setLocalVariant] = useState<string[]>([]);
+    const [dictVariants, setDictVariants] = useState<{[key: string]: any}>({});
+    const [variantsElements, setVariantsElements] = useState<ReactJSXElement[]>([]);
     const [question, setQuestion] = useState<Question>({
         id: "",
         text: "",
@@ -19,14 +19,13 @@ export function QuestionAdd({ onChangeQuestion, id } : any, { text, questionType
         correctAnswer: "",
         questionData: {Variants : ""}
     });
-    const [value] = useState<string>('');
-
+    
     const questionTypes = [
         {label: "Один из списка", value: "Radio"},
         {label: "Несколько из списка", value: "CheckBox"}
     ];
 
-    React.useEffect(() => {
+    useEffect(() => {
         const tempVariants = {"Variants" : ""};
         tempVariants.Variants = `[${Object.values(dictVariants)}]`;
 
@@ -37,35 +36,47 @@ export function QuestionAdd({ onChangeQuestion, id } : any, { text, questionType
         
         setQuestion({
             ...question,
-            text: localNameQuestion,
-            questionType: localQuestionType,
+            text: nameQuestion,
+            questionType: questionType,
             questionData: tempVariants,
             correctAnswer: `[${answers}]`
         });
 
-    }, [localNameQuestion, localQuestionType, dictVariants, indexesAnswers])
+    }, [nameQuestion, questionType, dictVariants, indexesAnswers]);
 
-    React.useEffect(() => {
-        console.log(question);
+    useEffect(() => {
         sendQuestion();
 
-    }, [question])
+    }, [question]);
+
+    const deleteQuestion = () => {
+        onDeleteQuestion(id);
+    };
 
     const sendQuestion = () => {
         onChangeQuestion(question, id);
     };
 
     const handleTextChanged = (event : any) => {
-        setLocalNameQuestion(event.target.value);
+        setNameQuestion(event.target.value);
     };
 
     const handleTypeChanged = (event : any) => {
-        setLocalQuestionType(event.target.value);
+        setQuestionType(event.target.value);
         setIndexesAnswers(new Set<number>());
     };
 
     const addNewVariant = () => {
-        setLocalVariant([...localVariant, value]);
+        setVariantsElements([...variantsElements, 
+        <VariantAdd
+            key={`${variantsElements.length}`}
+            onChangeVariant={handleVariantChange}
+            onChangeAnswer={handleAnswerChange}
+            onDeleteVariant={deleteVariant}
+            variantId={`${variantsElements.length}`}
+            questionId={`${id}`}
+            variantsType={`${questionType}`}
+        />]);
     };
 
     const handleVariantChange = (currentVariant : string, index : number) => {
@@ -76,7 +87,7 @@ export function QuestionAdd({ onChangeQuestion, id } : any, { text, questionType
     };
 
     const handleAnswerChange = (index : number) => {
-        if (localQuestionType == "Radio") {
+        if (questionType == "Radio") {
             setIndexesAnswers(new Set<number>([index]));
         } else {
             if (!indexesAnswers.has(index)) {
@@ -88,16 +99,30 @@ export function QuestionAdd({ onChangeQuestion, id } : any, { text, questionType
         }
     };
 
-    const variants = localVariant.map((element, index) => {
-        return <VariantAdd
-            key={`${index}`}
-            onChangeVariant={handleVariantChange}
-            onChangeAnswer={handleAnswerChange}
-            variantId={`${index}`}
-            questionId={`${id}`}
-            variantsType={`${localQuestionType}`}
-        />;
-    });
+    const deleteVariant = (variantId : number) => {
+        const tempDict = { ...dictVariants };
+        delete tempDict[variantId];
+        setDictVariants(tempDict);
+
+        // const updatedVariants : ReactJSXElement[] = variantsElements.filter((item, itemIndex) => itemIndex != variantId); 
+        // console.log(updatedVariants);
+        // setVariantsElements(updatedVariants);
+        const newComponents = [...variantsElements];
+        newComponents.splice(variantId, 1);
+        setVariantsElements(newComponents);
+    };
+
+    // const variants = variantsElements.map((element, index) => (
+    //     <VariantAdd
+    //         key={`${index}`}
+    //         onChangeVariant={handleVariantChange}
+    //         onChangeAnswer={handleAnswerChange}
+    //         onDeleteVariant={deleteVariant}
+    //         variantId={`${index}`}
+    //         questionId={`${id}`}
+    //         variantsType={`${questionType}`}
+    //     />
+    // ));
 
     return (
         <div className="test__body">
@@ -115,8 +140,6 @@ export function QuestionAdd({ onChangeQuestion, id } : any, { text, questionType
                             <input type="text" className="question__title" placeholder="Новый заголовок"
                                    onChange={handleTextChanged}/>
                         </div>
-                        {/* <img src="./img/image.png"/> */}
-
                         <select onChange={handleTypeChanged} className="question__type">
                             {questionTypes.map((type, index) => (
                                 <option key={index} value={type.value}>
@@ -150,7 +173,17 @@ export function QuestionAdd({ onChangeQuestion, id } : any, { text, questionType
                         </ul>
                     </nav>
                     <ul className="list__answers">
-                        {variants}
+                        {variantsElements.map((element, index) => (
+                            <VariantAdd
+                                key={`${index}`}
+                                onChangeVariant={handleVariantChange}
+                                onChangeAnswer={handleAnswerChange}
+                                onDeleteVariant={deleteVariant}
+                                variantId={`${index}`}
+                                questionId={`${id}`}
+                                variantsType={`${questionType}`}
+                            />
+                        ))}
                         <li className="answer">
                             <div className="answer__title">
                                 <button onClick={addNewVariant} className="answer__append">
@@ -165,7 +198,9 @@ export function QuestionAdd({ onChangeQuestion, id } : any, { text, questionType
                                 <img src="./img/paper.png"/>
                             </div>
                             <div className="action delete">
-                                <img src="./img/trash.png"/>
+                                <button  onClick={deleteQuestion}>
+                                    <img src="./img/trash.png"/>
+                                </button>                               
                             </div>
                             <div className="required">
                                 Обязательный вопрос
