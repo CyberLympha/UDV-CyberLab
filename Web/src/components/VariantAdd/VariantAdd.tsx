@@ -1,7 +1,7 @@
 import  "../TestsAdd/TestsAdd.css";
 
 
-export function VariantAdd({ onChangeVariant, onChangeAnswer, onDeleteVariant, 
+export function VariantAdd({ onChangeVariant, onChangeAnswer, onDeleteVariant,
                             variantId, questionId, variantsType } : any) {
 
     const changeVariant = (event : any) => {
@@ -34,7 +34,3 @@ export function VariantAdd({ onChangeVariant, onChangeAnswer, onDeleteVariant,
         </li>
     )
 }
-
-// export function VariantAdd() {
-//     return (<p>This is a component!</p>)
-//   };

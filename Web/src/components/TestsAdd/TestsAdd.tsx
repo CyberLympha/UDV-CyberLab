@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import {useNavigate} from "react-router-dom";
 
@@ -7,7 +7,6 @@ import {Question, Test} from "../../../api";
 import {Button} from "../Button/Button";
 import {QuestionAdd} from "../QuestionAdd/QuestionAdd";
 import {apiService} from "../../services";
-import { ReactJSXElement } from "@emotion/react/types/jsx-namespace";
 
 import  "./TestsAdd.css";
 
@@ -16,8 +15,8 @@ export function TestsAdd({id, name, description} : Test) {
     const [testName, setTestName] = useState<string>(name);
     const [testDescription, setTestDescription] = useState<string>(description);
     const [testQuestions, setTestQuestions] = useState<{[key: string]: any}>({});
-
-    const [questionsElements, setQuestionsElements] = useState<ReactJSXElement[]>([]);
+    const [keys, setKeys] = useState<number[]>([]);
+    const [questionsElements, setQuestionsElements] = useState<React.ReactNode[]>([]);
     const navigate = useNavigate();
 
     const addNewTest = async () => {
@@ -52,21 +51,37 @@ export function TestsAdd({id, name, description} : Test) {
         delete tempDict[questionId];
         setTestQuestions(tempDict);
 
-        const updatedVariants : ReactJSXElement[] = questionElements.filter((item, itemIndex) => itemIndex != questionId);
-        setQuestionsElements(updatedVariants);
+        setQuestionsElements(prevState => prevState.filter((item, itemIndex) => itemIndex != questionId));
+        setKeys(keys.filter((item) => item != questionId));
     };
 
     const questionElements = questionsElements.map((element, index) => {
+        if (keys[index] === undefined) {
+            return;
+        }
+
         return <QuestionAdd
-            key={index}
+            key={`${keys[index]}`}
             onChangeQuestion={handleQuestionChange}
             onDeleteQuestion={deleteQuestion}
-            id={`${index}`}
-        />
+            id={`${keys[index]}`}
+        />;
     });
 
     const addNewQuestion = () => {
-        setQuestionsElements([...questionsElements, questionsElements[0]]);
+        if (keys[0] === undefined) {
+            setKeys([0]);
+        } else {
+            setKeys([...keys, keys[keys.length - 1] + 1]);
+        }  
+
+        setQuestionsElements([...questionsElements, 
+        <QuestionAdd
+            key={`${keys}`}
+            onChangeQuestion={handleQuestionChange}
+            onDeleteQuestion={deleteQuestion}
+            id={`${keys}`}
+        />]);
     };
 
     return (

@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import  "../TestsAdd/TestsAdd.css";
 import {Question} from "../../../api";
 import {VariantAdd} from "../VariantAdd/VariantAdd";
-import { ReactJSXElement } from "@emotion/react/types/jsx-namespace";
+import  "../TestsAdd/TestsAdd.css";
 
 
 export function QuestionAdd({ onChangeQuestion, onDeleteQuestion, id } : any, { text } : Question) {    
@@ -19,6 +18,7 @@ export function QuestionAdd({ onChangeQuestion, onDeleteQuestion, id } : any, { 
         correctAnswer: "",
         questionData: {Variants : ""}
     });
+    const [keys, setKeys] = useState<number[]>([]);
     
     const questionTypes = [
         {label: "Один из списка", value: "Radio"},
@@ -31,7 +31,9 @@ export function QuestionAdd({ onChangeQuestion, onDeleteQuestion, id } : any, { 
 
         const answers : string[] = [];
         indexesAnswers.forEach((index) => {
-            answers.push((dictVariants as never)[index]);
+            if ((dictVariants as never)[index] !== undefined) {
+                answers.push((dictVariants as never)[index]);
+            }
         });
         
         setQuestion({
@@ -67,15 +69,21 @@ export function QuestionAdd({ onChangeQuestion, onDeleteQuestion, id } : any, { 
     };
 
     const addNewVariant = () => {
+        if (keys[0] === undefined) {
+            setKeys([0]);
+        } else {
+            setKeys([...keys, keys[keys.length - 1] + 1]);
+        }        
+
         setVariantsElements([...variantsElements, 
         <VariantAdd
-            key={`${variantsElements.length}`}
+            key={`${keys}`}
             onChangeVariant={handleVariantChange}
             onChangeAnswer={handleAnswerChange}
             onDeleteVariant={deleteVariant}
-            variantId={`${variantsElements.length}`}
+            variantId={`${keys}`}
             questionId={`${id}`}
-            variantsType={`${questionType}`}
+            variantsType={questionType}
         />]);
     };
 
@@ -99,30 +107,14 @@ export function QuestionAdd({ onChangeQuestion, onDeleteQuestion, id } : any, { 
         }
     };
 
-    useEffect(() => {
-        // console.log(variantsElements);
-
-    }, [variantsElements]);
-
     const deleteVariant = (variantId : number) => {
-        const tempDict = { ...dictVariants };
-        delete tempDict[variantId];
-        setDictVariants(tempDict);
+        const tempVariants = { ...dictVariants };
+        delete tempVariants[variantId];
+        setDictVariants(tempVariants);
 
         setVariantsElements(prevState => prevState.filter((item, itemIndex) => itemIndex != variantId));
+        setKeys(keys.filter((item) => item != variantId));
     };
-
-    const variants = variantsElements.map((element, index) => (
-        <VariantAdd
-            key={`${index}`}
-            onChangeVariant={handleVariantChange}
-            onChangeAnswer={handleAnswerChange}
-            onDeleteVariant={deleteVariant}
-            variantId={`${index}`}
-            questionId={`${id}`}
-            variantsType={`${questionType}`}
-        />
-    ));
 
     return (
         <div className="test__body">
@@ -173,7 +165,20 @@ export function QuestionAdd({ onChangeQuestion, onDeleteQuestion, id } : any, { 
                         </ul>
                     </nav>
                     <ul className="list__answers">
-                        {variants}
+                        {variantsElements.map((element, index) => {
+                            if (keys[index] === undefined) {
+                                return;
+                            }
+                            return <VariantAdd
+                                key={`${keys[index]}`}
+                                onChangeVariant={handleVariantChange}
+                                onChangeAnswer={handleAnswerChange}
+                                onDeleteVariant={deleteVariant}
+                                variantId={`${keys[index]}`}
+                                questionId={`${id}`}
+                                variantsType={questionType}
+                            />;
+                        })}
                         <li className="answer">
                             <div className="answer__title">
                                 <button onClick={addNewVariant} className="answer__append">
