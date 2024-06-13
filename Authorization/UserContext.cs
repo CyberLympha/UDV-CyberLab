@@ -17,7 +17,9 @@ namespace Authorization
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Host=158.160.91.137; Port=5433; Database=UdvLab; User ID=dev; Password=123123");
+            var env = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var host = env == "Docker-Development" ? "host.docker.internal" : "localhost";
+            optionsBuilder.UseNpgsql($"Host={host}; Port=5433; Database=Auth; User ID=user; Password=123123");
             //optionsBuilder.UseInMemoryDatabase("AuthFakeContext");
         }
     }

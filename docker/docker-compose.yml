@@ -1,0 +1,62 @@
+version: "3.8"
+
+services:
+  auth:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker-Development
+    image:
+        ssoncho/udv-cyberlab:v2
+    ports:
+      - "8081:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    
+  virtual_lab:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker-Development
+    image:
+        ssoncho/udv-cyberlab-temp:v1
+    ports:
+      - "8080:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  frontend:
+    image: 
+        ssoncho/udv-cyberlab-frontend:v1
+    ports:
+      - "8082:8082"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  postgres_auth:
+    image: postgres:15
+    container_name: postgres-auth
+    environment:
+      PGUSER: user
+      POSTGRES_DB: Auth
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: 123123
+    volumes:
+      - ./auth/:/docker-entrypoint-initdb.d
+      - data-auth:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  postgres_labs:
+    image: postgres:15
+    container_name: postgres-labs
+    environment:
+      PGUSER: dev
+      POSTGRES_DB: Labs
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: 123123
+    volumes:
+      - ./labs/:/docker-entrypoint-initdb.d
+      - data-labs:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+volumes:
+ data-auth:
+ data-labs:

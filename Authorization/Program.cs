@@ -58,11 +58,8 @@ builder.Services.AddAuthorization(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
@@ -73,7 +70,10 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-await RolesConfig.CreateRoles(app.Services);
-await RolesConfig.CreateTeacher(app.Services);
+if (app.Environment.IsDevelopment())
+{
+    await RolesConfig.CreateRoles(app.Services);
+    await RolesConfig.CreateTeacher(app.Services);
+}
 
 app.Run();
