@@ -35,7 +35,7 @@ export function UserResultItem ( { examineeId, testId } : any ) {
         <tbody>
             <tr className="student_item">
                 <td className="studen_item_info">
-                    <img className="student_item_img" src="img/user.png"/>
+                    <img className="student_item_img" src="public/img/user.png"/>
                     <div className="student_item_name">
                         {user}
                     </div>
