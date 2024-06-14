@@ -17,14 +17,14 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("user/{id}")]
-        [Authorize(Roles = "Admin,User")]
+        [Authorize(Roles = "Admin,Teacher,User")]
         public async Task<ActionResult<User>> GetUserById(string id)
         {
             return await _userService.GetAsyncById(id);
         }
 
         [HttpGet("user")]
-        [Authorize(Roles = "Admin,User")]
+        [Authorize(Roles = "Admin,Teacher,User")]
         public async Task<ActionResult<User>> GetUser()
         {
             var httpContext = new HttpContextAccessor().HttpContext;
