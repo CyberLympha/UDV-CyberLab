@@ -13,7 +13,7 @@ export function Registration() {
     const [password, setPassword] = React.useState<string>('');
     const [firstName, setFirstName] = React.useState<string>('');
     const [secondName, setSecondName] = React.useState<string>('');
-    const [role, setRole] = React.useState<string>(`👨‍🎓 Ученик`);
+    const [role, setRole] = React.useState<string>(`User`);
     const [loading, setLoading] = React.useState(false);
     const navigate = useNavigate();
 
@@ -24,7 +24,6 @@ export function Registration() {
 
     const handleClickPrimaryButton = async () => {
         setLoading(true);
-
         const response = await apiService.registration({email, password, firstName, secondName, role});
 
         if (response instanceof Error) {
@@ -45,7 +44,6 @@ export function Registration() {
     }
 
     const chengeSelect = (value : any) => {
-        console.log(value);
         setRole(value);
     };
 
