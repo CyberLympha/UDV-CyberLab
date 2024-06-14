@@ -17,9 +17,16 @@ namespace Authorization
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var env = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            var host = env == "Docker-Development" ? "host.docker.internal" : "localhost";
-            optionsBuilder.UseNpgsql($"Host={host}; Port=5433; Database=Auth; User ID=user; Password=123123");
+            var envUrl = System.Environment.GetEnvironmentVariable("DB_AUTH_URL");
+            var host = "localhost";
+            var port = "5433";
+            if (envUrl != null && envUrl != string.Empty)
+            {
+                var envUrlParts = envUrl.Split(':');
+                host = envUrlParts[1].Substring(2);
+                port = envUrlParts[2];
+            }
+            optionsBuilder.UseNpgsql($"Host={host}; Port={port}; Database=Auth; User ID=user; Password=123123");
             //optionsBuilder.UseInMemoryDatabase("AuthFakeContext");
         }
     }

@@ -4,8 +4,9 @@ services:
   auth:
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker-Development
+      - DB_AUTH_URL=${DB_AUTH_URL}
     image:
-        ssoncho/udv-cyberlab:v2
+        ssoncho/udv-cyberlab:v2.1
     ports:
       - "8081:8080"
     extra_hosts:
@@ -15,16 +16,23 @@ services:
   virtual_lab:
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker-Development
+      - IP_PROXMOX=10.40.229.10
+      - PROXMOX_TOKEN=root@pam!devil=e094061e-e909-4415-9a57-f353a81a9eed
+      - AUTH_URL=${AUTH_URL}
+      - DB_LABS_URL=${DB_LABS_URL}
     image:
-        ssoncho/udv-cyberlab-temp:v1
+        ssoncho/udv-cyberlab-temp:v1.1
     ports:
       - "8080:8080"
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
   frontend:
-    image: 
-        ssoncho/udv-cyberlab-frontend:v1
+    environment:
+     - AUTH_URL=${AUTH_URL}
+     - LABS_URL=${LABS_URL}
+    image:
+        ssoncho/udv-cyberlab-frontend:v1.1
     ports:
       - "8082:8082"
     extra_hosts:
@@ -34,7 +42,6 @@ services:
     image: postgres:15
     container_name: postgres-auth
     environment:
-      PGUSER: user
       POSTGRES_DB: Auth
       POSTGRES_USER: user
       POSTGRES_PASSWORD: 123123
@@ -48,7 +55,6 @@ services:
     image: postgres:15
     container_name: postgres-labs
     environment:
-      PGUSER: dev
       POSTGRES_DB: Labs
       POSTGRES_USER: dev
       POSTGRES_PASSWORD: 123123

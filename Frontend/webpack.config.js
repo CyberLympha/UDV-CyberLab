@@ -46,18 +46,10 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env.AUTH_URL': JSON.stringify(
-        process.env.NODE_ENV === 'production'
-              ? 'http://158.160.91.137'
-              :  process.env.NODE_ENV === 'deploy-private'
-              ? 'http://localhost:8081'
-              : 'https://localhost:7182'
+        process.env.AUTH_URL ??'https://localhost:7182'
       ),
       'process.env.LABS_URL': JSON.stringify(
-        process.env.NODE_ENV === 'production'
-              ? 'http://158.160.91.137'
-              :  process.env.NODE_ENV === 'deploy-private'
-              ? 'http://localhost:8080'
-              : 'https://localhost:7218'
+        process.env.LABS_URL ?? 'https://localhost:7218'
     ),
   }),
     new HtmlWebpackPlugin({

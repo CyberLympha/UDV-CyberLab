@@ -8,19 +8,16 @@ namespace VirtualLab.Application
     {
         private static Uri GetBaseAddress()
         {
-            var env = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            if (env == "Development")
-                return new Uri("https://localhost:7182");
-            else if (env == "Docker-Development")
+            var envUrl = System.Environment.GetEnvironmentVariable("AUTH_URL");
+            if (envUrl != null && envUrl != string.Empty)
             {
-                if (OperatingSystem.IsWindows() || OperatingSystem.IsMacOS())
-                    return new Uri("http://host.docker.internal:8081");
-                if (OperatingSystem.IsLinux())
-                    return new Uri("http://172.17.0.1:8081");
-            }            
-            throw new InvalidOperationException($"Unsupported environment. {env} - environment");
+                var envUrlParts = envUrl.Split(':');
+                if (envUrlParts[1] == "//localhost")
+                    return new Uri($"http://host.docker.internal:{envUrlParts[2]}");
+                return new Uri(envUrl);
+            }
+            return new Uri("https://localhost:7182");
         }
-
         private Uri _baseAddress = GetBaseAddress();
 
         public async Task<UserInfo> GetUserInfo(string userId)

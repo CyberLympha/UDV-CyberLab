@@ -38,8 +38,15 @@ public class LabDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         //optionsBuilder.UseInMemoryDatabase("FakeDbContext");
-        var env = System.Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-        var host = env == "Docker-Development" ? "host.docker.internal" : "localhost";
-        optionsBuilder.UseNpgsql($"Host={host}; Port=5432; Database=Labs; User ID=dev; Password=123123");
+        var envUrl = System.Environment.GetEnvironmentVariable("DB_LABS_URL");
+        var host = "localhost";
+        var port = "5432";
+        if (envUrl != null && envUrl != string.Empty)
+        {
+            var envUrlParts = envUrl.Split(':');
+            host = envUrlParts[1].Substring(2);
+            port = envUrlParts[2];
+        }
+        optionsBuilder.UseNpgsql($"Host={host}; Port={port}; Database=Labs; User ID=dev; Password=123123");
     }
 }

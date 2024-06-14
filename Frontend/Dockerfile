@@ -1,7 +1,5 @@
 FROM node:latest
 
-ENV NODE_ENV=deploy-private
-
 # Set the working directory in the container to /app
 WORKDIR /app
 
