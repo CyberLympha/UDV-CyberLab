@@ -26,7 +26,6 @@ export function VariantAdd({ onChangeVariant, onChangeAnswer, onDeleteVariant,
                        type="text" className="answer__title" placeholder="Новый заголовок"/>
             </div>
             <span className="answer__append">
-                <img src="./img/image.png"/>
                 <button onClick={deleteVariant}>
                     <img src="./img/delete.png"/>
                 </button>

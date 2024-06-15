@@ -92,30 +92,6 @@ export function TestsAdd({id, name, description} : Test) {
                         <input type="text" className="test__title" placeholder="Название"
                                onChange={e => setTestName(e.target.value)}/>
                     </div>
-                    <nav className="question-nav" aria-label="Main">
-                        <ul className="question-nav__list">
-                            <li className="question-nav__item">
-                                <button className="text__type bold">
-                                    <img src="img/bold.png"/>
-                                </button>
-                            </li>
-                            <li className="question-nav__item">
-                                <button className="text__type italic">
-                                    <img src="./img/italic.png"/>
-                                </button>
-                            </li>
-                            <li className="question-nav__item">
-                                <button className="text__type underlined">
-                                    <img src="./img/underlined.png"/>
-                                </button>
-                            </li>
-                            <li className="question-nav__item">
-                                <button className="text__type link">
-                                    <img src="./img/link.png"/>
-                                </button>
-                            </li>
-                        </ul>
-                    </nav>
                     <div className="test__description">
                         <input type="text" className="test__description" placeholder="Описание"
                                onChange={e => setTestDescription(e.target.value)}/>
