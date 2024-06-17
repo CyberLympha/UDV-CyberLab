@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+
+        body {
+            margin: 0;
+            background-color: white;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        html {
+            height: 100%;
+        }
+
+        #screen {
+            background-color: white;
+            flex: 1;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 24px;
+        }
+
+    </style>
+    
+    <script type="module" crossorigin="anonymous">
+        import RFB from './core/rfb.js';
+
+        let rfb;
+        let desktopName;
+
+        const host = localStorage.getItem('vnc_host') || "";
+        const port = localStorage.getItem('vnc_port') || "";
+        const password = localStorage.getItem('vnc_password') || "";
+        const path = localStorage.getItem('vnc_path') || "";
+        const websocketUrl = localStorage.getItem('websocketUrl') || "";
+
+        // Build the websocket URL used to connect
+        let url;
+        if (window.location.protocol === "https:") {
+            url = 'wss';
+        } else {
+            url = 'ws';
+        }
+        url += '://' + host;
+        if(port) {
+            url += ':' + port;
+        }
+        url += '/' + path;
+
+        // Creating a new RFB object will start a new connection
+        rfb = new RFB(document.getElementById('screen'), websocketUrl,
+                      { credentials: { password: password } });
+
+        rfb.scaleViewport = true;
+    </script>
+</head>
+
+<body>
+    <div id="screen">
+    </div>
+</body>
+</html>
