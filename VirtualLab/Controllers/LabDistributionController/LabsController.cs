@@ -2,8 +2,9 @@ using System.Collections.ObjectModel;
 using Microsoft.AspNetCore.Mvc;
 using ProxmoxApi;
 using VirtualLab.Application.Interfaces;
-using VirtualLab.Controllers.LabCreationService.Dto;
+using VirtualLab.Controllers.LabDistributionController.Dto;
 using VirtualLab.Domain.Entities;
+using VirtualLab.Domain.Entities.Mongo;
 using VirtualLab.Domain.Value_Objects;
 using VirtualLab.Domain.ValueObjects;
 
@@ -32,7 +33,8 @@ public class LabsController : ControllerBase
     public async Task<ActionResult> Create([FromBody] LabCreateRequest request)
     {
         var lab = Lab.From(request);
-        var result = await _labCreationService.Create(lab);
+        var stand = StandConfig.From(request.StandCreateRequest);
+        var result = await _labCreationService.Create(lab, stand);
         if (result.IsFailed) return BadRequest();
 
 

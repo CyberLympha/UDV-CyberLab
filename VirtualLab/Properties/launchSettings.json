@@ -18,14 +18,13 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "IP_PROXMOX": "10.40.229.10",
-        "PROXMOX_TOKEN": "root@pam!devil=e094061e-e909-4415-9a57-f353a81a9eed"
-      },
-      "mongoDbConf": {
-        "userName": "root",
-        "password": "example",
-        "port": 28017,
-        "dataBase": "admin"
+        "PROXMOX_TOKEN": "root@pam!devil=e094061e-e909-4415-9a57-f353a81a9eed",
+        "MongoDbUserName": "root",
+        "MongoDbPassword": "example",
+        "MongoDbPort": 28017,
+        "MongoDbDataBase": "admin"
       }
+      
     },
     "IIS Express": {
       "commandName": "IISExpress",

@@ -4,11 +4,14 @@ using ProxmoxApi;
 using VirtualLab;
 using VirtualLab.Application;
 using VirtualLab.Application.Interfaces;
+using VirtualLab.Domain.Interfaces.MongoRepository;
 using VirtualLab.Domain.Interfaces.Repositories;
 using VirtualLab.Infrastructure;
 using VirtualLab.Infrastructure.DataBase;
 using VirtualLab.Infrastructure.Options;
 using VirtualLab.Infrastructure.Repositories;
+using VirtualLab.Infrastructure.UnitOfWork;
+using VirtualLab.Lib;
 using VirtualLab.MiddleWare;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,7 +40,11 @@ builder.Services.AddScoped<IVirtualMachineDataHandler, VirtualMachineDataHandler
 builder.Services.AddScoped<IVirtualMachineRepository, VirtualMachineRepository>();
 builder.Services.AddScoped<ICredentialRepository, CredentialRepository>();
 
-builder.Services.Configure<ConfMongoDb>(builder.Configuration.GetSection("MongoDbConf"));
+builder.Services.AddScoped(_ => MongoDbConf.FromEnv());
+builder.Services.AddScoped<IMongoContext, MongoDb>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWorkMongo>();
+builder.Services.AddScoped<IConfigStandRepository, ConfigStandRepository>();
+
 
 builder.Services.AddConfigureAuthentication();
 builder.Services.AddPveClient();
@@ -45,7 +52,6 @@ builder.Services.AddPveClient();
 
 var app = builder.Build();
 app.UseMiddleware<ExceptionHandlerMiddleware>();
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

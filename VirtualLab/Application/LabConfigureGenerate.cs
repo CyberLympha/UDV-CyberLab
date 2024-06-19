@@ -1,5 +1,6 @@
 using FluentResults;
 using VirtualLab.Application.Interfaces;
+using VirtualLab.Domain.Entities.Mongo;
 using VirtualLab.Domain.Interfaces.Proxmox;
 using VirtualLab.Domain.Interfaces.Repositories;
 using VirtualLab.Domain.Value_Objects.Proxmox;
@@ -7,6 +8,7 @@ using VirtualLab.Domain.ValueObjects.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox.Config;
 using VirtualLab.Domain.ValueObjects.Proxmox.Requests;
 using VirtualLab.Infrastructure.Extensions;
+using VirtualLab.Lib;
 using Vostok.Logging.Abstractions;
 
 namespace VirtualLab.Application;
@@ -17,23 +19,28 @@ public class LabConfigure : ILabConfigure
     private readonly ILog _log;
     private readonly IVirtualMachineDataHandler _virtualMachines;
     private readonly IProxmoxNetwork _proxmoxNetwork;
-
+    private readonly IUnitOfWork _unitOfWorkMongo;
+    private readonly IProxmoxResourceManager _pveResourceManager;
     public LabConfigure(ILabRepository labs,
         ILog log,
         IVirtualMachineDataHandler virtualMachines,
-        IProxmoxNetwork proxmoxNetwork)
+        IProxmoxNetwork proxmoxNetwork,
+        IUnitOfWork unitOfWorkMongo, 
+        IProxmoxResourceManager PveResourceManager)
     {
         _labs = labs;
         log.ForContext("LabConfigure");
         _log = log;
         _virtualMachines = virtualMachines;
         _proxmoxNetwork = proxmoxNetwork;
+        _unitOfWorkMongo = unitOfWorkMongo;
+        _pveResourceManager = PveResourceManager;
     }
 
 
     public async Task<Result<StandCreateConfig>> GetConfigByLab(Guid labId)
     {
-        var getTemplateConfig = await GetTemplateConfig(labId);
+        var getTemplateConfig = await _unitOfWorkMongo.configs.GetByLabId(labId);
         if (getTemplateConfig.IsFailed) return Result.Fail(getTemplateConfig.Errors);
 
         var getConfigCurLab = await GenerateLabConfig(getTemplateConfig.Value);
@@ -75,6 +82,9 @@ public class LabConfigure : ILabConfigure
     //todo: псс, mongoDb норм идея, для хранием конфигов лаб)) по идей, могут быть доп данные.
     private async Task<Result<StandCreateConfig>> GetTemplateConfig(Guid labId)
     {
+        
+        
+        
         var lab = await _labs.Get(labId);
         if (lab.IsFailed)
         {
@@ -145,8 +155,32 @@ public class LabConfigure : ILabConfigure
         return labConfig;
     }
 
-    private async Task<Result<StandCreateConfig>> GenerateLabConfig(StandCreateConfig standCreateConfig)
-    {
+    private async Task<Result<StandCreateConfig>> GenerateLabConfig(StandConfig standConfig)
+    {// будем получать доступные вм (будет доп сервис с этим) и если это вм занята, то мы просто повторим поиск доступных вм
+        var standCreateConfig = new StandCreateConfig();
+        standCreateConfig.Node = "pve";
+        var freeQemuIds = await _pveResourceManager.GetFreeQemuIds("pve", standConfig.TemplatesVmConfig.Count);
+
+        for (int i = 0; i < standConfig.TemplatesVmConfig.Count; i++)
+        {
+            var template = new Template()
+            {
+                WithVmbr0 = standConfig.TemplatesVmConfig[i].WithVmbr0,
+                Id = standConfig.TemplatesVmConfig[i].TemplateId,
+                //todo: поля ниже мы должны брать так же из standConfig. то есть у нас будет таблица, в которой хранятся все доспутные template. 
+                Name = "test",
+                Password = "test"
+            };
+            standCreateConfig.CloneVmConfig.Add(
+                new CloneVmConfig() 
+                {
+                    NewId = freeQemuIds[i],
+                    Template = template,
+                    Nets = new NetCollection()
+                }); //todo: Nets мы пока тоже не создаём.
+            
+        }
+        
         return standCreateConfig;
     }
 }

@@ -1,8 +1,9 @@
-namespace VirtualLab.Controllers.LabCreationService.Dto;
+namespace VirtualLab.Controllers.LabDistributionController.Dto;
 
-public class LabCreateRequest
+public record LabCreateRequest
 {
     public string Name { get; set; }
-    public string Goal { get; set; }
+    public string Description { get; set; }
     public string Manual { get; set; }
+    public StandCreateRequest StandCreateRequest { get; set; }
 }

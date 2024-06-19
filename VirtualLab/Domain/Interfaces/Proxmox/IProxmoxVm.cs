@@ -14,7 +14,7 @@ public interface IProxmoxVm
     // 4 поставить другой интерфейс
     public Task<Result> UpdateDeviceInterface(string node, int qemu, NetCollection nets);
 
-    public Task<Result<List<long>>> GetAllQemu(string node);
+    
     public Task<Result<ProxmoxVmStatus>> GetStatus(string node, int qemu);
     
     // 5 запуск машни

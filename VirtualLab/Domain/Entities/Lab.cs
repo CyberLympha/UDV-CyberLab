@@ -1,7 +1,6 @@
-using VirtualLab.Controllers.LabCreationService.Dto;
+using VirtualLab.Controllers.LabDistributionController.Dto;
 
 namespace VirtualLab.Domain.Entities;
-
 
 //todo написать нормально сущность
 public class Lab : IEntity<Guid>
@@ -21,12 +20,12 @@ public class Lab : IEntity<Guid>
     {
         return new Lab()
         {
-            Description= request.Goal,
+            Description = request.Description,
             Id = Guid.NewGuid(),
             Manual = request.Manual,
             Name = request.Name,
             CreatedBy = Guid.Parse("00000000-0000-0000-0000-000000000000"), //TODO: брать id из Identity
             UserLabs = new List<UserLab>()
         };
-    } 
+    }
 }

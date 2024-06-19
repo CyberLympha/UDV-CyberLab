@@ -10,7 +10,7 @@ public class UserLabInfo
     public string Manual { get; set; }
     public Guid Status { get; set; }
     public int Rate { get; set; }
-
+    
 
     public static UserLabInfo From(Lab guid, UserLab userLab)
     {

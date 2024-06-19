@@ -2,24 +2,27 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using VirtualLab.Infrastructure.Options;
 using VirtualLab.Lib;
+using Vostok.Logging.Abstractions;
 
 namespace VirtualLab.Infrastructure.DataBase;
 
-public class LabConfigMongoDb : IMongoContext
+public class MongoDb : IMongoContext
 {
     private IMongoDatabase _database;
     private IMongoClient _client;
     private IClientSessionHandle _session;
-    private ConfMongoDb _confMongoDb;
+    private MongoDbConf _mongoDbConf;
     private readonly List<Func<Task>> _commands;
-    
-    public LabConfigMongoDb(
-        IOptions<ConfMongoDb> confMongoDb
-        )
+    private ILog _log;
+    public MongoDb(MongoDbConf confMongoDb, ILog log)
     {
-        _client = new MongoClient(confMongoDb.Value.UrlConnection());
-        _confMongoDb = confMongoDb.Value;
-        _database = _client.GetDatabase(confMongoDb.Value.Database);
+        _log = log;
+        
+        log.Debug($"{confMongoDb}");
+        _client = new MongoClient(confMongoDb.UrlConnection());
+        _mongoDbConf = confMongoDb;
+        _database = _client.GetDatabase(confMongoDb.DataBase);
+        _commands = new List<Func<Task>>(); 
     }
     
     public void Dispose()
@@ -35,6 +38,14 @@ public class LabConfigMongoDb : IMongoContext
 
     public async Task<int> SaveChangeAsync()
     {
+        if (_commands.Count == 1)
+        {
+            await _commands[0].Invoke();
+            
+            return 1;
+        }
+        
+        //todo: чтоб работало нужен replic-set
         using (_session = await _client.StartSessionAsync())
         {
             _session.StartTransaction();

@@ -11,7 +11,7 @@ using Result = FluentResults.Result;
 
 namespace VirtualLab.Infrastructure;
 
-public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итоге это будет два отдельных класса)
+public class Proxmox : IProxmoxVm, IProxmoxNetwork, IProxmoxNode // кажется в итоге это будет два отдельных класса)
 {
     private readonly PveClient _client;
     private readonly ILog _log;
@@ -25,25 +25,25 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork // кажется в итог
     }
 
 
-    public async Task<Result<List<long>>> GetAllQemu(string node)
+    public async Task<Result<List<int>>> GetAllQemu(string node)
     {
         var result = await _client.Nodes[node].Qemu.Vmlist(false);
 
         if (!result.IsSuccessStatusCode) throw new NotImplementedException("api ошибку обработать");
 
 
-        var vmids = new List<long>();
+        var vmids = new List<int>();
         var vmsData = result.Response.data;
         foreach (var vmData in vmsData)
         {
             foreach (var vmElementData in vmData)
             {
                 if (vmElementData is KeyValuePair<string, object> { Key: "vmid", Value: long id } )
-                    vmids.Add(id);
+                    vmids.Add((int) id);
             }
         }
-
-
+        
+        vmids.Sort();
         return vmids;
     }
 

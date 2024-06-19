@@ -18,6 +18,7 @@ public class UserLabProviderService : IUserLabProvider
         _userLabs = userLabs;
     }
 
+    
     //Todo: сделать норм реализацию. здесь как минимум можно сделать один sql запрос, который будет решать половину логики. сейчас это кринж, и очень медленно. слишком медленно
     public async Task<Result<IReadOnlyCollection<UserLabInfo>>> GetInfoAll(User user)
     {

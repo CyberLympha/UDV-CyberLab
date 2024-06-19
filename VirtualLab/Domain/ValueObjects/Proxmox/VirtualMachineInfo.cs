@@ -1,6 +1,6 @@
 namespace VirtualLab.Domain.ValueObjects.Proxmox;
 
-public class VirtualMachineInfo
+public record VirtualMachineInfo
 {
     public string? Ip { get; set; }
     public int ProxmoxVmId { get; set; }

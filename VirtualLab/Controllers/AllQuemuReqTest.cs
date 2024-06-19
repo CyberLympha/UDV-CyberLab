@@ -12,9 +12,9 @@ namespace VirtualLab.Controllers
     {
         private readonly PveClient _client;
         private readonly ILog _log;
-        private IProxmoxVm _proxmoxVm;
+        private IProxmoxNode _proxmoxVm;
 
-        public ProxmoxController(PveClient client, ILog log, ProxmoxAuthData proxmoxData, IProxmoxVm proxmoxVm)
+        public ProxmoxController(PveClient client, ILog log, ProxmoxAuthData proxmoxData, IProxmoxNode proxmoxVm)
         {
             _client = client;
             _log = log;
