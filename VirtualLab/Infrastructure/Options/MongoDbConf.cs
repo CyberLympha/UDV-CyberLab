@@ -1,19 +1,19 @@
 namespace VirtualLab.Infrastructure.Options;
 
-public record MongoDbConf(string UserName, string Password, int Port, string DataBase)
+public record MongoDbConf(string UserName, string Password, int Port, string DataBase, string Ip)
 {
     private const string UsernameEnv = "MongoDbUserName";
     private const string PasswordEnv = "MongoDbPassword";
     private const string PortEnv = "MongoDbPort";
     private const string DataBaseEnv = "MongoDbDataBase";
-
-    public MongoDbConf() : this(string.Empty, string.Empty, 4, string.Empty)
+    private const string IpEnv = "MongoDbIp";
+    public MongoDbConf() : this(string.Empty, string.Empty, 4, string.Empty, string.Empty)
     {
     }
 
     public string UrlConnection()
     {
-        return $"mongodb://root:example@localhost:{Port}";
+        return $"mongodb://root:example@{Ip}:{Port}";
     }
 
     public static MongoDbConf FromEnv()
@@ -22,8 +22,8 @@ public record MongoDbConf(string UserName, string Password, int Port, string Dat
         var password = GetEnvVar(PasswordEnv);
         var port = GetEnvVar(PortEnv);
         var dataBase = GetEnvVar(DataBaseEnv);
-
-        return new MongoDbConf(userName, password, int.Parse(port), dataBase);
+        var ip = Environment.GetEnvironmentVariable(IpEnv) ?? "localhost";
+        return new MongoDbConf(userName, password, int.Parse(port), dataBase, ip);
     }
 
 

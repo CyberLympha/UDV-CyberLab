@@ -14,6 +14,7 @@ public class LabDbContext : DbContext
     public DbSet<VirtualMachine> VirtualMachines { get; set; }
     public DbSet<Credential> Credentials { get; set; }
     public DbSet<StatusUserLab> UserLabStatus { get; set; }
+    public DbSet<TemplateVm> TemplateVms { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

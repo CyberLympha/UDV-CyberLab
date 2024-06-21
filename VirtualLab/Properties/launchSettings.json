@@ -25,6 +25,23 @@
         "MongoDbDataBase": "admin"
       }
     },
+    "neoLab": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "https://localhost:7218;http://localhost:5243",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "IP_PROXMOX": "10.40.229.10",
+        "PROXMOX_TOKEN": "root@pam!devil=e094061e-e909-4415-9a57-f353a81a9eed",
+        "MongoDbUserName": "root",
+        "MongoDbPassword": "example",
+        "MongoDbPort": 28017,
+        "MongoDbDataBase": "admin",
+        "MongoDbIp": "10.40.229.140"
+      }
+    },
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
