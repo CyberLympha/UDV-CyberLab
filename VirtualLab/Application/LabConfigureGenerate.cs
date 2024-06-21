@@ -1,5 +1,6 @@
 using FluentResults;
 using VirtualLab.Application.Interfaces;
+using VirtualLab.Domain.Entities;
 using VirtualLab.Domain.Entities.Mongo;
 using VirtualLab.Domain.Interfaces.Proxmox;
 using VirtualLab.Domain.Interfaces.Repositories;
@@ -17,16 +18,19 @@ public class LabConfigure : ILabConfigure
 {
     private readonly ILabRepository _labs;
     private readonly ILog _log;
-    private readonly IVirtualMachineDataHandler _virtualMachines;
     private readonly IProxmoxNetwork _proxmoxNetwork;
-    private readonly IUnitOfWork _unitOfWorkMongo;
     private readonly IProxmoxResourceManager _pveResourceManager;
+    private readonly ITemplateVmRepository _templatesVms;
+    private readonly IUnitOfWork _unitOfWorkMongo;
+    private readonly IVirtualMachineDataHandler _virtualMachines;
+
     public LabConfigure(ILabRepository labs,
         ILog log,
         IVirtualMachineDataHandler virtualMachines,
         IProxmoxNetwork proxmoxNetwork,
-        IUnitOfWork unitOfWorkMongo, 
-        IProxmoxResourceManager PveResourceManager)
+        IUnitOfWork unitOfWorkMongo,
+        IProxmoxResourceManager PveResourceManager,
+        ITemplateVmRepository templatesVms)
     {
         _labs = labs;
         log.ForContext("LabConfigure");
@@ -35,6 +39,7 @@ public class LabConfigure : ILabConfigure
         _proxmoxNetwork = proxmoxNetwork;
         _unitOfWorkMongo = unitOfWorkMongo;
         _pveResourceManager = PveResourceManager;
+        _templatesVms = templatesVms;
     }
 
 
@@ -52,23 +57,17 @@ public class LabConfigure : ILabConfigure
     public async Task<Result<StandRemoveConfig>> GetConfigByUserLab(Guid userLabId)
     {
         var resultVms = await _virtualMachines.GetAllByUserLabId(userLabId);
-        if (!resultVms.TryGetValue(out var virtualMachines))
-        {
-            return Result.Fail($"ошибка: {resultVms.Errors}");
-        }
+        if (!resultVms.TryGetValue(out var virtualMachines)) return Result.Fail($"ошибка: {resultVms.Errors}");
 
 
         var userLabConfig = new StandRemoveConfig();
         foreach (var virtualMachine in virtualMachines)
         {
-            var resultNets = await _proxmoxNetwork.
-                GetAllNetworksBridgeByVm(virtualMachine.ProxmoxVmId, virtualMachine.Node);
-            if (!resultNets.TryGetValue(out var nets))
-            {
-                return Result.Fail($"error: {resultNets.Errors}");
-            }
-            
-            userLabConfig.VmsData.Add(new VmInfo
+            var resultNets =
+                await _proxmoxNetwork.GetAllNetworksBridgeByVm(virtualMachine.ProxmoxVmId, virtualMachine.Node);
+            if (!resultNets.TryGetValue(out var nets)) return Result.Fail($"error: {resultNets.Errors}");
+
+            userLabConfig.VmsInfos.Add(new VmInfo
             {
                 ProxmoxVmId = virtualMachine.ProxmoxVmId,
                 Nets = nets,
@@ -79,108 +78,51 @@ public class LabConfigure : ILabConfigure
         return userLabConfig;
     }
 
-    //todo: псс, mongoDb норм идея, для хранием конфигов лаб)) по идей, могут быть доп данные.
-    private async Task<Result<StandCreateConfig>> GetTemplateConfig(Guid labId)
-    {
-        
-        
-        
-        var lab = await _labs.Get(labId);
-        if (lab.IsFailed)
-        {
-            return Result.Fail(lab.Errors);
-        }
-
-        var net24 = new NetSettings()
-        {
-            Bridge = "vmbr24",
-            Model = "virtio"
-        };
-        
-        var vmbr0 = new NetSettings()
-        {
-            Bridge = "vmbr0",
-            Model = "virtio"
-        };
-
-        var nets1300vm = new NetCollection { net24, vmbr0 };
-        var nets1301Vm = new NetCollection { net24 };
-        var nets1302Vm = new NetCollection() { net24 };
-        
-        var labConfig = new StandCreateConfig()
-        {
-            Node = "pve",
-            CloneVmConfig = new List<CloneVmConfig>()
-            {
-                new()
-                {
-                    Template = new Template() //kali
-                    {
-                        WithVmbr0 = true,
-                        Id = 300,
-                        Name = "test",
-                        Password = "test"
-                    },
-                    NewId = 1300,
-                    Nets = nets1300vm
-                },
-                /*new()
-                {
-                    Template = new Template() // win
-                    {
-                        WithVmbr0 = false,
-                        Id = 301,
-                        Name = "test",
-                        Password = "test"
-                    },
-                    NewId = 1301,
-                    Nets = nets1301Vm
-                },
-                new()
-                {
-                    Template = new Template() // win
-                    {
-                        WithVmbr0 = false,
-                        Id = 302,
-                        Password = "test",
-                        Name = "test"
-                    },
-                    NewId = 1302,
-                    Nets = nets1302Vm
-                }*/
-            }
-        };
-
-        _log.Info($"configure created {labConfig}");
-        return labConfig;
-    }
-
     private async Task<Result<StandCreateConfig>> GenerateLabConfig(StandConfig standConfig)
-    {// будем получать доступные вм (будет доп сервис с этим) и если это вм занята, то мы просто повторим поиск доступных вм
-        var standCreateConfig = new StandCreateConfig();
-        standCreateConfig.Node = "pve";
-        var freeQemuIds = await _pveResourceManager.GetFreeQemuIds("pve", standConfig.TemplatesVmConfig.Count);
+    {
+        var standCreateConfig =
+            new StandCreateConfig(); // будем получать доступные вм (будет доп сервис с этим) и если это вм занята, то мы просто повторим поиск доступных вм
+        standCreateConfig.Node = standConfig.Node;
+        var freeQemuIds =
+            await _pveResourceManager.GetFreeQemuIds(standConfig.Node, standConfig.TemplatesVmConfig.Count);
 
-        for (int i = 0; i < standConfig.TemplatesVmConfig.Count; i++)
+
+        var getTemplatesVms = await GetTemplatesVms(standConfig.TemplatesVmConfig);
+        if (!getTemplatesVms.TryGetValue(out var templateVms, out var errors)) return Result.Fail(errors);
+
+        for (var i = 0; i < standConfig.TemplatesVmConfig.Count; i++)
         {
-            var template = new Template()
+            // todo: здесь как то всё слишком разношерстно! хочется одну сущность, хотя тогда это уже будет StandConfig
+            var template = new TemplateData() // возможен баг при условий больго кол во пользователей.
             {
                 WithVmbr0 = standConfig.TemplatesVmConfig[i].WithVmbr0,
                 Id = standConfig.TemplatesVmConfig[i].TemplateId,
-                //todo: поля ниже мы должны брать так же из standConfig. то есть у нас будет таблица, в которой хранятся все доспутные template. 
-                Name = "test",
-                Password = "test"
+                Name = templateVms[i].userName,
+                Password = templateVms[i].Password
             };
             standCreateConfig.CloneVmConfig.Add(
-                new CloneVmConfig() 
+                new CloneVmConfig
                 {
                     NewId = freeQemuIds[i],
-                    Template = template,
+                    TemplateData = template,
                     Nets = new NetCollection()
                 }); //todo: Nets мы пока тоже не создаём.
-            
         }
-        
+
         return standCreateConfig;
+    }
+
+    private async Task<Result<IReadOnlyList<TemplateVm>>> GetTemplatesVms(List<TemplateVmConfig> TemplatesVmConfig)
+    {
+        var templatesVms = new List<TemplateVm>();
+        foreach (var vmConfig in TemplatesVmConfig)
+        {
+            var getTemplate = await _templatesVms.GetByTemplatePveVmId(vmConfig.TemplateId);
+            if (getTemplate.TryGetValue(out var template)) return Result.Fail(getTemplate.Errors);
+
+            templatesVms.Add(template);
+        }
+
+        return templatesVms;
     }
 }

@@ -4,5 +4,5 @@ public enum StatusUserLabEnum
 {
     Run,
     Stopped,
-    NotCreated,
+    NotCreated
 }

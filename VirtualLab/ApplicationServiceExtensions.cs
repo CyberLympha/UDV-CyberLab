@@ -1,15 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
-namespace Authorization
+namespace Authorization;
+
+public static class ApplicationServiceExtensions
 {
-    public static class ApplicationServiceExtensions
+    public static void AddConfigureAuthentication(this IServiceCollection services)
     {
-        public static void AddConfigureAuthentication(this IServiceCollection services)
-        {
-            services.AddAuthentication(options =>
+        services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -27,7 +25,7 @@ namespace Authorization
                 };
                 options.SaveToken = true;
                 options.RequireHttpsMetadata = false;
-                options.TokenValidationParameters = new TokenValidationParameters()
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
@@ -37,6 +35,5 @@ namespace Authorization
                     IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey()
                 };
             });
-        }
     }
 }

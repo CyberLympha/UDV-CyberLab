@@ -1,4 +1,5 @@
 using FluentResults;
+
 namespace VirtualLab.Domain.Interfaces.Repositories;
 
 public interface IRepositoryBase<TEntity, in TId>

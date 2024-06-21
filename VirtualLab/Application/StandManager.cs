@@ -14,9 +14,9 @@ namespace VirtualLab.Application;
 
 public class StandManager : IStandManager
 {
-    private readonly IProxmoxVm _proxmoxVm;
-    private readonly IProxmoxNetwork _proxmoxNetworkDevice;
     private readonly ILog _log;
+    private readonly IProxmoxNetwork _proxmoxNetworkDevice;
+    private readonly IProxmoxVm _proxmoxVm;
 
     public StandManager(IProxmoxVm proxmoxVm, IProxmoxNetwork proxmoxNetworkDevice, ILog log)
     {
@@ -29,11 +29,9 @@ public class StandManager : IStandManager
 
     public async Task<Result<IReadOnlyList<VirtualMachineInfo>>> Create(StandCreateConfig standCreateConfig)
     {
-        if ((await AddInterfaces(standCreateConfig.GetAllNetsInterfaces(), standCreateConfig.Node))
+        if ((await AddInterfaces(standCreateConfig.CloneVmConfig.GetAllNets(), standCreateConfig.Node))
             .IsFailedWithErrors(out var errors))
-        {
             Result.Fail(errors);
-        }
 
         //todo: то есть до этого ты сделал метод, в котором foreach, а сейчас забил?
         foreach (var cloneVmTemplate in standCreateConfig.CloneVmConfig)
@@ -49,30 +47,23 @@ public class StandManager : IStandManager
         Thread.Sleep(40000); // ждём пока qemu agent запустится на машинах
         foreach (var cloneVmConfig in standCreateConfig.CloneVmConfig)
         {
-            if (!cloneVmConfig.Template.WithVmbr0)
-            {
-                virtualMachineInfos.Add(new VirtualMachineInfo()
-                {
-                    ProxmoxVmId = cloneVmConfig.NewId,
-                    Password = cloneVmConfig.Template.Password,
-                    Username = cloneVmConfig.Template.Name,
-                    Node = standCreateConfig.Node
-                });
-            }
-            else
+            string ip = null!;
+            if (cloneVmConfig.TemplateData.WithVmbr0)
             {
                 var getIp = await _proxmoxVm.GetIp(standCreateConfig.Node, cloneVmConfig.NewId);
-                if (getIp.IsFailed) return Result.Fail($"not found ip because: {getIp}");
+                if (!getIp.TryGetValue(out var ipData)) return Result.Fail($"not found ip because: {getIp}");
 
-                virtualMachineInfos.Add(new VirtualMachineInfo()
-                {
-                    ProxmoxVmId = cloneVmConfig.NewId,
-                    Password = cloneVmConfig.Template.Password,
-                    Username = cloneVmConfig.Template.Name,
-                    Node = standCreateConfig.Node,
-                    Ip = getIp.Value.Value
-                });
+                ip = ipData.Value;
             }
+
+            virtualMachineInfos.Add(new VirtualMachineInfo
+            {
+                ProxmoxVmId = cloneVmConfig.NewId,
+                Password = cloneVmConfig.TemplateData.Password,
+                Username = cloneVmConfig.TemplateData.Name,
+                Node = standCreateConfig.Node,
+                Ip = ip
+            });
         }
 
         return virtualMachineInfos;
@@ -81,15 +72,15 @@ public class StandManager : IStandManager
 
     public async Task<Result> Delete(StandRemoveConfig standRemoveConfig)
     {
-        var vmsDeleted = await DeleteVms(standRemoveConfig.VmsData.AsReadOnly());
+        var vmsDeleted = await DeleteVms(standRemoveConfig.VmsInfos.AsReadOnly());
         if (vmsDeleted.IsFailed) return vmsDeleted;
 
         await Interfaces(x =>
                 _proxmoxNetworkDevice.Remove(
-                    standRemoveConfig.VmsData[0].Node, x), // todo: кринж с array
-            standRemoveConfig.GetAllNetsInterfaces());
+                    standRemoveConfig.VmsInfos[0].Node, x), // todo: кринж с array
+            standRemoveConfig.Vms.GetAllNets());
 
-        await _proxmoxNetworkDevice.Apply(standRemoveConfig.VmsData[0].Node); // тоже самое
+        await _proxmoxNetworkDevice.Apply(standRemoveConfig.VmsInfos[0].Node); // тоже самое
 
         return Result.Ok();
     }
@@ -119,19 +110,13 @@ public class StandManager : IStandManager
             if (vmStopped.IsFailed) return vmStopped;
 
             var getStatus = await _proxmoxVm.GetStatus(vmInfo.Node, vmInfo.ProxmoxVmId);
-            if (!getStatus.TryGetValue(out var curVmStatus))
-            {
-                return Result.Fail(getStatus.Errors);
-            }
+            if (!getStatus.TryGetValue(out var curVmStatus)) return Result.Fail(getStatus.Errors);
 
             while (curVmStatus == ProxmoxVmStatus.Running)
             {
                 Thread.Sleep(1000);
                 getStatus = await _proxmoxVm.GetStatus(vmInfo.Node, vmInfo.ProxmoxVmId);
-                if (!getStatus.TryGetValue(out curVmStatus))
-                {
-                    return Result.Fail(getStatus.Errors);
-                }
+                if (!getStatus.TryGetValue(out curVmStatus)) return Result.Fail(getStatus.Errors);
             }
 
             var vmDeleted = await _proxmoxVm.Destroy(vmInfo.Node, vmInfo.ProxmoxVmId);
@@ -158,12 +143,12 @@ public class StandManager : IStandManager
     {
         var response = await _proxmoxVm.Clone(cloneVmConfig, node);
         if (response.IsFailed) return response;
-        
+
         response = await _proxmoxVm.UpdateDeviceInterface(node, cloneVmConfig.NewId, cloneVmConfig.Nets);
         if (response.IsFailed) return response;
 
         response = await _proxmoxVm.Start(node, cloneVmConfig.NewId); // а запускать мне кажется, точно должны не здесcm
-        if (response.IsFailed) return response; 
+        if (response.IsFailed) return response;
 
         return Result.Ok();
     }

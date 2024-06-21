@@ -14,10 +14,10 @@ public static class ServiceCollectionExtension
 {
     public static void AddLogVostokWithConfig(this WebApplicationBuilder builder)
     {
-        var log = new ConsoleLog(new ConsoleLogSettings()
+        var log = new ConsoleLog(new ConsoleLogSettings
         {
             ColorsEnabled = true,
-            ColorMapping = new Dictionary<LogLevel, ConsoleColor>() { { LogLevel.Info, ConsoleColor.DarkMagenta } }
+            ColorMapping = new Dictionary<LogLevel, ConsoleColor> { { LogLevel.Info, ConsoleColor.DarkMagenta } }
         });
 
 
@@ -35,6 +35,10 @@ public static class ServiceCollectionExtension
 
         services.AddSingleton<IProxmoxNetwork, Proxmox>();
         services.AddSingleton<IProxmoxVm, Proxmox>();
+        services.AddSingleton<IProxmoxNode, Proxmox>();
+
+
+        services.AddScoped<IProxmoxResourceManager, ProxmoxResourceManager>();
 
         services.AddSingleton<IStandManager, StandManager>();
         services.AddScoped<ILabConfigure, LabConfigure>();

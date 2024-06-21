@@ -17,13 +17,14 @@ public abstract class RepositoryBase<TEntity, TId> : IRepositoryBase<TEntity, TI
     public async Task<Result<TEntity>> Get(TId id)
     {
         var response = await _dbContext.Set<TEntity>().FindAsync(id);
-        
-        return response.AssertExistsOrFail(); // а должна ли быть вообще ошибка при если у пользователя и нету данных по id??
+
+        return
+            response.AssertExistsOrFail(); // а должна ли быть вообще ошибка при если у пользователя и нету данных по id??
     }
 
     public async Task<Result> Insert(TEntity entity)
     {
-        await _dbContext.Set<TEntity>().AddAsync(entity); 
+        await _dbContext.Set<TEntity>().AddAsync(entity);
         await _dbContext.SaveChangesAsync();
         return Result.Ok();
     }

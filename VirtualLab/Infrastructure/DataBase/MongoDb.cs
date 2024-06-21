@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using VirtualLab.Infrastructure.Options;
 using VirtualLab.Lib;
@@ -8,23 +7,24 @@ namespace VirtualLab.Infrastructure.DataBase;
 
 public class MongoDb : IMongoContext
 {
-    private IMongoDatabase _database;
-    private IMongoClient _client;
-    private IClientSessionHandle _session;
-    private MongoDbConf _mongoDbConf;
     private readonly List<Func<Task>> _commands;
+    private readonly IMongoClient _client;
+    private readonly IMongoDatabase _database;
     private ILog _log;
+    private MongoDbConf _mongoDbConf;
+    private IClientSessionHandle _session;
+
     public MongoDb(MongoDbConf confMongoDb, ILog log)
     {
         _log = log;
-        
+
         log.Debug($"{confMongoDb}");
         _client = new MongoClient(confMongoDb.UrlConnection());
         _mongoDbConf = confMongoDb;
         _database = _client.GetDatabase(confMongoDb.DataBase);
-        _commands = new List<Func<Task>>(); 
+        _commands = new List<Func<Task>>();
     }
-    
+
     public void Dispose()
     {
         _session?.Dispose();
@@ -41,10 +41,10 @@ public class MongoDb : IMongoContext
         if (_commands.Count == 1)
         {
             await _commands[0].Invoke();
-            
+
             return 1;
         }
-        
+
         //todo: чтоб работало нужен replic-set
         using (_session = await _client.StartSessionAsync())
         {
@@ -57,7 +57,8 @@ public class MongoDb : IMongoContext
             await _session.CommitTransactionAsync();
         }
 
-        return _commands.Count; // по сути каждый новая транзация - это уже новый экзпляр класса(scoped), поэтому мы не очищаем commands. 
+        return
+            _commands.Count; // по сути каждый новая транзация - это уже новый экзпляр класса(scoped), поэтому мы не очищаем commands. 
     }
 
     public IMongoCollection<TEntity> GetCollection<TEntity>(string name)

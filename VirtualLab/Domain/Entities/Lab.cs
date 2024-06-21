@@ -5,7 +5,6 @@ namespace VirtualLab.Domain.Entities;
 //todo написать нормально сущность
 public class Lab : IEntity<Guid>
 {
-    public Guid Id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
     public DateTime CreatedAt { get; set; }
@@ -15,10 +14,11 @@ public class Lab : IEntity<Guid>
     public bool IsOpened { get; set; }
 
     public List<UserLab> UserLabs { get; set; }
+    public Guid Id { get; set; }
 
     public static Lab From(LabCreateRequest request) // а что если это реализовывать на уровне контроллеера?
     {
-        return new Lab()
+        return new Lab
         {
             Description = request.Description,
             Id = Guid.NewGuid(),

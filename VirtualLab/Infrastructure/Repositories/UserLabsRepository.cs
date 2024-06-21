@@ -1,13 +1,12 @@
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using VirtualLab.Domain.Entities;
-using VirtualLab.Domain.Interfaces;
 using VirtualLab.Domain.Interfaces.Repositories;
 using VirtualLab.Infrastructure.DataBase;
 
 namespace VirtualLab.Infrastructure.Repositories;
 
-public class UserLabsRepository : RepositoryBase<UserLab, Guid> ,IUserLabRepository 
+public class UserLabsRepository : RepositoryBase<UserLab, Guid>, IUserLabRepository
 {
     public UserLabsRepository(LabDbContext dbContext) : base(dbContext)
     {

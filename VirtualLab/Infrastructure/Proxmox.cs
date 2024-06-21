@@ -25,40 +25,6 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork, IProxmoxNode // кажетс
     }
 
 
-    public async Task<Result<List<int>>> GetAllQemu(string node)
-    {
-        var result = await _client.Nodes[node].Qemu.Vmlist(false);
-
-        if (!result.IsSuccessStatusCode) throw new NotImplementedException("api ошибку обработать");
-
-
-        var vmids = new List<int>();
-        var vmsData = result.Response.data;
-        foreach (var vmData in vmsData)
-        {
-            foreach (var vmElementData in vmData)
-            {
-                if (vmElementData is KeyValuePair<string, object> { Key: "vmid", Value: long id } )
-                    vmids.Add((int) id);
-            }
-        }
-        
-        vmids.Sort();
-        return vmids;
-    }
-
-    public async Task<Result> Clone(CloneVmConfig vmConfig, string node)
-    {
-        var result = await _client.Nodes[node].Qemu[vmConfig.Template.Id].Clone.CloneVm(vmConfig.NewId);
-
-
-        return result.Match(
-            Result.Ok,
-            ApiResultError.WithProxmox.CreateCloneFailure
-        );
-    }
-
-
     public async Task<Result<NetCollection>> GetAllNetworksBridgeByVm(int vmId, string node)
     {
         var response = await _client.Nodes[node].Qemu[vmId].Config.VmConfig();
@@ -70,7 +36,7 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork, IProxmoxNode // кажетс
         // здесь ужасная реализация
         foreach (var dnets in listNet)
         {
-            var net = (dnets is KeyValuePair<string, object> ? (KeyValuePair<string, object>)dnets : default);
+            var net = dnets is KeyValuePair<string, object> ? (KeyValuePair<string, object>)dnets : default;
             if (!net.Key.StartsWith("net")) continue;
             var netSettings = net.Value as string;
 
@@ -79,7 +45,7 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork, IProxmoxNode // кажетс
             var type = data[0].Split("=")[0];
             var iFace = data[1].Split('=')[1];
 
-            result.Add(new NetSettings()
+            result.Add(new NetSettings
             {
                 Bridge = iFace,
                 Model = type
@@ -121,6 +87,36 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork, IProxmoxNode // кажетс
         );
     }
 
+
+    public async Task<Result<List<int>>> GetAllQemu(string node)
+    {
+        var result = await _client.Nodes[node].Qemu.Vmlist(false);
+
+        if (!result.IsSuccessStatusCode) throw new NotImplementedException("api ошибку обработать");
+
+
+        var vmids = new List<int>();
+        var vmsData = result.Response.data;
+        foreach (var vmData in vmsData)
+        foreach (var vmElementData in vmData)
+            if (vmElementData is KeyValuePair<string, object> { Key: "vmid", Value: long id })
+                vmids.Add((int)id);
+
+        vmids.Sort();
+        return vmids;
+    }
+
+    public async Task<Result> Clone(CloneVmConfig vmConfig, string node)
+    {
+        var result = await _client.Nodes[node].Qemu[vmConfig.TemplateData.Id].Clone.CloneVm(vmConfig.NewId);
+
+
+        return result.Match(
+            Result.Ok,
+            ApiResultError.WithProxmox.CreateCloneFailure
+        );
+    }
+
     public async Task<Result> UpdateDeviceInterface(string node, int qemu, NetCollection nets)
     {
         var netN = new Dictionary<int, string>(nets.Value);
@@ -136,10 +132,7 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork, IProxmoxNode // кажетс
     public async Task<Result<ProxmoxVmStatus>> GetStatus(string node, int qemu)
     {
         var result = await _client.Nodes[node].Qemu[qemu].Status.Current.VmStatus();
-        if (!result.IsSuccessStatusCode)
-        {
-            return Result.Fail(result.ReasonPhrase);
-        }
+        if (!result.IsSuccessStatusCode) return Result.Fail(result.ReasonPhrase);
 
         var status = result.Response.data.qmpstatus as string;
 
@@ -160,10 +153,7 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork, IProxmoxNode // кажетс
     {
         var response = await _client.Nodes[node].Qemu[qemu].DestroyVm();
 
-        if (!response.IsSuccessStatusCode)
-        {
-            return Result.Fail(response.ReasonPhrase);
-        }
+        if (!response.IsSuccessStatusCode) return Result.Fail(response.ReasonPhrase);
 
         return response.Match(
             Result.Ok,
@@ -194,28 +184,22 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork, IProxmoxNode // кажетс
         var interfaces = data.data.result;
 
         foreach (var iFace in interfaces)
+        foreach (var ipAddresses in iFace)
         {
-            foreach (var ipAddresses in iFace)
+            var ipAddressPair = ipAddresses is KeyValuePair<string, object>
+                ? (KeyValuePair<string, object>)ipAddresses
+                : default;
+            if (ipAddressPair.Key != "ip-addresses") continue;
+            var ipAddress = ipAddressPair.Value as List<dynamic>;
+            foreach (var ipsD in ipAddress)
+            foreach (var ipD in ipsD)
             {
-                var ipAddressPair = ipAddresses is KeyValuePair<string, object>
-                    ? (KeyValuePair<string, object>)ipAddresses
-                    : default;
-                if (ipAddressPair.Key != "ip-addresses") continue;
-                var ipAddress = ipAddressPair.Value as List<dynamic>;
-                foreach (var ipsD in ipAddress)
-                {
-                    foreach (var ipD in ipsD)
-                    {
-                        var ipPair = ipD is KeyValuePair<string, object> ? (KeyValuePair<string, object>)ipD : default;
-                        if (ipPair.Key != "ip-address") continue;
+                var ipPair = ipD is KeyValuePair<string, object> ? (KeyValuePair<string, object>)ipD : default;
+                if (ipPair.Key != "ip-address") continue;
 
-                        var ip = ipPair.Value as string;
-                        if (!string.IsNullOrEmpty(ip) && ip.StartsWith(_proxmoxData.Ip.GetIdNetwork()))
-                        {
-                            return new Ip() { Value = ipPair.Value as string };
-                        }
-                    }
-                }
+                var ip = ipPair.Value as string;
+                if (!string.IsNullOrEmpty(ip) && ip.StartsWith(_proxmoxData.Ip.GetIdNetwork()))
+                    return new Ip { Value = ipPair.Value as string };
             }
         }
 

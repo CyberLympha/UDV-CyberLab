@@ -7,7 +7,7 @@ public static class ActionResultExtensions
 {
     public static ActionResult<T> Match<T>(
         this Result<T> result,
-        Func<T,ActionResult<T>> onSuccess,
+        Func<T, ActionResult<T>> onSuccess,
         Func<List<IReason>, ActionResult<T>> onFailure)
     {
         return result.IsSuccess ? onSuccess(result.Value) : onFailure(result.Reasons);

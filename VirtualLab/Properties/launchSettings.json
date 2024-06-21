@@ -24,7 +24,6 @@
         "MongoDbPort": 28017,
         "MongoDbDataBase": "admin"
       }
-      
     },
     "IIS Express": {
       "commandName": "IISExpress",

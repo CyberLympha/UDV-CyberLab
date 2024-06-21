@@ -15,7 +15,7 @@ public class UnitOfWorkMongo : IUnitOfWork
     }
 
     public IConfigStandRepository configs { get; }
-    
+
     public void Dispose()
     {
         _context.Dispose();

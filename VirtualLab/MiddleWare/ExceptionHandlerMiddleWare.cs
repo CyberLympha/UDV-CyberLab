@@ -1,33 +1,34 @@
 using Vostok.Logging.Abstractions;
 
-namespace VirtualLab.MiddleWare
+namespace VirtualLab.MiddleWare;
+
+public class ExceptionHandlerMiddleware
 {
-    public class ExceptionHandlerMiddleware
+    private readonly ILog _log;
+    private readonly RequestDelegate _next;
+
+    public ExceptionHandlerMiddleware(RequestDelegate next, ILog log)
     {
-        private readonly RequestDelegate _next;
-        private readonly ILog _log;
-        public ExceptionHandlerMiddleware(RequestDelegate next, ILog log)
+        _next = next;
+        log.ForContext("exception");
+        _log = log;
+    }
+
+    // todo:: потенциально нужно допилить))) отправку ответа с ошибкой.
+    public async Task Invoke(HttpContext context)
+    {
+        try
         {
-            _next = next;
-            log.ForContext("exception");
-            _log = log;
+            await _next(context);
         }
-        // todo:: потенциально нужно допилить))) отправку ответа с ошибкой.
-        public async Task Invoke(HttpContext context)
+        catch (Exception ex)
         {
-            try
-            {
-                await _next(context);
-            }
-            catch (Exception ex)
-            {
-                // Обработка исключения здесь
-                // Например, логирование ошибки
-                _log.Error($"{ex.ToString()}");
-                // Можно также изменить контекст ответа, например, установить статус кода ошибки
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                await context.Response.WriteAsJsonAsync(ex.ToString());
-            }
+            // Обработка исключения здесь
+            // Например, логирование ошибки
+            _log.Error($"{ex.ToString()}");
+            // Можно также изменить контекст ответа, например, установить статус кода ошибки
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            await context.Response.WriteAsJsonAsync(ex.ToString());
         }
     }
 }

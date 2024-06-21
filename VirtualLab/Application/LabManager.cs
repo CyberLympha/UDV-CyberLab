@@ -10,11 +10,11 @@ namespace VirtualLab.Application;
 
 public class LabManager : ILabManager
 {
-    private readonly IUserLabProvider _userLabProvider;
     private readonly ILabConfigure _labConfigure;
-    private readonly IStandManager _stands;
-    private readonly IVirtualMachineDataHandler _virtualMachineDataHandler;
     private readonly ILog _log;
+    private readonly IStandManager _stands;
+    private readonly IUserLabProvider _userLabProvider;
+    private readonly IVirtualMachineDataHandler _virtualMachineDataHandler;
 
     public LabManager(IUserLabProvider userLabProvider, ILabConfigure labConfigure,
         IStandManager stands, ILog log,
@@ -30,7 +30,7 @@ public class LabManager : ILabManager
     public async Task<Result<ReadOnlyCollection<Credential>>> StartNew(Guid labId, Guid userId)
     {
         var getUserLab = await _userLabProvider.GetUserLab(userId, labId);
-        if (getUserLab.IsFailed)
+        if (!getUserLab.TryGetValue(out var userLab))
         {
             _log.Error($"Not find lab with {labId} for user with id {userId}"); // так бы везде))
             return Result.Fail(getUserLab.Errors);
@@ -48,7 +48,7 @@ public class LabManager : ILabManager
         var result = new List<Credential>();
         foreach (var virtualMachineInfo in labCreatedWithVm.Value)
         {
-            var vm = VirtualMachine.From(virtualMachineInfo.Node, virtualMachineInfo.ProxmoxVmId, getUserLab.Value.Id);
+            var vm = VirtualMachine.From(virtualMachineInfo.Node, virtualMachineInfo.ProxmoxVmId, userLab.Id);
             await _virtualMachineDataHandler.AddVm(vm);
             if (string.IsNullOrEmpty(virtualMachineInfo.Ip)) continue;
 
@@ -58,7 +58,8 @@ public class LabManager : ILabManager
                 virtualMachineInfo.Password,
                 vm.Id
             );
-            await _virtualMachineDataHandler.AddCredential(credential); // по сути, можно разделить на два интерфейса ICre и I Vm. а нужно ли 
+            await _virtualMachineDataHandler
+                .AddCredential(credential); // по сути, можно разделить на два интерфейса ICre и I Vm. а нужно ли 
 
             result.Add(credential);
         }
@@ -77,10 +78,7 @@ public class LabManager : ILabManager
         // if (getUserLab.Value.Status == ) проверка, что лаба УЖЕ ЗАПУЩЕНА
 
         var userLabConfig = await _labConfigure.GetConfigByUserLab(userLabInfo.Id);
-        if (!userLabConfig.TryGetValue(out var config))
-        {
-            return Result.Fail($"error {getUserLab.Errors}");
-        }
+        if (!userLabConfig.TryGetValue(out var config)) return Result.Fail($"error {getUserLab.Errors}");
 
         var deletedConfig = await _stands.Delete(config);
         if (deletedConfig.IsFailed) return deletedConfig;

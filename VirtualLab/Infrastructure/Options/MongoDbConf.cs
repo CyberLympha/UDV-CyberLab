@@ -1,5 +1,3 @@
-using System.Runtime.InteropServices.JavaScript;
-
 namespace VirtualLab.Infrastructure.Options;
 
 public record MongoDbConf(string UserName, string Password, int Port, string DataBase)
@@ -8,10 +6,14 @@ public record MongoDbConf(string UserName, string Password, int Port, string Dat
     private const string PasswordEnv = "MongoDbPassword";
     private const string PortEnv = "MongoDbPort";
     private const string DataBaseEnv = "MongoDbDataBase";
-    public string UrlConnection() => $"mongodb://root:example@localhost:{Port}";
 
-    public MongoDbConf() : this(String.Empty, String.Empty, 4, String.Empty)
+    public MongoDbConf() : this(string.Empty, string.Empty, 4, string.Empty)
     {
+    }
+
+    public string UrlConnection()
+    {
+        return $"mongodb://root:example@localhost:{Port}";
     }
 
     public static MongoDbConf FromEnv()

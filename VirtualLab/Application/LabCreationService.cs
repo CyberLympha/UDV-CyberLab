@@ -3,6 +3,8 @@ using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Entities;
 using VirtualLab.Domain.Entities.Mongo;
 using VirtualLab.Domain.Interfaces.Repositories;
+using VirtualLab.Domain.ValueObjects.Proxmox;
+using VirtualLab.Infrastructure.Extensions;
 using VirtualLab.Lib;
 using Vostok.Logging.Abstractions;
 
@@ -10,11 +12,12 @@ namespace VirtualLab.Application;
 
 public class LabCreationService : ILabCreationService
 {
-    private readonly ILabRepository labs;
     private readonly ILog _log;
-    private readonly IUnitOfWork _ofWorkMongoDb; 
+    private readonly IUnitOfWork _ofWorkMongoDb;
+    private readonly ILabRepository labs;
+
     public LabCreationService(
-        ILabRepository labs, 
+        ILabRepository labs,
         ILog log,
         IUnitOfWork ofWorkMongoDb)
     {
@@ -41,16 +44,18 @@ public class LabCreationService : ILabCreationService
         return result;
     }
 
-    public async Task<Result> Create(Lab lab, StandConfig stand)
+    public async Task<Result> Create(CreateLabDto createLab)
     {
-        // todo: разные сложные проверки, на то, что лабу можно создать т.д
+        var standConfig = StandConfig.From(createLab);
 
+        var addedLab = await labs.Insert(createLab.Lab);
+        if (addedLab.IsFailedWithErrors(out var errors)) return Result.Fail(errors);
 
-        var x = await labs.Insert(lab);
-        await _ofWorkMongoDb.configs.Insert(stand);
+        standConfig.Node = "pve"; //todo: убрать и сделать нормально))
+        await _ofWorkMongoDb.configs.Insert(standConfig);
         await _ofWorkMongoDb.Commit();
-        
-        _log.Info($"lab {lab.Name} with id {lab.Id} created");
-        return x;
+
+        _log.Info($"lab {createLab.Lab.Name} with id {createLab.Lab.Id} created");
+        return addedLab;
     }
 }

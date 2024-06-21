@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using System.Data;
 using FluentResults;
 using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Entities;
@@ -11,8 +10,8 @@ namespace VirtualLab.Application;
 
 public class VirtualMachineDataHandler : IVirtualMachineDataHandler
 {
-    private readonly IVirtualMachineRepository _vms;
     private readonly ICredentialRepository _credentials;
+    private readonly IVirtualMachineRepository _vms;
 
     public VirtualMachineDataHandler(IVirtualMachineRepository vms,
         ICredentialRepository credentials)
@@ -50,7 +49,7 @@ public class VirtualMachineDataHandler : IVirtualMachineDataHandler
     public async Task<Result<ImmutableArray<VirtualMachine>>> GetAllByUserLabId(Guid userLabId)
     {
         // todo: если где-то как здесь пусто. значит нету никаких проверок и нужно их добавить. например, а есть ли ваще такая лаба?
-        
+
         var getVms = await _vms.GetAllByUserLab(userLabId);
         if (!getVms.TryGetValue(out var vms)) return getVms;
 
@@ -61,9 +60,8 @@ public class VirtualMachineDataHandler : IVirtualMachineDataHandler
 
     public async Task<Result> DeleteAllByUserLabId(Guid userLabId)
     {
-                // todo: если где-то как здесь пусто. значит нету никаких проверок и нужно их добавить. например, а есть ли ваще такая лаба?
+        // todo: если где-то как здесь пусто. значит нету никаких проверок и нужно их добавить. например, а есть ли ваще такая лаба?
 
         return await _vms.DeleteByUserLabId(userLabId);
     }
-
 }

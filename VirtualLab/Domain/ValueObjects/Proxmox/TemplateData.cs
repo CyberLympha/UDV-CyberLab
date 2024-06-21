@@ -1,6 +1,6 @@
-namespace VirtualLab.Domain.Value_Objects.Proxmox;
+namespace VirtualLab.Domain.ValueObjects.Proxmox;
 
-public class Template
+public class TemplateData
 {
     public int Id { get; set; }
     public string Password { get; set; }

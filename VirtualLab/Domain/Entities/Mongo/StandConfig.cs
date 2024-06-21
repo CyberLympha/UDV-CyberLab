@@ -1,24 +1,24 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using VirtualLab.Controllers.LabDistributionController.Dto;
+using VirtualLab.Domain.ValueObjects.Proxmox;
 
 namespace VirtualLab.Domain.Entities.Mongo;
 
 public class StandConfig : IEntity<ObjectId>
 {
-    [BsonId]
-    public ObjectId Id { get; set; }
-    
     public Guid LabId { get; set; }
     public List<TemplateVmConfig> TemplatesVmConfig { get; set; }
+    public string Node { get; set; }
 
-    public static StandConfig From(StandCreateRequest requestStandCreateRequest)
+    [BsonId] public ObjectId Id { get; set; }
+
+    public static StandConfig From(CreateLabDto createLabDto)
     {
-        return new StandConfig()
+        return new StandConfig
         {
-            TemplatesVmConfig = requestStandCreateRequest.TemplateConfigs,
             Id = ObjectId.GenerateNewId(),
-            LabId = Guid.NewGuid()
+            LabId = createLabDto.Lab.Id,
+            TemplatesVmConfig = createLabDto.Templates
         };
     }
 }

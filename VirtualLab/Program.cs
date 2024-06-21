@@ -1,4 +1,3 @@
-using System.Threading.RateLimiting;
 using Authorization;
 using ProxmoxApi;
 using VirtualLab;
@@ -6,7 +5,6 @@ using VirtualLab.Application;
 using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Interfaces.MongoRepository;
 using VirtualLab.Domain.Interfaces.Repositories;
-using VirtualLab.Infrastructure;
 using VirtualLab.Infrastructure.DataBase;
 using VirtualLab.Infrastructure.Options;
 using VirtualLab.Infrastructure.Repositories;
@@ -39,6 +37,8 @@ builder.Services.AddScoped<ILabManager, LabManager>();
 builder.Services.AddScoped<IVirtualMachineDataHandler, VirtualMachineDataHandler>();
 builder.Services.AddScoped<IVirtualMachineRepository, VirtualMachineRepository>();
 builder.Services.AddScoped<ICredentialRepository, CredentialRepository>();
+builder.Services.AddScoped<ITemplateVmRepository, TemplateVmRepository>();
+
 
 builder.Services.AddScoped(_ => MongoDbConf.FromEnv());
 builder.Services.AddScoped<IMongoContext, MongoDb>();

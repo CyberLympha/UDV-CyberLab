@@ -2,15 +2,16 @@ namespace VirtualLab.Domain.Entities;
 
 public class Credential : IEntity<Guid>
 {
-    public Guid Id { get; set; }
-    public Guid VmId { get; set; } 
+    public Guid VmId { get; set; }
     public string Username { get; set; }
     public string Password { get; set; }
     public string Ip { get; set; }
+    public Guid Id { get; set; }
 
 
     public static Credential From(string ip, string username, string password, Guid vmId)
-        => new()
+    {
+        return new Credential
         {
             Id = Guid.NewGuid(),
             Password = password,
@@ -18,4 +19,5 @@ public class Credential : IEntity<Guid>
             Username = username,
             VmId = vmId
         };
+    }
 }

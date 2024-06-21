@@ -1,15 +1,13 @@
 using VirtualLab.Domain.Interfaces.Proxmox;
-using VirtualLab.Domain.Value_Objects.Proxmox;
 
 namespace VirtualLab.Domain.ValueObjects.Proxmox.Requests;
 
-
 // todo: потенциаольно это можно обернуть методами, чтоб было все более интуитивно.
-public record CloneVmConfig : IHasNets// в будущем добавить extentions, который будет доставать все Nets 
+public record CloneVmConfig : IHaveNets // в будущем добавить extentions, который будет доставать все Nets 
 {
-    public Template Template { get; init; }
-    public NetCollection Nets { get; init; }
+    public TemplateData TemplateData { get; init; }
     public int NewId { get; init; }
+    public NetCollection Nets { get; init; }
 }
 
 //todo: можно сделать словарь где ключ NewId. и все красиво обернуть.

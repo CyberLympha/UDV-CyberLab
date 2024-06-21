@@ -9,7 +9,7 @@ namespace VirtualLab.Infrastructure.Repositories;
 
 public class VirtualMachineRepository : RepositoryBase<VirtualMachine, Guid>, IVirtualMachineRepository
 {
-    private DbContext _db;
+    private readonly DbContext _db;
 
     public VirtualMachineRepository(LabDbContext dbContext) : base(dbContext)
     {

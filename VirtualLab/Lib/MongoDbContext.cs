@@ -1,5 +1,5 @@
 namespace VirtualLab.Lib;
 
-public abstract class MongoDbContext {
-    
+public abstract class MongoDbContext
+{
 }

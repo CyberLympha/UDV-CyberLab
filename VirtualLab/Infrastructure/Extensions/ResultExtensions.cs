@@ -22,7 +22,7 @@ public static class ResultExtensions
         return result.IsSuccess;
     }
 
-    public static bool  IsFailedWithErrors(this Result result, out List<IError> errors)
+    public static bool IsFailedWithErrors(this Result result, out List<IError> errors)
     {
         errors = result.Errors;
         return result.IsFailed;

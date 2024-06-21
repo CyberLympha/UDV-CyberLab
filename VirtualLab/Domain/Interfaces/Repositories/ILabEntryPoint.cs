@@ -5,5 +5,4 @@ namespace VirtualLab.Domain.Interfaces.Repositories;
 
 public interface ILabEntryPointRepository : IRepositoryBase<Credential, Guid>
 {
-    
 }
