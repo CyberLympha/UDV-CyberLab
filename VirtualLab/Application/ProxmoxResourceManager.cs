@@ -50,8 +50,18 @@ public class ProxmoxResourceManager : IProxmoxResourceManager
 
             if (qemuId - prevQemuId < count)
             {
-                freeQemuIds.AddRange(prevQemuId, qemuId);
+                freeQemuIds.AddRange(prevQemuId + 1, qemuId - 1);
                 count -= qemuId - prevQemuId;
+            }
+        }
+
+        var last = qemies.Last(); //todo: O(N) БРООООО
+        last = last > 2000 ? last : 2000;
+        while (freeQemuIds.Count != count)
+        {
+            if (freeQemuIds.Count != count)
+            {
+                freeQemuIds.Add(++last);
             }
         }
 

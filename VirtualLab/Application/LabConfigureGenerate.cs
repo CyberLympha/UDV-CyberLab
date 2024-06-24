@@ -79,9 +79,11 @@ public class LabConfigure : ILabConfigure
 
     private async Task<Result<StandCreateConfig>> GenerateLabConfig(StandConfig standConfig)
     {
-        var standCreateConfig = new StandCreateConfig(); 
-        // будем получать доступные вм (будет доп сервис с этим) и если это вм занята, то мы просто повторим поиск доступных вм
-        standCreateConfig.Node = standConfig.Node;
+        var standCreateConfig = new StandCreateConfig
+        {
+            // будем получать доступные вм (будет доп сервис с этим) и если это вм занята, то мы просто повторим поиск доступных в
+            Node = standConfig.Node
+        };
         var getFreeQemuIds = await _pveResourceManager
             .GetFreeQemuIds(standConfig.Node, standConfig.TemplatesVmConfig.Count);
         if (!getFreeQemuIds.TryGetValue(out var freeQemuIds, out var errors)) Result.Fail(errors);
@@ -100,7 +102,7 @@ public class LabConfigure : ILabConfigure
                 Name = templateVms[i].userName,
                 Password = templateVms[i].Password
             };
-            standCreateConfig.CloneVmConfig.Add(
+            standCreateConfig.Add(
                 new CloneVmConfig
                 {
                     NewId = freeQemuIds[i],
@@ -118,7 +120,7 @@ public class LabConfigure : ILabConfigure
         foreach (var vmConfig in TemplatesVmConfig)
         {
             var getTemplate = await _templatesVms.GetByTemplatePveVmId(vmConfig.TemplateId);
-            if (getTemplate.TryGetValue(out var template)) return Result.Fail(getTemplate.Errors);
+            if (!getTemplate.TryGetValue(out var template)) return Result.Fail(getTemplate.Errors);
 
             templatesVms.Add(template);
         }

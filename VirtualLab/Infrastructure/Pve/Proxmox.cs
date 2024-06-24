@@ -173,7 +173,7 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork, IProxmoxNode // кажетс
     {
         var result = await _client.Nodes[node].Qemu[qemu].Agent.NetworkGetInterfaces.NetworkGetInterfaces();
 
-        if (!result.IsSuccessStatusCode) return Result.Fail(result.ReasonPhrase);
+        if (!result.IsSuccessStatusCode) return Result.Fail($"qemu {qemu} {result.ReasonPhrase}");
 
         // todo: декомпозиция. эта часть кода явно должн быть как минум в методе, а можно и в расширений, хотяя.
         // todo: честно я потом сделаю нормальный метод))))))

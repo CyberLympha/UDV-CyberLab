@@ -44,7 +44,7 @@ public class StandManager : IStandManager
 
         var virtualMachineInfos = new List<VirtualMachineInfo>();
 
-        Thread.Sleep(40000); // ждём пока qemu agent запустится на машинах
+        Thread.Sleep(55000); // ждём пока qemu agent запустится на машинах
         foreach (var cloneVmConfig in standCreateConfig.CloneVmConfig)
         {
             string ip = null!;
@@ -129,7 +129,7 @@ public class StandManager : IStandManager
 
     private async Task<Result> Interfaces(Func<Net, Task<Result>> action, IEnumerable<Net> nets)
     {
-        foreach (var net in nets.Where(x => x.Bridge != "vmbr0")) // чёт крижово выглядит.
+        foreach (var net in nets.WithoutVmbr0())
         {
             var response = await action(net);
             if (response.IsFailed) return Result.Fail($"net: {net} occured with error: {response}");
@@ -144,7 +144,8 @@ public class StandManager : IStandManager
         var response = await _proxmoxVm.Clone(cloneVmConfig, node);
         if (response.IsFailed) return response;
 
-        response = await _proxmoxVm.UpdateDeviceInterface(node, cloneVmConfig.NewId, cloneVmConfig.Nets);
+        if (cloneVmConfig.WithNets())
+            response = await _proxmoxVm.UpdateDeviceInterface(node, cloneVmConfig.NewId, cloneVmConfig.Nets);
         if (response.IsFailed) return response;
 
         response = await _proxmoxVm.Start(node, cloneVmConfig.NewId); // а запускать мне кажется, точно должны не здесcm

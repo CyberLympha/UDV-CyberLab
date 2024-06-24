@@ -18,4 +18,14 @@ public static class ProxmoxExtensions
             hashset.Add(vmConfigNet.Bridge);
         }
     }
+
+    public static bool WithNets<T>(this T config) where T: IHaveNets
+    {
+        return config.Nets.Count != 0;
+    }
+
+    public static IEnumerable<Net> WithoutVmbr0(this IEnumerable<Net> nets)
+    {
+        return nets.Where(x => x.Bridge != "vmbr0");
+    }
 }
