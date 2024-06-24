@@ -58,8 +58,7 @@ public class LabConfigure : ILabConfigure
     {
         var resultVms = await _virtualMachines.GetAllByUserLabId(userLabId);
         if (!resultVms.TryGetValue(out var virtualMachines)) return Result.Fail($"ошибка: {resultVms.Errors}");
-
-
+        
         var userLabConfig = new StandRemoveConfig();
         foreach (var virtualMachine in virtualMachines)
         {
@@ -80,15 +79,16 @@ public class LabConfigure : ILabConfigure
 
     private async Task<Result<StandCreateConfig>> GenerateLabConfig(StandConfig standConfig)
     {
-        var standCreateConfig =
-            new StandCreateConfig(); // будем получать доступные вм (будет доп сервис с этим) и если это вм занята, то мы просто повторим поиск доступных вм
+        var standCreateConfig = new StandCreateConfig(); 
+        // будем получать доступные вм (будет доп сервис с этим) и если это вм занята, то мы просто повторим поиск доступных вм
         standCreateConfig.Node = standConfig.Node;
-        var freeQemuIds =
-            await _pveResourceManager.GetFreeQemuIds(standConfig.Node, standConfig.TemplatesVmConfig.Count);
-
+        var getFreeQemuIds = await _pveResourceManager
+            .GetFreeQemuIds(standConfig.Node, standConfig.TemplatesVmConfig.Count);
+        if (!getFreeQemuIds.TryGetValue(out var freeQemuIds, out var errors)) Result.Fail(errors);
+        
 
         var getTemplatesVms = await GetTemplatesVms(standConfig.TemplatesVmConfig);
-        if (!getTemplatesVms.TryGetValue(out var templateVms, out var errors)) return Result.Fail(errors);
+        if (!getTemplatesVms.TryGetValue(out var templateVms, out errors)) return Result.Fail(errors);
 
         for (var i = 0; i < standConfig.TemplatesVmConfig.Count; i++)
         {

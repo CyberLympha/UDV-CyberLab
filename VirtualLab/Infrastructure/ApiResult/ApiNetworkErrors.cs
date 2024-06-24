@@ -1,6 +1,6 @@
 namespace VirtualLab.Infrastructure.ApiResult;
 
-public class NetworkApiResult
+public class ApiNetworkErrors
 {
     public string Apply(string error, string node)
     {

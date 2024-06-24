@@ -9,14 +9,15 @@ using VirtualLab.Infrastructure.Extensions;
 using Vostok.Logging.Abstractions;
 using Result = FluentResults.Result;
 
-namespace VirtualLab.Infrastructure;
+namespace VirtualLab.Infrastructure.Pve;
 
 public class Proxmox : IProxmoxVm, IProxmoxNetwork, IProxmoxNode // кажется в итоге это будет два отдельных класса)
 {
     private readonly PveClient _client;
     private readonly ILog _log;
     private readonly ProxmoxAuthData _proxmoxData;
-
+    private static ApiNetworkErrors PveNetworkErrors => ApiResultError.WithProxmox.ApiNetworkErrors;
+    
     public Proxmox(PveClient client, ILog log, ProxmoxAuthData proxmoxData)
     {
         _client = client;
@@ -33,7 +34,7 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork, IProxmoxNode // кажетс
 
         var result = new NetCollection();
 
-        // здесь ужасная реализация
+        //todo:  здесь ужасная реализация
         foreach (var dnets in listNet)
         {
             var net = dnets is KeyValuePair<string, object> ? (KeyValuePair<string, object>)dnets : default;
@@ -62,7 +63,7 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork, IProxmoxNode // кажетс
 
         return result.Match(
             Result.Ok,
-            reasonPhrases => ApiResultError.WithProxmox.Network.Create(reasonPhrases, node, net.Bridge)
+            reasonPhrases => PveNetworkErrors.Create(reasonPhrases, node, net.Bridge)
         );
     }
 
@@ -83,7 +84,7 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork, IProxmoxNode // кажетс
 
         return result.Match(
             Result.Ok,
-            reasonPhrases => ApiResultError.WithProxmox.Network.Apply(reasonPhrases, node)
+            reasonPhrases => PveNetworkErrors.Apply(reasonPhrases, node)
         );
     }
 
@@ -92,9 +93,9 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork, IProxmoxNode // кажетс
     {
         var result = await _client.Nodes[node].Qemu.Vmlist(false);
 
-        if (!result.IsSuccessStatusCode) throw new NotImplementedException("api ошибку обработать");
-
-
+        if (!result.IsSuccessStatusCode)
+            return Result.Fail(ApiResultError.WithProxmox.Node.GetQuemies(node, result.ReasonPhrase));
+        
         var vmids = new List<int>();
         var vmsData = result.Response.data;
         foreach (var vmData in vmsData)
@@ -109,8 +110,7 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork, IProxmoxNode // кажетс
     public async Task<Result> Clone(CloneVmConfig vmConfig, string node)
     {
         var result = await _client.Nodes[node].Qemu[vmConfig.TemplateData.Id].Clone.CloneVm(vmConfig.NewId);
-
-
+        
         return result.Match(
             Result.Ok,
             ApiResultError.WithProxmox.CreateCloneFailure
@@ -121,8 +121,7 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork, IProxmoxNode // кажетс
     {
         var netN = new Dictionary<int, string>(nets.Value);
         var result = await _client.Nodes[node].Qemu[qemu].Config.UpdateVmAsync(netN: netN);
-
-
+        
         return result.Match(
             Result.Ok,
             reasonPhrases => ApiResultError.WithProxmox.ChangeInterfaceFailure(reasonPhrases, node, qemu)
@@ -152,12 +151,10 @@ public class Proxmox : IProxmoxVm, IProxmoxNetwork, IProxmoxNode // кажетс
     public async Task<Result> Destroy(string node, int qemu)
     {
         var response = await _client.Nodes[node].Qemu[qemu].DestroyVm();
-
-        if (!response.IsSuccessStatusCode) return Result.Fail(response.ReasonPhrase);
-
+        
         return response.Match(
             Result.Ok,
-            responseError => ApiResultError.WithProxmox.Vm.Delete(node, qemu, responseError)
+            errors => ApiResultError.WithProxmox.Vm.Delete(node, qemu, errors)
         );
     }
 

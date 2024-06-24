@@ -26,9 +26,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<LabDbContext>();
 
 builder.Services.AddScoped<ILabCreationService, LabCreationService>();
+builder.Services.AddScoped<ITemplateService, TemplateService>();
 builder.Services.AddScoped<ILabRepository, LabRepository>();
 builder.Services.AddScoped<IUserLabRepository, UserLabsRepository>();
 builder.Services.AddScoped<IUserLabProvider, UserLabProviderService>();
+
+
 //конец))
 // самый важный класс
 builder.Services.AddScoped<ILabConfigure, LabConfigure>();
@@ -38,6 +41,7 @@ builder.Services.AddScoped<IVirtualMachineDataHandler, VirtualMachineDataHandler
 builder.Services.AddScoped<IVirtualMachineRepository, VirtualMachineRepository>();
 builder.Services.AddScoped<ICredentialRepository, CredentialRepository>();
 builder.Services.AddScoped<ITemplateVmRepository, TemplateVmRepository>();
+
 
 
 builder.Services.AddScoped(_ => MongoDbConf.FromEnv());

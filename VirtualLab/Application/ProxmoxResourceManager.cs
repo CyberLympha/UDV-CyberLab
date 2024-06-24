@@ -1,6 +1,8 @@
+using FluentResults;
 using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Interfaces.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox;
+using VirtualLab.Infrastructure.ApiResult;
 using VirtualLab.Infrastructure.Extensions;
 
 namespace VirtualLab.Application;
@@ -15,18 +17,18 @@ public class ProxmoxResourceManager : IProxmoxResourceManager
         _proxmoxNode = proxmoxNode;
     }
 
-    public async Task<QemuCollections> GetFreeQemuIds(string node, long count)
+    public async Task<Result<QemuCollections>> GetFreeQemuIds(string node, long count)
     {
         var qemusUnVailabe = await _proxmoxNode.GetAllQemu(node);
-        if (!qemusUnVailabe.TryGetValue(out var qemies))
-            throw new NotImplementedException("пропиши в ProxmoxResurceManager ошибку");
+        if (!qemusUnVailabe.TryGetValue(out var qemies, out var errors))
+            return Result.Fail(errors);
 
         var freeQemuIds = GetFirstFreeQemuIds(count, qemies);
 
         return freeQemuIds;
     }
 
-    public Task<List<long>> GetFreeVmbrs(string node, int count)
+    public Task<Result<List<long>>> GetFreeVmbrs(string node, int count)
     {
         throw new NotImplementedException();
     }

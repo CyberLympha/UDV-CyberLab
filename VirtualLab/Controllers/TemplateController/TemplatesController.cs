@@ -11,16 +11,16 @@ namespace VirtualLab.Controllers.TemplateController;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TemplateController : ControllerBase
+public class TemplatesController : ControllerBase
 {
     private readonly ITemplateService _templateService;
 
-    public TemplateController(ITemplateService templateService)
+    public TemplatesController(ITemplateService templateService)
     {
         _templateService = templateService;
     }
 
-    [HttpPost("/[action]")]
+    [HttpPost("add")]
     public async Task<ActionResult> Add([FromBody] TemplateAddRequest request)
     {
         var template = TemplateVm.From(request);
@@ -30,5 +30,15 @@ public class TemplateController : ControllerBase
         return result.Match(
             Ok,
             BadRequest);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IReadOnlyCollection<TemplateVmInfo>>> GetAll()
+    {
+        var templatesVm = await _templateService.GetAll();
+
+        return templatesVm.Match(
+            data => Ok(data),
+            errors => BadRequest(errors));
     }
 }
