@@ -13,6 +13,8 @@ public class PveVm : IProxmoxVm
 {
     private readonly PveClient _client;
     private readonly ProxmoxAuthData _proxmoxData;
+    private static VmApiResult ErrorWhen => ApiResultError.WithProxmox.Vm;
+
     public PveVm(PveClient client, ProxmoxAuthData proxmoxData)
     {
         _client = client;
@@ -22,10 +24,10 @@ public class PveVm : IProxmoxVm
     public async Task<Result> Clone(CloneVmConfig vmConfig, string node)
     {
         var result = await _client.Nodes[node].Qemu[vmConfig.TemplateData.Id].Clone.CloneVm(vmConfig.NewId);
-        
+
         return result.Match(
             Result.Ok,
-            ApiResultError.WithProxmox.CreateCloneFailure
+            ErrorWhen.CreateClone
         );
     }
 
@@ -37,18 +39,19 @@ public class PveVm : IProxmoxVm
 
         return result.Match(
             Result.Ok,
-            reasonPhrases => ApiResultError.WithProxmox.ChangeInterfaceFailure(reasonPhrases, node, qemu)
+            errors => ApiResultError.WithProxmox.ChangeInterfaceFailure(errors, node, qemu)
         );
     }
 
     public async Task<Result<ProxmoxVmStatus>> GetStatus(string node, int qemu)
     {
         var result = await _client.Nodes[node].Qemu[qemu].Status.Current.VmStatus();
-        if (!result.IsSuccessStatusCode) return Result.Fail(result.ReasonPhrase);
+        if (!result.IsSuccessStatusCode) return result.Fail(errors => 
+            ErrorWhen.VmGetStatusFailure(errors, node, qemu));
 
         var status = result.Response.data.qmpstatus as string;
 
-        return Enum.Parse<ProxmoxVmStatus>(status!.ToUpFirst());
+        return Enum.Parse<ProxmoxVmStatus>(status.ToUpFirst());
     }
 
     public async Task<Result> Start(string node, int qemu)
@@ -57,17 +60,17 @@ public class PveVm : IProxmoxVm
 
         return result.Match(
             Result.Ok, // todo возможно, что данные в какой node ошибка прописываеется в ответе от proxmox.
-            reasonPhrases => ApiResultError.WithProxmox.Vm.Start(reasonPhrases, node, qemu)
+            errors => ErrorWhen.Start(errors, node, qemu)
         );
     }
 
     public async Task<Result> Destroy(string node, int qemu)
     {
         var response = await _client.Nodes[node].Qemu[qemu].DestroyVm();
-        
+
         return response.Match(
             Result.Ok,
-            responseError => ApiResultError.WithProxmox.Vm.Delete(node, qemu, responseError)
+            errors => ErrorWhen.Delete(node, qemu, errors)
         );
     }
 
@@ -77,7 +80,7 @@ public class PveVm : IProxmoxVm
 
         return result.Match(
             Result.Ok,
-            rp => ApiResultError.WithProxmox.VmStopFailure(rp, node, qemu)
+            errors => ErrorWhen.VmStop(errors, node, qemu)
         );
     }
 

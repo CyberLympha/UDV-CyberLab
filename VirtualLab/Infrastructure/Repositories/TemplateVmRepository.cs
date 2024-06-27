@@ -7,7 +7,7 @@ using VirtualLab.Infrastructure.DataBase;
 
 namespace VirtualLab.Infrastructure.Repositories;
 
-public class TemplateVmRepository : RepositoryBase<TemplateVm, Guid>, ITemplateVmRepository
+public class TemplateVmRepository : RepositoryBase<TemplateVm, Guid>
 {
     public TemplateVmRepository(LabDbContext dbContext) : base(dbContext)
     {

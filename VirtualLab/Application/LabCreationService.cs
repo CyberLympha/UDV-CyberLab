@@ -49,9 +49,8 @@ public class LabCreationService : ILabCreationService
         var standConfig = StandConfig.From(createLab);
 
         var addedLab = await labs.Insert(createLab.Lab);
-        if (addedLab.IsFailedWithErrors(out var errors)) return Result.Fail(errors);
-
-        standConfig.Node = "pve"; //todo: убрать и сделать нормально))
+        if (addedLab.IsFailedWithErrors(out var errors)) return Result.Fail(errors); 
+        
         await _ofWorkMongoDb.configs.Insert(standConfig);
         await _ofWorkMongoDb.Commit();
 

@@ -33,12 +33,10 @@ public class LabsController : ControllerBase
     {
         var labConstructorData = CreateLabDto.From(request);
         var result = await _labCreationService.Create(labConstructorData);
-        if (result.IsFailed) return BadRequest();
-
-
-        return Ok();
+        
+        return result.Match(Ok, BadRequest);
     }
-
+    
     [HttpGet] // ограничение на роли
     public async Task<ActionResult<IReadOnlyCollection<UserLabInfo>>> Get()
     {

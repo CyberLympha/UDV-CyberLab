@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualLab", "VirtualLab\Vi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authorization", "Authorization\Authorization.csproj", "{1C2F91D6-3701-4681-A72A-9FA5F9276CCC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestVirtualLab", "TestVirtualLab\TestVirtualLab.csproj", "{B2C730C3-E41E-46F8-8EE1-C467D87C4E27}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{1C2F91D6-3701-4681-A72A-9FA5F9276CCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C2F91D6-3701-4681-A72A-9FA5F9276CCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C2F91D6-3701-4681-A72A-9FA5F9276CCC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2C730C3-E41E-46F8-8EE1-C467D87C4E27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2C730C3-E41E-46F8-8EE1-C467D87C4E27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2C730C3-E41E-46F8-8EE1-C467D87C4E27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2C730C3-E41E-46F8-8EE1-C467D87C4E27}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

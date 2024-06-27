@@ -1,11 +1,7 @@
-using System.Text.RegularExpressions;
-using FluentResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Abstractions;
 using ProxmoxApi;
 using VirtualLab.Application.Interfaces;
-using VirtualLab.Controllers.TemplateController.Dto;
-using VirtualLab.Domain.Entities;
+using VirtualLab.Domain.ValueObjects.Proxmox;
 
 namespace VirtualLab.Controllers.TemplateController;
 
@@ -13,32 +9,20 @@ namespace VirtualLab.Controllers.TemplateController;
 [Route("api/[controller]")]
 public class TemplatesController : ControllerBase
 {
-    private readonly ITemplateService _templateService;
+    private readonly IPveTemplateService _pveTemplateService;
 
-    public TemplatesController(ITemplateService templateService)
+    public TemplatesController(IPveTemplateService pveTemplateService)
     {
-        _templateService = templateService;
+        _pveTemplateService = pveTemplateService;
     }
 
-    [HttpPost("add")]
-    public async Task<ActionResult> Add([FromBody] TemplateAddRequest request)
+    [HttpGet("{node}/{id:int}")]
+    public async Task<ActionResult<TemplateData>> Get(int id, string node)
     {
-        var template = TemplateVm.From(request);
+        var template = await _pveTemplateService.GetDataTemplate(id, node);
 
-        var result = await _templateService.Add(template);
-
-        return result.Match(
-            Ok,
-            BadRequest);
-    }
-
-    [HttpGet]
-    public async Task<ActionResult<IReadOnlyCollection<TemplateVmInfo>>> GetAll()
-    {
-        var templatesVm = await _templateService.GetAll();
-
-        return templatesVm.Match(
+        return template.Match(
             data => Ok(data),
-            errors => BadRequest(errors));
+            error => BadRequest(error));
     }
 }

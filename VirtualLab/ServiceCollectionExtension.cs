@@ -34,13 +34,13 @@ public static class ServiceCollectionExtension
             ApiToken = authData.Token
         };
 
-        services.AddSingleton<IProxmoxNetwork, Proxmox>();
-        services.AddSingleton<IProxmoxVm, Proxmox>();
-        services.AddSingleton<IProxmoxNode, Proxmox>();
-
-
+        services.AddSingleton<IProxmoxNetwork, PveNetwork>();
+        services.AddSingleton<IProxmoxVm, PveVm>();
+        services.AddSingleton<IProxmoxNode, PveNode>();
+        
         services.AddScoped<IProxmoxResourceManager, ProxmoxResourceManager>();
-
+        services.AddScoped<IPveTemplateService, PveTemplateService>();
+        
         services.AddSingleton<IStandManager, StandManager>();
         services.AddScoped<ILabConfigure, LabConfigure>();
         services.AddSingleton(client);

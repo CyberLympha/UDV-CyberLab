@@ -29,7 +29,7 @@ public class StandManager : IStandManager
 
     public async Task<Result<IReadOnlyList<VirtualMachineInfo>>> Create(StandCreateConfig standCreateConfig)
     {
-        if ((await AddInterfaces(standCreateConfig.CloneVmConfig.GetAllNets(), standCreateConfig.Node))
+        if ((await AddInterfaces(standCreateConfig.GetAllNets(), standCreateConfig.Node))
             .IsFailedWithErrors(out var errors))
             Result.Fail(errors);
 
@@ -48,7 +48,7 @@ public class StandManager : IStandManager
         foreach (var cloneVmConfig in standCreateConfig.CloneVmConfig)
         {
             string ip = null!;
-            if (cloneVmConfig.TemplateData.WithVmbr0)
+            if (cloneVmConfig.TemplateData.Nets.HaveVmbr0())
             {
                 var getIp = await _proxmoxVm.GetIp(standCreateConfig.Node, cloneVmConfig.NewId);
                 if (!getIp.TryGetValue(out var ipData)) return Result.Fail($"not found ip because: {getIp}");
@@ -144,8 +144,8 @@ public class StandManager : IStandManager
         var response = await _proxmoxVm.Clone(cloneVmConfig, node);
         if (response.IsFailed) return response;
 
-        if (cloneVmConfig.WithNets())
-            response = await _proxmoxVm.UpdateDeviceInterface(node, cloneVmConfig.NewId, cloneVmConfig.Nets);
+        if (cloneVmConfig.TemplateData.WithNets())
+            response = await _proxmoxVm.UpdateDeviceInterface(node, cloneVmConfig.NewId, cloneVmConfig.TemplateData.Nets);
         if (response.IsFailed) return response;
 
         response = await _proxmoxVm.Start(node, cloneVmConfig.NewId); // а запускать мне кажется, точно должны не здесcm

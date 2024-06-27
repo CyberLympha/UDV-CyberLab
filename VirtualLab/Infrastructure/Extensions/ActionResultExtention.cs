@@ -1,6 +1,5 @@
 using FluentResults;
 using Microsoft.AspNetCore.Mvc;
-using VirtualLab.Controllers.TemplateController.Dto;
 
 namespace ProxmoxApi;
 

@@ -20,7 +20,6 @@ public class LabConfigure : ILabConfigure
     private readonly ILog _log;
     private readonly IProxmoxNetwork _proxmoxNetwork;
     private readonly IProxmoxResourceManager _pveResourceManager;
-    private readonly ITemplateVmRepository _templatesVms;
     private readonly IUnitOfWork _unitOfWorkMongo;
     private readonly IVirtualMachineDataHandler _virtualMachines;
 
@@ -29,8 +28,7 @@ public class LabConfigure : ILabConfigure
         IVirtualMachineDataHandler virtualMachines,
         IProxmoxNetwork proxmoxNetwork,
         IUnitOfWork unitOfWorkMongo,
-        IProxmoxResourceManager PveResourceManager,
-        ITemplateVmRepository templatesVms)
+        IProxmoxResourceManager PveResourceManager)
     {
         _labs = labs;
         log.ForContext("LabConfigure");
@@ -39,7 +37,6 @@ public class LabConfigure : ILabConfigure
         _proxmoxNetwork = proxmoxNetwork;
         _unitOfWorkMongo = unitOfWorkMongo;
         _pveResourceManager = PveResourceManager;
-        _templatesVms = templatesVms;
     }
 
 
@@ -58,7 +55,7 @@ public class LabConfigure : ILabConfigure
     {
         var resultVms = await _virtualMachines.GetAllByUserLabId(userLabId);
         if (!resultVms.TryGetValue(out var virtualMachines)) return Result.Fail($"ошибка: {resultVms.Errors}");
-        
+
         var userLabConfig = new StandRemoveConfig();
         foreach (var virtualMachine in virtualMachines)
         {
@@ -79,52 +76,23 @@ public class LabConfigure : ILabConfigure
 
     private async Task<Result<StandCreateConfig>> GenerateLabConfig(StandConfig standConfig)
     {
-        var standCreateConfig = new StandCreateConfig
-        {
-            // будем получать доступные вм (будет доп сервис с этим) и если это вм занята, то мы просто повторим поиск доступных в
-            Node = standConfig.Node
-        };
-        var getFreeQemuIds = await _pveResourceManager
-            .GetFreeQemuIds(standConfig.Node, standConfig.TemplatesVmConfig.Count);
-        if (!getFreeQemuIds.TryGetValue(out var freeQemuIds, out var errors)) Result.Fail(errors);
+        var standCreateConfig = new StandCreateConfig();
         
+        var getFreeQemuIds = await _pveResourceManager
+            .GetFreeQemuIds(standConfig.Node, standConfig.TemplateData.Count);
+        if (!getFreeQemuIds.TryGetValue(out var freeQemuIds, out var errors)) Result.Fail(errors);
 
-        var getTemplatesVms = await GetTemplatesVms(standConfig.TemplatesVmConfig);
-        if (!getTemplatesVms.TryGetValue(out var templateVms, out errors)) return Result.Fail(errors);
 
-        for (var i = 0; i < standConfig.TemplatesVmConfig.Count; i++)
+        for (var i = 0; i < standConfig.TemplateData.Count; i++)
         {
-            // todo: здесь как то всё слишком разношерстно! хочется одну сущность, хотя тогда это уже будет StandConfig
-            var template = new TemplateData() // возможен баг при условий больго кол во пользователей.
-            {
-                WithVmbr0 = standConfig.TemplatesVmConfig[i].WithVmbr0,
-                Id = standConfig.TemplatesVmConfig[i].TemplateId,
-                Name = templateVms[i].userName,
-                Password = templateVms[i].Password
-            };
             standCreateConfig.Add(
                 new CloneVmConfig
                 {
                     NewId = freeQemuIds[i],
-                    TemplateData = template,
-                    Nets = new NetCollection()
-                }); //todo: Nets мы пока тоже не создаём.
+                    TemplateData = standConfig.TemplateData[i],
+                });
         }
 
         return standCreateConfig;
-    }
-
-    private async Task<Result<IReadOnlyList<TemplateVm>>> GetTemplatesVms(List<TemplateVmConfig> TemplatesVmConfig)
-    {
-        var templatesVms = new List<TemplateVm>();
-        foreach (var vmConfig in TemplatesVmConfig)
-        {
-            var getTemplate = await _templatesVms.GetByTemplatePveVmId(vmConfig.TemplateId);
-            if (!getTemplate.TryGetValue(out var template)) return Result.Fail(getTemplate.Errors);
-
-            templatesVms.Add(template);
-        }
-
-        return templatesVms;
     }
 }

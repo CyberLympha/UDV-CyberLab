@@ -9,7 +9,7 @@ public static class ResultExtensions
         return string.Join($"{Environment.NewLine}", result.Errors); //todo: лучше поменять реализацию
     }
 
-    public static bool TryGetValue<Tvalue>(this IResult<Tvalue> result, out Tvalue? value, out List<IError>? error)
+    public static bool TryGetValue<TValue>(this IResult<TValue> result, out TValue value, out List<IError>? error)
     {
         error = result.Errors;
         value = result.Value;

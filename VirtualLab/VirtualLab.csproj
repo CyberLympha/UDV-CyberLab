@@ -42,5 +42,9 @@
         <_ContentIncludedByDefault Remove="out\VirtualLab.runtimeconfig.json"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Controllers\TemplateController\Dto\" />
+    </ItemGroup>
+
 
 </Project>
