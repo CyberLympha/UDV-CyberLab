@@ -31,6 +31,7 @@ public class PveVm : IProxmoxVm
         );
     }
 
+    // куда это засунуть в pveVm или pveNetwork - здесь глубокая филосовия. 
     public async Task<Result> UpdateDeviceInterface(string node, int qemu, NetCollection nets)
     {
         var netN = new Dictionary<int, string>(nets.Value);
