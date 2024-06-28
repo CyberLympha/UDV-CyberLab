@@ -19,7 +19,7 @@ public class Net
     public bool CanChange { get; set; }
     
     private Dictionary<string, string> Parameters { get; } = new();
-
+    
     public override string ToString()
     {
         return $"{Bridge}, {Parameters}";

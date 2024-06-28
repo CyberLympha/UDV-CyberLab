@@ -17,7 +17,7 @@ public class TemplatesController : ControllerBase
     }
 
     [HttpGet("{node}/{id:int}")]
-    public async Task<ActionResult<TemplateData>> Get(int id, string node)
+    public async Task<ActionResult<TemplateData>> Get(int id, string node) // нужно сделать dto
     {
         var template = await _pveTemplateService.GetDataTemplate(id, node);
 

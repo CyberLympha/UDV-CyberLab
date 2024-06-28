@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Components.RenderTree;
 using VirtualLab.Controllers.LabDistributionController.Dto;
 using VirtualLab.Domain.Entities;
 
@@ -13,7 +14,7 @@ public class CreateLabDto
         return new CreateLabDto
         {
             Lab = Lab.From(request),
-            Templates = request.StandCreateRequest.TemplateConfigs
+            Templates = request.Template.Select(TemplateData.From).ToList()
         };
     }
 }
