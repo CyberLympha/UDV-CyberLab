@@ -3,6 +3,7 @@ using VirtualLab.Application;
 using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Interfaces.Proxmox;
 using VirtualLab.Infrastructure;
+using VirtualLab.Infrastructure.Options;
 using VirtualLab.Infrastructure.Pve;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Console;

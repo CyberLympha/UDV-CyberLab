@@ -2,9 +2,9 @@ using Corsinvest.ProxmoxVE.Api;
 using FluentResults;
 using VirtualLab.Domain.Interfaces.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox;
-using VirtualLab.Domain.ValueObjects.Proxmox.Requests;
 using VirtualLab.Infrastructure.ApiResult;
 using VirtualLab.Infrastructure.Extensions;
+using VirtualLab.Infrastructure.Options;
 using Result = FluentResults.Result;
 
 namespace VirtualLab.Infrastructure.Pve;
@@ -21,9 +21,9 @@ public class PveVm : IProxmoxVm
         _proxmoxData = proxmoxData;
     }
 
-    public async Task<Result> Clone(CloneVmConfig vmConfig, string node)
+    public async Task<Result> Clone(string node, int newId, int templateId)
     {
-        var result = await _client.Nodes[node].Qemu[vmConfig.TemplateData.Id].Clone.CloneVm(vmConfig.NewId);
+        var result = await _client.Nodes[node].Qemu[templateId].Clone.CloneVm(newId);
 
         return result.Match(
             Result.Ok,

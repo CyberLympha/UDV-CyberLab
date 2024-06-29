@@ -4,7 +4,6 @@ using VirtualLab.Domain.Interfaces.Proxmox;
 using VirtualLab.Domain.Value_Objects.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox.Config;
-using VirtualLab.Domain.ValueObjects.Proxmox.Requests;
 using VirtualLab.Infrastructure.Extensions;
 using Vostok.Logging.Abstractions;
 
@@ -40,7 +39,7 @@ public class StandManager : IStandManager
             if (createdVm.IsFailed) return createdVm;
         }
 
-        //todo: максимально тупая реализация.
+        //todo: максимально средняя реализация.
 
         var virtualMachineInfos = new List<VirtualMachineInfo>();
 
@@ -61,7 +60,7 @@ public class StandManager : IStandManager
                 ProxmoxVmId = cloneVmConfig.NewId,
                 Password = cloneVmConfig.TemplateData.Password,
                 Username = cloneVmConfig.TemplateData.Name,
-                Node = standCreateConfig.Node,
+                Node = cloneVmConfig.TemplateData.Node,
                 Ip = ip
             });
         }
@@ -138,10 +137,9 @@ public class StandManager : IStandManager
         return Result.Ok();
     }
 
-    // меня напрягает здесь node, как вообще будет работать node
     private async Task<Result> CreateVmByTemplate(CloneVmConfig cloneVmConfig, string node)
     {
-        var response = await _proxmoxVm.Clone(cloneVmConfig, node);
+        var response = await _proxmoxVm.Clone(node, cloneVmConfig.NewId, cloneVmConfig.TemplateData.Id);
         if (response.IsFailed) return response;
 
         if (cloneVmConfig.TemplateData.WithNets())

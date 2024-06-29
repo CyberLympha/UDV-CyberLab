@@ -9,7 +9,7 @@ public class QemuCollections
 
     public void AddRange(int from, int to)
     {
-        for (var i = from; i <= to; i++) _list.Add(i);
+        for (var i = from; i <= to; i++) Add(i);
     }
 
     public void Add(int q)

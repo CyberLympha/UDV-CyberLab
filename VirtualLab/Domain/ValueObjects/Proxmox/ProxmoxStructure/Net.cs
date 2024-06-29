@@ -1,3 +1,6 @@
+using Amazon.Runtime.Internal.Transform;
+using VirtualLab.Controllers.LabDistributionController.Dto;
+
 namespace VirtualLab.Domain.Value_Objects.Proxmox;
 
 // todo: сделать лучше: потецинально, мы будет не только bridge делать поэтому Type есть.
@@ -14,14 +17,29 @@ public class Net
         Type = "bridge";
     }
 
+    private Net(Dictionary<string, string> parameters)
+    {
+        Parameters = parameters;
+        Type = "bridge";
+    }
+    
     public string Type { get; }
     public string this[string index] => Parameters[index];
     public bool CanChange { get; set; }
-    
-    private Dictionary<string, string> Parameters { get; } = new();
-    
+
+    private readonly Dictionary<string, string> Parameters = new();
+
     public override string ToString()
     {
         return $"{Bridge}, {Parameters}";
+    }
+
+
+    public static Net From(NetRequest request)
+    {
+        return new Net(request.Parameters)
+        {
+            CanChange = request.CanChange
+        };
     }
 }

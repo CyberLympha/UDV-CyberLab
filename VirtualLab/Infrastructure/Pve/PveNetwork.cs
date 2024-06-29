@@ -5,6 +5,7 @@ using VirtualLab.Domain.Value_Objects.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox;
 using VirtualLab.Infrastructure.ApiResult;
 using VirtualLab.Infrastructure.Extensions;
+using VirtualLab.Infrastructure.Options;
 using Vostok.Logging.Abstractions;
 using Result = FluentResults.Result;
 

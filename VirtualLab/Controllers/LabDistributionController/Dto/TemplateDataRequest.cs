@@ -5,4 +5,4 @@ public record TemplateDataRequest(
     string Password,
     string Name,
     string Node,
-    Dictionary<string,string> Nets);
+    List<NetRequest> Nets);

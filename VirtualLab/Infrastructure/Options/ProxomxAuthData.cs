@@ -1,6 +1,6 @@
 using VirtualLab.Domain.ValueObjects.Proxmox;
 
-namespace VirtualLab.Infrastructure;
+namespace VirtualLab.Infrastructure.Options;
 
 public class ProxmoxAuthData
 {

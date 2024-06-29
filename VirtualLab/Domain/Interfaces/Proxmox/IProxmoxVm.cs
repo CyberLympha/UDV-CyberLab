@@ -1,13 +1,12 @@
 using FluentResults;
 using VirtualLab.Domain.ValueObjects.Proxmox;
-using VirtualLab.Domain.ValueObjects.Proxmox.Requests;
 
 namespace VirtualLab.Domain.Interfaces.Proxmox;
 
 public interface IProxmoxVm
 {
     // 1
-    public Task<Result> Clone(CloneVmConfig vmConfig, string node);
+    public Task<Result> Clone(string node, int newId, int templateId);
 
     // 4 поставить другой интерфейс
     public Task<Result> UpdateDeviceInterface(string node, int qemu, NetCollection nets);

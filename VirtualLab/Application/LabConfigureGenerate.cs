@@ -7,7 +7,6 @@ using VirtualLab.Domain.Interfaces.Repositories;
 using VirtualLab.Domain.Value_Objects.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox.Config;
-using VirtualLab.Domain.ValueObjects.Proxmox.Requests;
 using VirtualLab.Infrastructure.Extensions;
 using VirtualLab.Lib;
 using Vostok.Logging.Abstractions;

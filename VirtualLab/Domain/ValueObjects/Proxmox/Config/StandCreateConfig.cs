@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using VirtualLab.Domain.Value_Objects.Proxmox;
-using VirtualLab.Domain.ValueObjects.Proxmox.Requests;
 
 namespace VirtualLab.Domain.ValueObjects.Proxmox.Config;
 
@@ -18,7 +17,8 @@ public record StandCreateConfig // он record здесь мало смысла.
     {
         return CloneVmConfig.SelectMany(config => config.TemplateData.Nets);
     }
-
+    
+    // представим, что у нас точно все вм на одном сервере (node)
     public string Node => _cloneVmConfig[0].TemplateData.Node;
     public ImmutableList<CloneVmConfig> CloneVmConfig => _cloneVmConfig.ToImmutableList(); 
 }
