@@ -19,7 +19,7 @@ public class ProxmoxResourceManager : IProxmoxResourceManager
 
     public async Task<Result<QemuCollections>> GetFreeQemuIds(string node, long count)
     {
-        var qemusUnVailabe = await _proxmoxNode.GetAllQemu(node);
+        var qemusUnVailabe = await _proxmoxNode.GetAllQemuIds(node);
         if (!qemusUnVailabe.TryGetValue(out var qemies, out var errors))
             return Result.Fail(errors);
 
