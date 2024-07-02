@@ -157,4 +157,107 @@ public class VmService
     {
         await vmCollection.InsertManyAsync(listVm);
     }
+
+    /// <summary>
+    /// Creates a new vm record.
+    /// </summary>
+    /// <param name="vm">The vm record to create.</param>
+    public async Task CreateAsync(Vm vm)
+    {
+        if (vm == null) throw new Exception();
+        try
+        {
+            await vmCollection.InsertOneAsync(vm);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+    
+    /// <summary>
+    /// Retrieves a vm record by its ID.
+    /// </summary>
+    /// <param name="id">The ID of the vm to retrieve.</param>
+    /// <returns>The vm record.</returns>
+    public async Task<Vm> GetByIdAsync(string id)
+    {
+        try
+        {
+            return (await vmCollection.FindAsync(bson => bson.Id == id)).First();
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+    
+    /// <summary>
+    /// Updates an existing vm record.
+    /// </summary>
+    /// <param name="vm">The updated vm record.</param>
+    public async Task UpdateAsync(Vm vm)
+    {
+        var vmToUpdate = await vmCollection.FindAsync(bson => bson.Id == vm.Id) ??
+                              throw new Exception("Vm not found");
+        try
+        {
+            var filter = Builders<Vm>.Filter.Eq("Id", vm.Id);
+            var update = Builders<Vm>.Update
+                .Set("VmId", vm.VmId)
+                .Set("Name", vm.Name)
+                .Set("LabId", vm.LabWorkId);
+            await vmCollection.UpdateOneAsync(filter, update);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+    
+    /// <summary>
+    /// Deletes a vm record by its ID.
+    /// </summary>
+    /// <param name="vmId">The ID of the laboratory work to delete.</param>
+    public async Task DeleteAsync(string vmId)
+    {
+        var vm = await GetByIdAsync(vmId) ??
+                      throw new Exception("Vm not found");
+        try
+        {
+            await vmCollection.DeleteOneAsync(bson => bson.Id == vmId);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+    
+    /// <summary>
+    /// Retrieves all vm records.
+    /// </summary>
+    /// <returns>A list of all vm records.</returns>
+    public async Task<List<Vm>> GetAllAsync()
+    {
+        try
+        {
+            return await vmCollection.Find(_ => true).ToListAsync();
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    /// <summary>
+    /// Retrieves vm id in proxmox.
+    /// </summary>
+    /// <param name="id">The ID of the vm.</param>
+    /// <returns>The vm id in proxmox</returns>
+    public async Task<string> GetVmId(string id)
+    {
+        var vm = await GetByIdAsync(id);
+
+        return vm.VmId.ToString();
+    }
 }

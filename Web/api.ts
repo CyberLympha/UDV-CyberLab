@@ -34,26 +34,6 @@ export interface Question {
   questionData: {"Variants" : string};
 }
 
-export interface CreateLabReservationRequest {
-  timeStart: number;
-  timeEnd: number;
-  /** @minLength 1 */
-  theme: string;
-  /** @minLength 1 */
-  description: string;
-  reservorId: string|undefined;
-  lab: Lab|null;
-}
-
-export interface Lab {
-  /** @minLength 1 */
-  id: string;
-  title?: string;
-  shortDescription?: string;
-  description?: string;
-  labsEntitys?: string[];
-}
-
 export interface BalloonInfoInt {
   /** @format int64 */
   actual?: number;
@@ -150,6 +130,25 @@ export interface Ip {
   ipAddress?: string | null;
   /** @format int32 */
   prefix?: number;
+}
+
+export interface Lab {
+  /** @minLength 1 */
+  id: string;
+  title?: string;
+  shortDescription?: string;
+  description?: string;
+  labsEntitys?: string[];
+}
+
+export interface LabWork {
+  /** @minLength 1 */
+  id: string;
+  vmId: string;
+  instructionId: string;
+  title?: string;
+  shortDescription?: string;
+  description?: string;
 }
 
 export interface LoginRequest {
@@ -296,6 +295,7 @@ export interface User {
   labs: string;
   testAttempt: TestAttempt;
   isApproved: boolean;
+  vmId: string;
 }
 
 export enum UserRole {
@@ -376,6 +376,17 @@ export interface LabReservation {
   description: string;
   reservor: User;
   lab: Lab;
+}
+
+export interface CreateLabReservationRequest {
+  timeStart: number;
+  timeEnd: number;
+  /** @minLength 1 */
+  theme: string;
+  /** @minLength 1 */
+  description: string;
+  reservorId: string|undefined;
+  lab: Lab|null;
 }
 
 export interface UpdateLabReservationRequest {

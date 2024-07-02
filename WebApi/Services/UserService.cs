@@ -7,11 +7,13 @@ namespace WebApi.Services;
 public class UserService
 {
     private readonly IMongoCollection<User> _usersCollection;
+    private readonly VmService vmService;
 
     public UserService(
-        IMongoCollection<User> usersCollection)
+        IMongoCollection<User> usersCollection, VmService vmService)
     {
         _usersCollection = usersCollection;
+        this.vmService = vmService;
     }
 
     public async Task<List<User>> GetUsersAsync() =>
@@ -60,4 +62,32 @@ public class UserService
 
     public async Task RemoveAsync(string id) =>
         await _usersCollection.DeleteOneAsync(x => x.Id == id);
+    
+    /// <summary>
+    /// Updates an existing user record.
+    /// </summary>
+    /// <param name="user">The updated user record.</param>
+    public async Task UpdateAsync(User user)
+    {
+        var userToUpdate = await _usersCollection.FindAsync(bson => bson.Id == user.Id) ??
+                              throw new Exception("LabWork not found");
+        try
+        {
+            var filter = Builders<User>.Filter.Eq("Id", user.Id);
+            var update = Builders<User>.Update
+                .Set("FirstName", user.FirstName)
+                .Set("SecondName", user.SecondName)
+                .Set("Email", user.Email)
+                .Set("Password", user.Password)
+                .Set("Role", user.Role)
+                .Set("Labs", user.Labs)
+                .Set("IsApproved", user.IsApproved)
+                .Set("VmId", user.VmId);
+            await _usersCollection.UpdateOneAsync(filter, update);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
 }

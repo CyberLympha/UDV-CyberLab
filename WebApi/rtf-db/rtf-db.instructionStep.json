@@ -1,0 +1,21 @@
+[{
+  "_id": {
+    "$oid": "6641df234168e9285265522a"
+  },
+  "Instruction": "перейдите в дерикторию /home/pureos/example и создайте файл example. Выведите содержимое файла в терминал",
+  "Hint": "чтобы перейти в директорию используйте команду cd. Чтобы создать файл используйте команду touch. Чтобы вывести содержимое файла используйте команду cat",
+  "Answers": [
+    "touch example.txt\ncat example.txt /home/pureos/example",
+    "cat example.txt\ncat example.txt /home/example"
+  ]
+},
+{
+  "_id": {
+    "$oid": "6644c9bd1cd06ef0f0586f40"
+  },
+  "Instruction": "теперь удалите файл example.txt",
+  "Hint": "Чтобы удалить файл используйте команду rm.",
+  "Answers": [
+    "rm example.txt /home/pureos/example"
+  ]
+}]

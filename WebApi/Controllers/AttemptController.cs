@@ -64,7 +64,7 @@ public class AttemptController : ControllerBase
     }
 
     [HttpGet("{id}/result")]
-    [Authorize(Roles = "Admin,Teacher,User")]
+    //[Authorize(Roles = "Admin,Teacher,User")]
     public async Task<ActionResult<AttemptResult>> GetResult(string id)
     {
         var result = await _attemptService.GetResult(id).ConfigureAwait(false);

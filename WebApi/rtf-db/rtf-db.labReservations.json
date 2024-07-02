@@ -1193,4 +1193,50 @@
       "659bc278f2ffafc933064687"
     ]
   }
+},
+{
+  "_id": {
+    "$oid": "65a7a77af221288b79870b21"
+  },
+  "TimeStart": {
+    "DateTime": {
+      "$date": "2024-01-18T10:09:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638411693400000000"
+    }
+  },
+  "TimeEnd": {
+    "DateTime": {
+      "$date": "2024-01-18T11:10:00.000Z"
+    },
+    "Ticks": {
+      "$numberLong": "638411730000000000"
+    }
+  },
+  "Theme": "fdsfsdf",
+  "Description": "fsdfsdfsd",
+  "Reservor": {
+    "_id": {
+      "$oid": "659994ba587b72e22e8941c1"
+    },
+    "FirstName": "Козлов Данил",
+    "SecondName": "Юрьевич",
+    "Email": "danilk",
+    "Password": "$2a$11$IdznmWKsn7h/v7YOTG2E/ugrE1LmPdKN1vMu4QNk/k4VuM6N2vJfq",
+    "Role": 2,
+    "Labs": "65880b9c5de6bd5d3b5101eb",
+    "IsApproved": true
+  },
+  "Lab": {
+    "_id": {
+      "$oid": "65880b9c5de6bd5d3b5101eb"
+    },
+    "Title": "Лаборатория Ирит-Ртф",
+    "ShortDescription": "Short description of the lab",
+    "Description": "Detailed description of the lab",
+    "LabsEntitys": [
+      "659bc278f2ffafc933064687"
+    ]
+  }
 }]
