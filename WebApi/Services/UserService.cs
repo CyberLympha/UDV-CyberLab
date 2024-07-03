@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
-using WebApi.Models;
+using WebApi.Model.AuthModels;
 
 namespace WebApi.Services;
 

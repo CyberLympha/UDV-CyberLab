@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson;
+using WebApi.Model.VirtualMachineModels;
 using WebApi.Models;
 using WebApi.Models.WebsocketProxies;
 

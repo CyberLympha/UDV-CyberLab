@@ -1,3 +1,39 @@
+export interface AttemptResult {
+  totalScore: string;
+  results: string[];
+}
+
+export interface TestAttempt {
+  idTest: string;
+  idAttempt: string;
+}
+
+export interface Attempt {
+  id: string;
+  testId: string;
+  examineeId: string;
+  status: string,
+  startTime: string;
+  endTime: string;
+  results: string[];
+}
+
+export interface Test {
+  id: string;
+  name: string;
+  description: string;
+  questions: Question[];
+}
+
+export interface Question {
+  id: string;
+  text?: string;
+  description: string,
+  questionType: string;
+  correctAnswer: string;
+  questionData: {"Variants" : string};
+}
+
 export interface BalloonInfoInt {
   /** @format int64 */
   actual?: number;
@@ -182,6 +218,8 @@ export interface RegistrationRequest {
   email: string;
   /** @minLength 1 */
   password: string;
+  /** @minLength 1 */
+  role: string;
 }
 
 export interface ResultInt {
@@ -255,6 +293,7 @@ export interface User {
   role: UserRole;
   /** @minLength 1 */
   labs: string;
+  testAttempt: TestAttempt;
   isApproved: boolean;
   vmId: string;
 }

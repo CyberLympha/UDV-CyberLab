@@ -35,7 +35,7 @@ export const SideMenu = observer(() => {
 
     const renderNavLinks = (navLink: NavLink) => {
 
-        if (!navLink.roles.includes(user?.role ?? UserRole.Anon)) return;
+        // if (!navLink.roles.includes(user?.role ?? UserRole.Anon)) return;
         return (<NavLink style={({isActive}) => {
             return {
                 fontWeight: isActive ? "bold" : "",

@@ -2,7 +2,7 @@ using Corsinvest.ProxmoxVE.Api.Shared.Models.Node;
 using Corsinvest.ProxmoxVE.Api.Shared.Models.Vm;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebApi.Models;
+using WebApi.Model.VirtualMachineModels.Requests;
 using WebApi.Services;
 
 namespace WebApi.Controllers

@@ -11,7 +11,7 @@ import './index.scss'
 
 spy((ev) => {
     if (ev.type.includes('action')) {
-        console.log(ev)
+        // console.log(ev)
     }
 })
 

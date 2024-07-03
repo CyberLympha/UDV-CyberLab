@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebApi.Models;
+using WebApi.Model.AuthModels;
 using WebApi.Services;
 
 namespace WebApi.Controllers
@@ -16,8 +16,15 @@ namespace WebApi.Controllers
             _userService = userService;
         }
 
+        [HttpGet("user/{id}")]
+        [Authorize(Roles = "Admin,Teacher,User")]
+        public async Task<ActionResult<User>> GetUserById(string id)
+        {
+            return await _userService.GetAsyncById(id);
+        }
+
         [HttpGet("user")]
-        [Authorize(Roles = "Admin,User")]
+        [Authorize(Roles = "Admin,Teacher,User")]
         public async Task<ActionResult<User>> GetUser()
         {
             var httpContext = new HttpContextAccessor().HttpContext;

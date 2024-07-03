@@ -1,6 +1,8 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 using System.ComponentModel.DataAnnotations;
+using WebApi.Model.AuthModels;
+using WebApi.Model.LabModels;
 using WebApi.Models.Logs;
 
 namespace WebApi.Models;

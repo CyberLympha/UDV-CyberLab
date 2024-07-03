@@ -35,7 +35,6 @@ export function Login() {
             userStore.setUser(response.user)
             localStorage.setItem("access_token", response.token);
             navigate("/");
-
         }
         setLoginLoading(false)
     }

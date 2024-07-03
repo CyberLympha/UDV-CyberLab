@@ -1,7 +1,10 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using System.ComponentModel.DataAnnotations;
 using MongoDB.Bson;
-using System.ComponentModel.DataAnnotations;
-namespace WebApi.Models;
+using MongoDB.Bson.Serialization.Attributes;
+using WebApi.Model.AuthModels;
+using WebApi.Model.LabModels;
+
+namespace WebApi.Model.LabReservationModels;
 public class LabReservation
 {
     [BsonId]
