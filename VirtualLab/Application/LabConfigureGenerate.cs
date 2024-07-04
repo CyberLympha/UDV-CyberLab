@@ -1,4 +1,5 @@
 using FluentResults;
+using Microsoft.AspNetCore.Routing.Template;
 using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Entities;
 using VirtualLab.Domain.Entities.Mongo;
@@ -7,9 +8,11 @@ using VirtualLab.Domain.Interfaces.Repositories;
 using VirtualLab.Domain.Value_Objects.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox.Config;
+using VirtualLab.Domain.ValueObjects.Proxmox.ProxmoxStructure;
 using VirtualLab.Infrastructure.Extensions;
 using VirtualLab.Lib;
 using Vostok.Logging.Abstractions;
+using ZstdSharp.Unsafe;
 
 namespace VirtualLab.Application;
 
@@ -77,32 +80,29 @@ public class LabConfigure : ILabConfigure
     {
         var standCreateConfig = new StandCreateConfig();
 
-        var getFreeQemuIds = await _pveResourceManager
-            .GetFreeQemuIds(standConfig.Node, standConfig.Template.Count);
+        var getFreeQemuIds = await GetNewQemus(standConfig);
         if (!getFreeQemuIds.TryGetValue(out var freeQemuIds, out var errors)) Result.Fail(errors);
+
+
+        if (!(await ChangeInterfaces(standConfig.Template)).TryGetValue(out var templates, out errors))
+            Result.Fail(errors);
 
 
         //todo: как-то не однородно
         for (var i = 0; i < standConfig.Template.Count; i++)
         {
-            // да сейчас там же где и template создаётся создаётся и конфиг
-            var qemu = new NewQemu()
-            {
-                Node = standConfig.Template[i].Node,
-                Id = freeQemuIds[i]
-            };
             standCreateConfig.Add(
                 new CloneVmConfig
                 {
-                    newQemu = qemu,
-                    TemplateData = TemplateData.From(standConfig.Template[i]),
+                    newQemu = freeQemuIds[i],
+                    TemplateData = templates[i]
                 });
         }
 
         return standCreateConfig;
     }
 
-    private async Task<Result<List<NewQemu>>> GetQemus(StandConfig config)
+    private async Task<Result<List<NewQemu>>> GetNewQemus(StandConfig config)
     {
         var getFreeQemuIds = await _pveResourceManager
             .GetFreeQemuIds(config.Node, config.Template.Count);
@@ -115,5 +115,54 @@ public class LabConfigure : ILabConfigure
         }
 
         return qemus;
+    }
+
+    private async Task<Result<List<TemplateData>>> ChangeInterfaces(List<TemplateConfig> templatesConfigs)
+    {
+        //пока представляем, что вся рабораторная находится на одной node/ либо в конфиге прописывать в какой node будет находится весь stand
+        var getFreeIds =
+            await _pveResourceManager.GetFreeVmbrs(templatesConfigs[0].Node, templatesConfigs.CountNetChange());
+        if (!getFreeIds.TryGetValue(out var ids, out var errors))
+        {
+            return Result.Fail(errors);
+        }
+
+        var dict = new Dictionary<string, string>();
+        var poiterId = 0;
+        var templates = new List<TemplateData>();
+        foreach (var config in templatesConfigs)
+        {
+            var nets = new NetCollection();
+            for (int i = 0; i < config.Nets.Count; i++)
+            {
+                if (!config.Nets[i].canChange) continue;
+                
+                if (!dict.ContainsKey(config.Nets[i].Parameters["bridge"]))
+                {
+                    dict.Add(config.Nets[i].Parameters["bridge"], $"vmbr{ids[poiterId++]}");
+                }
+
+                nets.Add(new NetSettings()
+                {
+                    Bridge = dict[config.Nets[i].Parameters["bridge"]],
+                    Model = config.Nets[i].Parameters["model"]
+                });
+            }
+
+
+            var template = new TemplateData()
+            {
+                Node = config.Node,
+                Id = config.Id,
+                Nets = nets,
+                Password = config.Password,
+                Name = config.Name
+            };
+
+            templates.Add(template);
+        }
+
+
+        return templates;
     }
 }

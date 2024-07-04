@@ -9,7 +9,8 @@ public class Net
 {
     public string GetFull => string.Join(",", Parameters.Select(x => $"{x.Key}={x.Value}"));
     public string Bridge => Parameters["bridge"];
-
+    
+    
     // todo: пока что максимально простая реализация, потом допилить. builder с начальником
     public Net(string model, string bridge)
     {

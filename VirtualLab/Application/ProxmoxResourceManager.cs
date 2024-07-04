@@ -2,7 +2,6 @@ using FluentResults;
 using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Interfaces.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox;
-using VirtualLab.Infrastructure.ApiResult;
 using VirtualLab.Infrastructure.Extensions;
 
 namespace VirtualLab.Application;
@@ -17,45 +16,54 @@ public class ProxmoxResourceManager : IProxmoxResourceManager
         _proxmoxNode = proxmoxNode;
     }
 
-    public async Task<Result<QemuCollections>> GetFreeQemuIds(string node, long count)
+    public async Task<Result<List<int>>> GetFreeQemuIds(string node, long count)
     {
         var qemusUnVailabe = await _proxmoxNode.GetAllQemuIds(node);
         if (!qemusUnVailabe.TryGetValue(out var qemies, out var errors))
             return Result.Fail(errors);
 
-        var freeQemuIds = GetFirstFreeQemuIds(count, qemies);
+        var freeQemuIds = GetFirstFreeIds(count, qemies);
 
         return freeQemuIds;
     }
 
-    public Task<Result<List<long>>> GetFreeVmbrs(string node, int count)
+    public async Task<Result<List<int>>> GetFreeVmbrs(string node, int count)
     {
-        throw new NotImplementedException();
+        if (!(await _proxmoxNode.GetAllIFaceId(node)).TryGetValue(out var busyIFaceIds, out var errors))
+            return Result.Fail(errors);
+
+        var freeIds = GetFirstFreeIds(count, busyIFaceIds);
+
+        return freeIds;
     }
 
-    private static QemuCollections GetFirstFreeQemuIds(long count, IEnumerable<int> qemies)
+    // todo: переписать
+    private static List<int> GetFirstFreeIds(long count, IReadOnlyList<int> qemies)
     {
         var isFirst = true;
-        var prevQemuId = int.MinValue;
-        var freeQemuIds = new QemuCollections();
-        foreach (var qemuId in qemies.SkipWhile(x => x <= StartPointToTakeIds))
+        var prevId = int.MinValue;
+        var freeQemuIds = new List<int>();
+        foreach (var curId in qemies.SkipWhile(x => x <= StartPointToTakeIds))
         {
             if (isFirst)
             {
-                prevQemuId = qemuId;
+                prevId = curId;
                 isFirst = true;
             }
 
-            if (qemuId - prevQemuId >= count) freeQemuIds.AddRange(prevQemuId, qemuId);
-
-            if (qemuId - prevQemuId < count)
+            if (curId - prevId >= count)
             {
-                freeQemuIds.AddRange(prevQemuId + 1, qemuId - 1);
-                count -= qemuId - prevQemuId;
+                for (var i = prevId; i <= curId; i++) freeQemuIds.Add(i);
+            }
+
+            if (curId - prevId < count)
+            {
+                for (var i = prevId + 1; i <= curId - 1; i++) freeQemuIds.Add(i);
+                count -= curId - prevId;
             }
         }
 
-        var last = qemies.Last(); //todo: O(N) БРООООО
+        var last = qemies[^1]; //todo: O(N) БРООООО
         last = last > 2000 ? last : 2000;
         while (freeQemuIds.Count != count)
         {

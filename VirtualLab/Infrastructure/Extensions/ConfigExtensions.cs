@@ -4,8 +4,21 @@ namespace VirtualLab.Infrastructure.Extensions;
 
 public static class ConfigExtensions
 {
-    public static int CountForChanged(this List<NetConfig> config)
+    public static int CountNetChange(this List<TemplateConfig> templateConfigs)
     {
-        return config.Count(net => net.canChange);
+        var count = 0;
+
+        var isCounted = new HashSet<string>();
+        foreach (var templateConfig in templateConfigs)
+        foreach (var net in templateConfig.Nets)
+        {
+            if (isCounted.Contains(net.Parameters["bridge"])) continue;
+
+            
+            count++;
+            isCounted.Add(net.Parameters["bridge"]);
+        }
+
+        return count;
     }
 }
