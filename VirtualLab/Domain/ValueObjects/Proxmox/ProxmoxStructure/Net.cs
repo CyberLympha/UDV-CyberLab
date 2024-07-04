@@ -1,5 +1,6 @@
 using Amazon.Runtime.Internal.Transform;
 using VirtualLab.Controllers.LabDistributionController.Dto;
+using VirtualLab.Domain.Entities.Mongo;
 
 namespace VirtualLab.Domain.Value_Objects.Proxmox;
 
@@ -22,11 +23,12 @@ public class Net
         Parameters = parameters;
         Type = "bridge";
     }
-    
+
     public string Type { get; }
     public string this[string index] => Parameters[index];
     public bool CanChange { get; set; }
 
+    // должно быть всё приватное, но для этого нужно, чтоб он не зависел он standConfig. 
     private readonly Dictionary<string, string> Parameters = new();
 
     public override string ToString()
@@ -35,11 +37,11 @@ public class Net
     }
 
 
-    public static Net From(NetRequest request)
+    public static Net From(NetConfig request)
     {
         return new Net(request.Parameters)
         {
-            CanChange = request.CanChange
+            CanChange = request.canChange
         };
     }
 }

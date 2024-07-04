@@ -6,11 +6,13 @@ namespace VirtualLab.Domain.Entities.Mongo;
 
 public class StandConfig : IEntity<ObjectId>
 {
-    public string Node => TemplateData[0].Node;
+    public string Node => Template[0].Node;
     
     
     public Guid LabId { get; set; }
-    public List<TemplateData> TemplateData { get; set; }
+    
+    // реализовать это в независимые класс, которые будут часть StandConfig
+    public List<TemplateConfig> Template { get; set; }
 
     [BsonId] public ObjectId Id { get; set; }
  
@@ -22,7 +24,7 @@ public class StandConfig : IEntity<ObjectId>
         {
             Id = ObjectId.GenerateNewId(),
             LabId = createLabDto.Lab.Id,
-            TemplateData = createLabDto.Templates
+            Template = createLabDto.Templates
         };
     }
 }

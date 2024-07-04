@@ -1,4 +1,5 @@
 using VirtualLab.Domain.Interfaces.Proxmox;
+using VirtualLab.Domain.ValueObjects.Proxmox.ProxmoxStructure;
 
 namespace VirtualLab.Domain.ValueObjects.Proxmox;
 

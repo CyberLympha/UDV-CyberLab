@@ -4,7 +4,7 @@ namespace VirtualLab.Domain.ValueObjects.Proxmox.Config;
 public record CloneVmConfig // в будущем добавить extentions, который будет доставать все Nets 
 {
     public TemplateData TemplateData { get; init; }
-    public int NewId { get; init; }
+    public NewQemu newQemu;
     // добавить сюда node для NewId и если, что созадть класс.
 }
 

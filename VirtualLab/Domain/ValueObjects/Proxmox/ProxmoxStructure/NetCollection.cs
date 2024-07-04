@@ -1,8 +1,7 @@
 using System.Collections;
-using VirtualLab.Controllers.LabDistributionController.Dto;
 using VirtualLab.Domain.Value_Objects.Proxmox;
 
-namespace VirtualLab.Domain.ValueObjects.Proxmox;
+namespace VirtualLab.Domain.ValueObjects.Proxmox.ProxmoxStructure;
 
 public class NetCollection : IEnumerable<Net> // todo: встваить сюда интерфейса листта либо коллекция
 {

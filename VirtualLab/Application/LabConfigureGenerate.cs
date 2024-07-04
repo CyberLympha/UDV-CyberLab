@@ -76,22 +76,44 @@ public class LabConfigure : ILabConfigure
     private async Task<Result<StandCreateConfig>> GenerateLabConfig(StandConfig standConfig)
     {
         var standCreateConfig = new StandCreateConfig();
-        
+
         var getFreeQemuIds = await _pveResourceManager
-            .GetFreeQemuIds(standConfig.Node, standConfig.TemplateData.Count);
+            .GetFreeQemuIds(standConfig.Node, standConfig.Template.Count);
         if (!getFreeQemuIds.TryGetValue(out var freeQemuIds, out var errors)) Result.Fail(errors);
 
 
-        for (var i = 0; i < standConfig.TemplateData.Count; i++)
+        //todo: как-то не однородно
+        for (var i = 0; i < standConfig.Template.Count; i++)
         {
+            // да сейчас там же где и template создаётся создаётся и конфиг
+            var qemu = new NewQemu()
+            {
+                Node = standConfig.Template[i].Node,
+                Id = freeQemuIds[i]
+            };
             standCreateConfig.Add(
                 new CloneVmConfig
                 {
-                    NewId = freeQemuIds[i],
-                    TemplateData = standConfig.TemplateData[i],
+                    newQemu = qemu,
+                    TemplateData = TemplateData.From(standConfig.Template[i]),
                 });
         }
 
         return standCreateConfig;
+    }
+
+    private async Task<Result<List<NewQemu>>> GetQemus(StandConfig config)
+    {
+        var getFreeQemuIds = await _pveResourceManager
+            .GetFreeQemuIds(config.Node, config.Template.Count);
+        if (!getFreeQemuIds.TryGetValue(out var freeQemuIds, out var errors)) Result.Fail(errors);
+
+        var qemus = new List<NewQemu>();
+        for (int i = 0; i < freeQemuIds.Count; i++)
+        {
+            qemus.Add(new NewQemu() { Node = config.Node, Id = freeQemuIds[i] });
+        }
+
+        return qemus;
     }
 }

@@ -1,5 +1,9 @@
 using FluentResults;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
+using Newtonsoft.Json;
 using VirtualLab.Lib;
 
 namespace VirtualLab.Domain.Interfaces.Repositories;

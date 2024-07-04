@@ -1,10 +1,19 @@
+using System.Collections;
+
 namespace VirtualLab.Domain.ValueObjects.Proxmox;
 
-public class QemuCollections
+public class QemuCollections 
 {
     private readonly List<int> _list = [];
 
+    public void CopyTo(Array array, int index)
+    {
+        throw new NotImplementedException();
+    }
+
     public int Count => _list.Count;
+    public bool IsSynchronized { get; }
+    public object SyncRoot { get; }
     public int this[int i] => _list[i];
 
     public void AddRange(int from, int to)
@@ -16,4 +25,5 @@ public class QemuCollections
     {
         _list.Add(q);
     }
+
 }

@@ -49,7 +49,7 @@ public class StandManager : IStandManager
             string ip = null!;
             if (cloneVmConfig.TemplateData.Nets.HaveVmbr0())
             {
-                var getIp = await _proxmoxVm.GetIp(standCreateConfig.Node, cloneVmConfig.NewId);
+                var getIp = await _proxmoxVm.GetIp(standCreateConfig.Node, cloneVmConfig.newQemu.Id);
                 if (!getIp.TryGetValue(out var ipData)) return Result.Fail($"not found ip because: {getIp}");
 
                 ip = ipData.Value;
@@ -57,10 +57,10 @@ public class StandManager : IStandManager
 
             virtualMachineInfos.Add(new VirtualMachineInfo
             {
-                ProxmoxVmId = cloneVmConfig.NewId,
+                ProxmoxVmId = cloneVmConfig.newQemu.Id,
                 Password = cloneVmConfig.TemplateData.Password,
                 Username = cloneVmConfig.TemplateData.Name,
-                Node = cloneVmConfig.TemplateData.Node,
+                Node = cloneVmConfig.newQemu.Node,
                 Ip = ip
             });
         }
@@ -139,14 +139,14 @@ public class StandManager : IStandManager
 
     private async Task<Result> CreateVmByTemplate(CloneVmConfig cloneVmConfig, string node)
     {
-        var response = await _proxmoxVm.Clone(node, cloneVmConfig.NewId, cloneVmConfig.TemplateData.Id);
+        var response = await _proxmoxVm.Clone(node, cloneVmConfig.newQemu.Id, cloneVmConfig.TemplateData.Id);
         if (response.IsFailed) return response;
 
         if (cloneVmConfig.TemplateData.WithNets())
-            response = await _proxmoxVm.UpdateDeviceInterface(node, cloneVmConfig.NewId, cloneVmConfig.TemplateData.Nets);
+            response = await _proxmoxVm.UpdateDeviceInterface(node, cloneVmConfig.newQemu.Id, cloneVmConfig.TemplateData.Nets);
         if (response.IsFailed) return response;
 
-        response = await _proxmoxVm.Start(node, cloneVmConfig.NewId); // а запускать мне кажется, точно должны не здесcm
+        response = await _proxmoxVm.Start(node, cloneVmConfig.newQemu.Id); // а запускать мне кажется, точно должны не здесcm
         if (response.IsFailed) return response;
 
         return Result.Ok();

@@ -3,6 +3,7 @@ using FluentResults;
 using VirtualLab.Domain.Interfaces.Proxmox;
 using VirtualLab.Domain.Value_Objects.Proxmox;
 using VirtualLab.Domain.ValueObjects.Proxmox;
+using VirtualLab.Domain.ValueObjects.Proxmox.ProxmoxStructure;
 using VirtualLab.Infrastructure.ApiResult;
 using VirtualLab.Infrastructure.Extensions;
 using VirtualLab.Infrastructure.Options;

@@ -1,6 +1,8 @@
 using VirtualLab.Controllers.LabDistributionController.Dto;
+using VirtualLab.Domain.Entities.Mongo;
 using VirtualLab.Domain.Interfaces.Proxmox;
 using VirtualLab.Domain.Value_Objects.Proxmox;
+using VirtualLab.Domain.ValueObjects.Proxmox.ProxmoxStructure;
 
 namespace VirtualLab.Domain.ValueObjects.Proxmox;
 
@@ -13,7 +15,7 @@ public class TemplateData : IHaveNets
     public string Node { get; set; }
 
 
-    public static TemplateData From(TemplateDataRequest templateDataRequest)
+    public static TemplateData From(TemplateConfig templateDataRequest)
     {
         var nets = new NetCollection();
         foreach (var net in templateDataRequest.Nets)
