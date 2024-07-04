@@ -18,7 +18,7 @@ builder.AddLogVostokWithConfig();
 
 
 builder.Services.AddControllers();
-
+builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -39,8 +39,6 @@ builder.Services.AddScoped<ILabManager, LabManager>();
 builder.Services.AddScoped<IVirtualMachineDataHandler, VirtualMachineDataHandler>();
 builder.Services.AddScoped<IVirtualMachineRepository, VirtualMachineRepository>();
 builder.Services.AddScoped<ICredentialRepository, CredentialRepository>();
-
-
 
 builder.Services.AddScoped(_ => MongoDbConf.FromEnv());
 builder.Services.AddScoped<IMongoContext, MongoDb>();
