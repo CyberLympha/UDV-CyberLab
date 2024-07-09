@@ -37,7 +37,7 @@ public class ProxmoxResourceManager : IProxmoxResourceManager
         return freeIds;
     }
 
-    // todo: переписать
+    // todo: переписать самое важное сейчас
     private static List<int> GetFirstFreeIds(long count, IReadOnlyList<int> qemies)
     {
         var isFirst = true;
@@ -63,7 +63,7 @@ public class ProxmoxResourceManager : IProxmoxResourceManager
             }
         }
 
-        var last = qemies[^1]; //todo: O(N) БРООООО
+        var last = qemies.Max(); //todo: O(N) БРООООО
         last = last > 2000 ? last : 2000;
         while (freeQemuIds.Count != count)
         {

@@ -27,7 +27,7 @@ public class TemplateData : IHaveNets
         var templateData = new TemplateData()
         {
             Id = templateDataRequest.Id,
-            Name = templateDataRequest.Name,
+            Name = templateDataRequest.Username,
             Node = templateDataRequest.Node,
             Password = templateDataRequest.Password,
             Nets = nets

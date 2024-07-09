@@ -12,7 +12,8 @@ public static class ConfigExtensions
         foreach (var templateConfig in templateConfigs)
         foreach (var net in templateConfig.Nets)
         {
-            if (isCounted.Contains(net.Parameters["bridge"])) continue;
+            
+            if (!net.canChange || isCounted.Contains(net.Parameters["bridge"])) continue;
 
             
             count++;

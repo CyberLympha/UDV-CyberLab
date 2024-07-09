@@ -128,24 +128,22 @@ public class LabConfigure : ILabConfigure
         }
 
         var dict = new Dictionary<string, string>();
-        var poiterId = 0;
+        var queue = new Queue<int>(ids);
         var templates = new List<TemplateData>();
         foreach (var config in templatesConfigs)
         {
             var nets = new NetCollection();
-            for (int i = 0; i < config.Nets.Count; i++)
+            foreach (var net in config.Nets)
             {
-                if (!config.Nets[i].canChange) continue;
-                
-                if (!dict.ContainsKey(config.Nets[i].Parameters["bridge"]))
+                if (net.canChange && !dict.ContainsKey(net.Parameters["bridge"]))
                 {
-                    dict.Add(config.Nets[i].Parameters["bridge"], $"vmbr{ids[poiterId++]}");
+                    dict.Add(net.Parameters["bridge"], $"vmbr{queue.Dequeue()}");
                 }
 
                 nets.Add(new NetSettings()
                 {
-                    Bridge = dict[config.Nets[i].Parameters["bridge"]],
-                    Model = config.Nets[i].Parameters["model"]
+                    Bridge = net.canChange ? dict[net.Parameters["bridge"]] : net.Parameters["bridge"],
+                    Model = net.Parameters["model"]
                 });
             }
 
@@ -156,7 +154,7 @@ public class LabConfigure : ILabConfigure
                 Id = config.Id,
                 Nets = nets,
                 Password = config.Password,
-                Name = config.Name
+                Name = config.Username
             };
 
             templates.Add(template);

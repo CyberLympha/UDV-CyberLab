@@ -51,7 +51,7 @@ public partial class PveNode : IProxmoxNode
             }
         }
 
-
+        iFacesId.Sort();
         return iFacesId;
     }
 
