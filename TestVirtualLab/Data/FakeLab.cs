@@ -13,7 +13,7 @@ public class FakeLab
             Manual = "просто открой и делай",
             Name = "hack",
             CreatedAt = new DateTime(20024, 1, 11),
-            CreatedBy = id,
+            CreatorId = id,
             DeadLine = new DateTime(20024, 1, 11),
             IsOpened = false,
             UserLabs = []

@@ -20,5 +20,6 @@ public record StandCreateConfig // он record здесь мало смысла.
     
     // представим, что у нас точно все вм на одном сервере (node)
     public string Node => _cloneVmConfig[0].TemplateData.Node;
-    public ImmutableList<CloneVmConfig> CloneVmConfig => _cloneVmConfig.ToImmutableList(); 
+    
+    public IEnumerable<CloneVmConfig> CloneVmConfig => _cloneVmConfig.Select(x => x); 
 }

@@ -26,68 +26,68 @@ public class StandManager : IStandManager
     }
 
 
-    public async Task<Result<IReadOnlyList<VirtualMachineInfo>>> Create(StandCreateConfig standCreateConfig)
+    public async Task<Result<IReadOnlyList<NewVmInfo>>> Create(StandCreateConfig standCreateConfig)
     {
-        if ((await AddInterfaces(standCreateConfig.GetAllNets(), standCreateConfig.Node))
-            .IsFailedWithErrors(out var errors))
-            Result.Fail(errors);
+        var added = await AddNewInterfaces(standCreateConfig.GetAllNets(), standCreateConfig.Node);
+        if (added.IsFailed) return added;
+        
+        var result = await ExecuteStandAction(
+            standCreateConfig.CloneVmConfig.ToArray, // сомнительная штука ну ладно.
+            config => DeployNewVm(config, standCreateConfig.Node));
+        if (result.IsFailed) return result;
 
-        //todo: то есть до этого ты сделал метод, в котором foreach, а сейчас забил?
-        foreach (var cloneVmTemplate in standCreateConfig.CloneVmConfig)
+        Thread.Sleep(55000); // ждём пока qemu agent запустится на машинах -- по идей лучше нам смотреть, каждый 10 секунд, а запущен ли agent
+        if (!(await GetVmsInfo(standCreateConfig)).TryGetValue(out var vmsInfo, out var errors))
         {
-            var createdVm = await CreateVmByTemplate(cloneVmTemplate, standCreateConfig.Node);
-            if (createdVm.IsFailed) return createdVm;
+            return Result.Fail(errors);
         }
 
-        //todo: максимально средняя реализация.
-
-        var virtualMachineInfos = new List<VirtualMachineInfo>();
-
-        Thread.Sleep(55000); // ждём пока qemu agent запустится на машинах
-        foreach (var cloneVmConfig in standCreateConfig.CloneVmConfig)
-        {
-            string ip = null!;
-            if (cloneVmConfig.TemplateData.Nets.HaveVmbr0())
-            {
-                var getIp = await _proxmoxVm.GetIp(standCreateConfig.Node, cloneVmConfig.newQemu.Id);
-                if (!getIp.TryGetValue(out var ipData)) return Result.Fail($"not found ip because: {getIp}");
-
-                ip = ipData.Value;
-            }
-
-            virtualMachineInfos.Add(new VirtualMachineInfo
-            {
-                ProxmoxVmId = cloneVmConfig.newQemu.Id,
-                Password = cloneVmConfig.TemplateData.Password,
-                Username = cloneVmConfig.TemplateData.Name,
-                Node = cloneVmConfig.newQemu.Node,
-                Ip = ip
-            });
-        }
-
-        return virtualMachineInfos;
+        return vmsInfo;
     }
-
 
     public async Task<Result> Delete(StandRemoveConfig standRemoveConfig)
     {
         var vmsDeleted = await DeleteVms(standRemoveConfig.VmsInfos.AsReadOnly());
         if (vmsDeleted.IsFailed) return vmsDeleted;
 
-        await Interfaces(x =>
-                _proxmoxNetworkDevice.Remove(
-                    standRemoveConfig.VmsInfos[0].Node, x), // todo: кринж с array
-            standRemoveConfig.Vms.GetAllNets());
-
+        var result = await ExecuteStandAction(
+            standRemoveConfig.Vms.GetAllNets().WithoutVmbr0,
+            x => _proxmoxNetworkDevice.Remove(standRemoveConfig.VmsInfos[0].Node, x) // todo: кринж с array
+        );
+        if (result.IsFailed) return result;
+        
         await _proxmoxNetworkDevice.Apply(standRemoveConfig.VmsInfos[0].Node); // тоже самое
-
+        
         return Result.Ok();
     }
 
-
-    private async Task<Result> AddInterfaces(IEnumerable<Net> nets, string node)
+    private async Task<Result<List<NewVmInfo>>> GetVmsInfo(StandCreateConfig standCreateConfig)
     {
-        var response = await Interfaces(net => _proxmoxNetworkDevice.Create(node, net), nets);
+        var virtualMachineInfos = new List<NewVmInfo>();
+        foreach (var cloneVmConfig in standCreateConfig.CloneVmConfig)
+        {
+            var vminfo = NewVmInfo.From(cloneVmConfig);
+            if (cloneVmConfig.TemplateData.Nets.HaveVmbr0())
+            {
+                var getIp = await _proxmoxVm.GetIp(standCreateConfig.Node, cloneVmConfig.newQemu.Id);
+                if (!getIp.TryGetValue(out var ipData))
+                {
+                    return Result.Fail($"not found ip because: {getIp}");
+                }
+
+                vminfo.Ip = ipData.Value;
+            }
+
+            virtualMachineInfos.Add(vminfo);
+        }
+
+        return virtualMachineInfos;
+    }
+
+
+    private async Task<Result> AddNewInterfaces(IEnumerable<Net> nets, string node)
+    {
+        var response = await ExecuteStandAction(nets.WithoutVmbr0, net => _proxmoxNetworkDevice.Create(node, net));
         if (response.IsFailed)
         {
             _log.Error($"create interface occured with errors: {response.Reasons}"); //todo: сделать так везде.
@@ -125,8 +125,7 @@ public class StandManager : IStandManager
         return Result.Ok();
     }
 
-
-    private async Task<Result> Interfaces(Func<Net, Task<Result>> action, IEnumerable<Net> nets)
+    /*private async Task<Result> Interfaces(IEnumerable<Net> nets, Func<Net, Task<Result>> action)
     {
         foreach (var net in nets.WithoutVmbr0())
         {
@@ -135,18 +134,30 @@ public class StandManager : IStandManager
         }
 
         return Result.Ok();
+    }*/ //todo если всё работает можно убрать эту штуку.
+    private static async Task<Result> ExecuteStandAction<T>(Func<IEnumerable<T>> elements, Func<T, Task<Result>> action)
+    {
+        foreach (var element in elements())
+        {
+            var response = await action(element);
+            if (response.IsFailed) return Result.Fail($"error with {typeof(T).Name} occured with error: {response}");
+        }
+
+        return Result.Ok();
     }
 
-    private async Task<Result> CreateVmByTemplate(CloneVmConfig cloneVmConfig, string node)
+    private async Task<Result> DeployNewVm(CloneVmConfig cloneVmConfig, string node)
     {
         var response = await _proxmoxVm.Clone(node, cloneVmConfig.newQemu.Id, cloneVmConfig.TemplateData.Id);
         if (response.IsFailed) return response;
 
         if (cloneVmConfig.TemplateData.WithNets())
-            response = await _proxmoxVm.UpdateDeviceInterface(node, cloneVmConfig.newQemu.Id, cloneVmConfig.TemplateData.Nets);
+            response = await _proxmoxVm.UpdateDeviceInterface(node, cloneVmConfig.newQemu.Id,
+                cloneVmConfig.TemplateData.Nets);
         if (response.IsFailed) return response;
 
-        response = await _proxmoxVm.Start(node, cloneVmConfig.newQemu.Id); // а запускать мне кажется, точно должны не здесcm
+        response = await _proxmoxVm.Start(node,
+            cloneVmConfig.newQemu.Id); // а запускать мне кажется, точно должны не здесcm
         if (response.IsFailed) return response;
 
         return Result.Ok();

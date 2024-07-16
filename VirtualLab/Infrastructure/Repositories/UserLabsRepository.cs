@@ -20,4 +20,13 @@ public class UserLabsRepository : RepositoryBase<UserLab, Guid>, IUserLabReposit
 
         return Result.Ok(userLabs);
     }
+
+    public async Task<Result<UserLab>> Get(Guid userId, Guid labId)
+    {
+        var userLab = await _dbContext.Set<UserLab>().FirstOrDefaultAsync(l => l.LabId == labId && l.UserId == userId);
+        if (userLab == null)
+            return Result.Fail($"this user {userId} not has lab {labId}");
+
+        return userLab;
+    }
 }

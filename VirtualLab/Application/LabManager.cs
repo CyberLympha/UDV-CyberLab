@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using FluentResults;
 using VirtualLab.Application.Interfaces;
 using VirtualLab.Domain.Entities;
+using VirtualLab.Domain.Entities.Enums;
 using VirtualLab.Infrastructure.Extensions;
 using Vostok.Logging.Abstractions;
 using Result = FluentResults.Result;
@@ -32,11 +33,16 @@ public class LabManager : ILabManager
         var getUserLab = await _userLabProvider.GetUserLab(userId, labId);
         if (!getUserLab.TryGetValue(out var userLab))
         {
-            _log.Error($"Not find lab with {labId} for user with id {userId}"); // так бы везде))
+            _log.Error(
+                $"Not find lab with {labId} for user with id {userId}"); //todo чуваааак, нужно сделать, так чтоб логи прописывались не здесь, типо при возвращание Result.Error() - тип сделать обёртку в виде класса мб.
             return Result.Fail(getUserLab.Errors);
         }
 
-        // if (getUserLab.Value.Status == ) проверка, что лаба еще не запущена.
+        if (userLab.Status != StatusUserLabEnum.NotCreated) // проверка, что лаба еще не запущена.
+        {
+            return Result.Fail("you can't create two instance of one lab");
+        }
+
 
         var config = await _labConfigure.GetConfigByLab(labId);
         if (config.IsFailed) return Result.Fail(config.Errors);

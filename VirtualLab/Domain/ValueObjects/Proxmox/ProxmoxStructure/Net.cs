@@ -9,8 +9,8 @@ public class Net
 {
     public string GetFull => string.Join(",", Parameters.Select(x => $"{x.Key}={x.Value}"));
     public string Bridge => Parameters["bridge"];
-    
-    
+
+
     // todo: пока что максимально простая реализация, потом допилить. builder с начальником
     public Net(string model, string bridge)
     {
@@ -27,9 +27,7 @@ public class Net
 
     public string Type { get; }
     public string this[string index] => Parameters[index];
-    public bool CanChange { get; set; }
 
-    // должно быть всё приватное, но для этого нужно, чтоб он не зависел он standConfig. 
     private readonly Dictionary<string, string> Parameters = new();
 
     public override string ToString()
@@ -40,9 +38,6 @@ public class Net
 
     public static Net From(NetConfig request)
     {
-        return new Net(request.Parameters)
-        {
-            CanChange = request.canChange
-        };
+        return new Net(request.Parameters);
     }
 }

@@ -28,7 +28,7 @@ builder.Services.AddDbContext<LabDbContext>();
 builder.Services.AddScoped<ILabCreationService, LabCreationService>();
 builder.Services.AddScoped<ILabRepository, LabRepository>();
 builder.Services.AddScoped<IUserLabRepository, UserLabsRepository>();
-builder.Services.AddScoped<IUserLabProvider, UserLabProviderService>();
+builder.Services.AddScoped<IUserLabProvider, UserLabProvider>();
 
 
 //конец))
@@ -39,6 +39,7 @@ builder.Services.AddScoped<ILabManager, LabManager>();
 builder.Services.AddScoped<IVirtualMachineDataHandler, VirtualMachineDataHandler>();
 builder.Services.AddScoped<IVirtualMachineRepository, VirtualMachineRepository>();
 builder.Services.AddScoped<ICredentialRepository, CredentialRepository>();
+builder.Services.AddScoped<IStatusUserLabRepository, StatusUserLabRepository>();
 
 builder.Services.AddScoped(_ => MongoDbConf.FromEnv());
 builder.Services.AddScoped<IMongoContext, MongoDb>();

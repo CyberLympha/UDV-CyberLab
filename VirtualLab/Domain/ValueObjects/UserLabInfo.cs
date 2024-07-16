@@ -1,4 +1,5 @@
 using VirtualLab.Domain.Entities;
+using VirtualLab.Domain.Entities.Enums;
 
 namespace VirtualLab.Domain.ValueObjects;
 
@@ -8,11 +9,10 @@ public class UserLabInfo
     public string Name { get; set; }
     public string Goal { get; set; }
     public string Manual { get; set; }
-    public Guid Status { get; set; }
     public int Rate { get; set; }
+    public StatusUserLabEnum Status { get; set; }
 
-
-    public static UserLabInfo From(Lab guid, UserLab userLab)
+    public static UserLabInfo From(Lab guid, UserLab userLab, StatusUserLab statusUserLab)
     {
         return new UserLabInfo
         {
@@ -21,7 +21,7 @@ public class UserLabInfo
             Manual = guid.Manual,
             Rate = userLab.Rate,
             Name = guid.Name,
-            Status = userLab.StatusId
+            Status = statusUserLab.Name
         };
     }
 }

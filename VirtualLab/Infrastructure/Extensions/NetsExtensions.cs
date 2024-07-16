@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Corsinvest.ProxmoxVE.Api;
 using VirtualLab.Domain.Interfaces.Proxmox;
 using VirtualLab.Domain.Value_Objects.Proxmox;
 
@@ -30,4 +31,6 @@ public static class NetsExtensions
     }
 
     public static bool HaveVmbr0(this IEnumerable<Net> nets) => nets.Any(n => n.Bridge == "vmbr0");
+    
+   
 }

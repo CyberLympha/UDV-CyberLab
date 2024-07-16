@@ -5,10 +5,6 @@ namespace VirtualLab.Infrastructure.DataBase;
 
 public class LabDbContext : DbContext
 {
-    public LabDbContext(DbContextOptions<LabDbContext> options) : base(options)
-    {
-    }
-
     public DbSet<Lab> Labs { get; set; }
     public DbSet<UserLab> UserLabs { get; set; }
     public DbSet<VirtualMachine> VirtualMachines { get; set; }

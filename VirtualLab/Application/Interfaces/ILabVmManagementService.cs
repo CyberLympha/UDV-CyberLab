@@ -6,7 +6,7 @@ namespace VirtualLab.Application.Interfaces;
 
 public interface IStandManager
 {
-    public Task<Result<IReadOnlyList<VirtualMachineInfo>>> Create(StandCreateConfig standCreateConfig);
+    public Task<Result<IReadOnlyList<NewVmInfo>>> Create(StandCreateConfig standCreateConfig);
 
     public Task<Result> Delete(StandRemoveConfig standRemoveConfig);
 }
