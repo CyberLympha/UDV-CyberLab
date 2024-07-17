@@ -12,15 +12,15 @@ public class UserLabInfo
     public int Rate { get; set; }
     public StatusUserLabEnum Status { get; set; }
 
-    public static UserLabInfo From(Lab guid, UserLab userLab, StatusUserLab statusUserLab)
+    public static UserLabInfo From(Lab lab, UserLab userLab, StatusUserLab statusUserLab)
     {
         return new UserLabInfo
         {
-            Id = guid.Id,
-            Goal = guid.Description,
-            Manual = guid.Manual,
+            Id = userLab.Id,
+            Goal = lab.Description,
+            Manual = lab.Manual,
             Rate = userLab.Rate,
-            Name = guid.Name,
+            Name = lab.Name,
             Status = statusUserLab.Name
         };
     }

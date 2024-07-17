@@ -16,7 +16,6 @@ public class LabsController : ControllerBase
     private readonly ILabCreationService _labCreationService;
     private readonly ILabManager _labManager;
     private readonly IUserLabProvider _userLabProvider;
-    private readonly Guid UserId = Guid.NewGuid();
 
     public LabsController(
         IUserLabProvider userLabProvider,
@@ -40,8 +39,7 @@ public class LabsController : ControllerBase
     [HttpGet] // ограничение на роли
     public async Task<ActionResult<IReadOnlyCollection<UserLabInfo>>> Get()
     {
-        var user = new User();
-        var labs = await _userLabProvider.GetInfoAll(user);
+        var labs = await _userLabProvider.GetInfoAll(FakeUser.UserId);
 
         return labs.Match(
             v => Ok(v),
@@ -51,7 +49,7 @@ public class LabsController : ControllerBase
     [HttpGet("{labId:guid}/start")]
     public async Task<ActionResult<ReadOnlyCollection<Credential>>> Start(Guid labId)
     {
-        var createLab = await _labManager.StartNew(labId, UserId);
+        var createLab = await _labManager.StartNew(labId, FakeUser.UserId);
 
         return createLab.Match(
             s => Ok(s),
@@ -61,7 +59,7 @@ public class LabsController : ControllerBase
     [HttpGet("{labId:guid}/end")]
     public async Task<ActionResult> End(Guid labId)
     {
-        var removeLab = await _labManager.End(labId, UserId);
+        var removeLab = await _labManager.End(labId, FakeUser.UserId);
 
         return removeLab.Match(Ok, BadRequest);
     }

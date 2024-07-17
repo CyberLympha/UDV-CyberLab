@@ -11,15 +11,20 @@ public class UserLab : IEntity<Guid>
     public Guid Id { get; set; }
     // и другие данные, которые отображаются для пользователя.
 
-    public static UserLab From(User user, Lab guid, StatusUserLab statusNotCreated)
+    public static UserLab From(Guid userId, Lab lab, StatusUserLab status)
     {
         return new UserLab
         {
             Id = Guid.NewGuid(),
             Rate = 0,
-            LabId = guid.Id,
-            StatusId = statusNotCreated.Id,
-            UserId = user.Id
+            LabId = lab.Id,
+            StatusId = status.Id,
+            UserId = userId
         };
+    }
+
+    public override string ToString()
+    {
+        return $"UserLab {{UserId={UserId}, LabId={LabId}, StatusId={StatusId}, Rate={Rate}, id={Id}}}";
     }
 }

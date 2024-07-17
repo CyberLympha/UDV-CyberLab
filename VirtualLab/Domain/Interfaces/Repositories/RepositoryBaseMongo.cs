@@ -35,6 +35,11 @@ public abstract class RepositoryBaseMongo<TEntity, TId> : IRepositoryBase<TEntit
         return Result.Ok();
     }
 
+    public Task<Result> Update(TEntity entity)
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<Result<IReadOnlyCollection<TEntity>>> GetAll()
     {
         var all = await DbSet.FindAsync(Builders<TEntity>.Filter.Empty);

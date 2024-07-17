@@ -30,15 +30,15 @@ public class LabManager : ILabManager
 
     public async Task<Result<ReadOnlyCollection<Credential>>> StartNew(Guid labId, Guid userId)
     {
-        var getUserLab = await _userLabProvider.GetUserLab(userId, labId);
-        if (!getUserLab.TryGetValue(out var userLab))
+        var getUserLab = await _userLabProvider.GetUserLabInfo(userId, labId);
+        if (!getUserLab.TryGetValue(out var userLabInfo))
         {
             _log.Error(
                 $"Not find lab with {labId} for user with id {userId}"); //todo чуваааак, нужно сделать, так чтоб логи прописывались не здесь, типо при возвращание Result.Error() - тип сделать обёртку в виде класса мб.
             return Result.Fail(getUserLab.Errors);
         }
 
-        if (userLab.Status != StatusUserLabEnum.NotCreated) // проверка, что лаба еще не запущена.
+        if (userLabInfo.Status != StatusUserLabEnum.NotCreated) // проверка, что лаба еще не запущена.
         {
             return Result.Fail("you can't create two instance of one lab");
         }
@@ -54,7 +54,7 @@ public class LabManager : ILabManager
         var result = new List<Credential>();
         foreach (var virtualMachineInfo in labCreatedWithVm.Value)
         {
-            var vm = VirtualMachine.From(virtualMachineInfo.Node, virtualMachineInfo.ProxmoxVmId, userLab.Id);
+            var vm = VirtualMachine.From(virtualMachineInfo.Node, virtualMachineInfo.ProxmoxVmId, userLabInfo.Id);
             await _virtualMachineDataHandler.AddVm(vm);
             if (string.IsNullOrEmpty(virtualMachineInfo.Ip)) continue;
 
@@ -69,13 +69,15 @@ public class LabManager : ILabManager
 
             result.Add(credential);
         }
-
+        _log.Info($"{userLabInfo}");
+        _log.Debug($"userLab id {userLabInfo.Id} after Created Lab");
+        await _userLabProvider.UpdateStatus(userLabInfo.Id, StatusUserLabEnum.Run);
         return result.AsReadOnly();
     }
 
     public async Task<Result> End(Guid labId, Guid userId)
     {
-        var getUserLab = await _userLabProvider.GetUserLab(userId, labId);
+        var getUserLab = await _userLabProvider.GetUserLabInfo(userId, labId);
         if (!getUserLab.TryGetValue(out var userLabInfo))
         {
             _log.Error($"Not find lab with {labId} for user with id {userId}"); // так бы везде))
