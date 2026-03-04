@@ -150,12 +150,13 @@ public class StandManager : IStandManager
     {
         var response = await _proxmoxVm.Clone(node, cloneVmConfig.newQemu.Id, cloneVmConfig.TemplateData.Id);
         if (response.IsFailed) return response;
-
+        Thread.Sleep(5000);
         if (cloneVmConfig.TemplateData.WithNets())
             response = await _proxmoxVm.UpdateDeviceInterface(node, cloneVmConfig.newQemu.Id,
                 cloneVmConfig.TemplateData.Nets);
         if (response.IsFailed) return response;
 
+        Thread.Sleep(5000);
         response = await _proxmoxVm.Start(node,
             cloneVmConfig.newQemu.Id); // а запускать мне кажется, точно должны не здесcm
         if (response.IsFailed) return response;
